@@ -57,3 +57,5 @@
 #define SN32_USB_USE_USB1                  TRUE
 #define SN32_USB_LOW_POWER_ON_SUSPEND      TRUE
 #define SN32_USB_USB1_LP_IRQ_PRIORITY      3
+
+#define PLATFORM_USB_USE_USB1              TRUE
