@@ -48,14 +48,13 @@
 /*
  * HAL driver system settings.
  */
-#define HAL_USE_USB TRUE
-
 
 /*
  * USB driver system settings.
  */
 #define SN32_USB_USE_USB1                  TRUE
 #define SN32_USB_LOW_POWER_ON_SUSPEND      TRUE
-#define SN32_USB_USB1_LP_IRQ_PRIORITY      3
+#define STM32_USB_USB1_HP_IRQ_PRIORITY      13
+#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
 
 #define PLATFORM_USB_USE_USB1              TRUE
