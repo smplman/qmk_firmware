@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PRODUCT DK63
 #define DESCRIPTION DK63 Keyboard
 
+#define NO_JTAG_DISABLE
+
 /* key matrix size */
 #define MATRIX_ROWS 5
 #define MATRIX_COLS 14
