@@ -3,6 +3,7 @@
 ## chip/board settings
 # the next two should match the directories in
 #  <chibios>/os/hal/ports/$(MCU_FAMILY)/$(MCU_SERIES)
+DEBUG_ENABLED = yes
 MCU_FAMILY = SN32
 MCU_SERIES = SN32F240
 # linker script to use
