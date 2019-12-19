@@ -43,7 +43,7 @@
  * @note    Allowed values are 16 or 32 bits.
  */
 #if !defined(CH_CFG_ST_RESOLUTION)
-#define CH_CFG_ST_RESOLUTION                32
+#define CH_CFG_ST_RESOLUTION                16
 #endif
 
 /**
@@ -116,7 +116,7 @@
  *          infinite loop.
  */
 #if !defined(CH_CFG_NO_IDLE_THREAD)
-#define CH_CFG_NO_IDLE_THREAD               FALSE
+#define CH_CFG_NO_IDLE_THREAD               TRUE
 #endif
 
 /** @} */

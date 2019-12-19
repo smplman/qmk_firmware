@@ -23,9 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEVICE_VER      0x0001
 /* in python2: list(u"whatever".encode('utf-16-le')) */
 /*   at most 32 characters or the ugly hack in usb_main.c borks */
-#define MANUFACTURER Kmove_Dierya
-#define PRODUCT DK63
-#define DESCRIPTION DK63 Keyboard
+#define MANUFACTURER "Kmove_Dierya"
+#define PRODUCT "DK63"
+#define DESCRIPTION "DK63 Keyboard"
 
 #define NO_JTAG_DISABLE
 
