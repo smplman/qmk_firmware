@@ -50,6 +50,12 @@
  */
 
 /*
+ * ST driver system settings.
+ */
+#define SN32_CT_IRQ_PRIORITY 2
+#define SN32_CT_USE_TIMER 2
+
+/*
  * USB driver system settings.
  */
 #define SN32_USB_USE_USB1                  TRUE
