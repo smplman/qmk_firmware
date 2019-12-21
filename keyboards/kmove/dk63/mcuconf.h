@@ -60,7 +60,28 @@
  */
 #define SN32_USB_USE_USB1                  TRUE
 #define SN32_USB_LOW_POWER_ON_SUSPEND      TRUE
-#define STM32_USB_USB1_HP_IRQ_PRIORITY      13
-#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
+#define STM32_USB_USB1_HP_IRQ_PRIORITY     13
+#define STM32_USB_USB1_LP_IRQ_PRIORITY     14
+
+#define CRT1_AREAS_NUMBER                  1
+#define SYS_CLOCK_SETUP                    1
 
 #define PLATFORM_USB_USE_USB1              TRUE
+
+#define SYS_CLOCK_SETUP 1
+#define SYS0_CLKCFG_VAL 0
+#define AHB_PRESCALAR 0x2
+#define CLKOUT_SEL_VAL 0x0
+#define CLKOUT_PRESCALAR 0x0
+
+/*----------------------------------------------------------------------------
+  DEFINES
+ *----------------------------------------------------------------------------*/
+#define IHRC48 0
+#define ILRC 1
+
+/*----------------------------------------------------------------------------
+  Define clocks
+ *----------------------------------------------------------------------------*/
+#define __IHRC48_FREQ (48000000UL)
+#define __ILRC_FREQ (32000UL)
