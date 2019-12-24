@@ -50,7 +50,7 @@
  */
 
 /*
- * ST driver system settings.
+ * SN driver system settings.
  */
 #define SN32_CT_IRQ_PRIORITY 2
 #define SN32_CT_USE_TIMER 2
