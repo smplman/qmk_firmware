@@ -55,6 +55,11 @@
 #define SN32_CT_IRQ_PRIORITY 2
 #define SN32_CT_USE_TIMER 2
 
+#define SN32_HAS_GPIOA TRUE
+#define SN32_HAS_GPIOB TRUE
+#define SN32_HAS_GPIOC TRUE
+#define SN32_HAS_GPIOD TRUE
+
 /*
  * USB driver system settings.
  */

@@ -43,7 +43,7 @@
  * @note    Allowed values are 16 or 32 bits.
  */
 #if !defined(CH_CFG_ST_RESOLUTION)
-#define CH_CFG_ST_RESOLUTION                16
+#define CH_CFG_ST_RESOLUTION                32
 #endif
 
 /**
@@ -533,7 +533,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_SYSTEM_STATE_CHECK)
-#define CH_DBG_SYSTEM_STATE_CHECK           TRUE
+#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
 #endif
 
 /**
@@ -544,7 +544,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_CHECKS)
-#define CH_DBG_ENABLE_CHECKS                TRUE
+#define CH_DBG_ENABLE_CHECKS                FALSE
 #endif
 
 /**
@@ -556,7 +556,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_ASSERTS)
-#define CH_DBG_ENABLE_ASSERTS               TRUE
+#define CH_DBG_ENABLE_ASSERTS               FALSE
 #endif
 
 /**
@@ -589,7 +589,7 @@
  *          @p panic_msg variable set to @p NULL.
  */
 #if !defined(CH_DBG_ENABLE_STACK_CHECK)
-#define CH_DBG_ENABLE_STACK_CHECK           TRUE
+#define CH_DBG_ENABLE_STACK_CHECK           FALSE
 #endif
 
 /**
@@ -601,7 +601,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_FILL_THREADS)
-#define CH_DBG_FILL_THREADS                 TRUE
+#define CH_DBG_FILL_THREADS                 FALSE
 #endif
 
 /**

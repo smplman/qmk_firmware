@@ -69,6 +69,13 @@
 #endif
 
 /**
+ * @brief   Enables the EXT subsystem.
+ */
+#if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
+#define HAL_USE_EXT                 FALSE
+#endif
+
+/**
  * @brief   Enables the EFlash subsystem.
  */
 #if !defined(HAL_USE_EFL) || defined(__DOXYGEN__)

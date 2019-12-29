@@ -200,7 +200,7 @@ void keyboard_setup(void) {
 #ifndef NO_JTAG_DISABLE
     disable_jtag();
 #endif
-    matrix_setup();
+    // matrix_setup();
     keyboard_pre_init_kb();
 }
 

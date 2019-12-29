@@ -10,12 +10,14 @@
         "**/*.hex": true
     },
     "files.associations": {
+      "*.cfg": "shellscript",
       "*.h": "c",
       "*.c": "c",
       "*.cpp": "cpp",
       "*.hpp": "cpp",
       "xstddef": "c",
       "type_traits": "c",
-      "utility": "c"
+      "utility": "c",
+      "thread": "c"
     }
 }
