@@ -3,7 +3,7 @@ import os
 import signal
 import time
 
-gdb = 'arm-none-eabi-gdb.exe .build/kmove_dk63_default.elf -ex "target remote :50000"'
+gdb = 'arm-none-eabi-gdb .build/kmove_dk63_default.elf -ex "target remote :3333"'
 gdb += ' -ex "set confirm off" '
 gdb += ' -ex "set pagination off" '
 gdb += ' -ex "load" '
