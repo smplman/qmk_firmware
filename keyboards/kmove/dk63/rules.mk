@@ -23,11 +23,7 @@ MCU  = cortex-m0
 # ARM version, CORTEX-M0/M1 are 6, CORTEX-M3/M4/M7 are 7
 ARMV = 6
 
-# Vector table for application
-# 0x00000000-0x00001000 area is occupied by bootlaoder.*/
-# The CORTEX_VTOR... is needed only for MCHCK/Infinity KB
-# OPT_DEFS = -DCORTEX_VTOR_INIT=0x08005000
-OPT_DEFS = -O0
+# OPT_DEFS = -O0
 
 # Options to pass to dfu-util when flashing
 # DFU_ARGS = -d 0483:df11 -a 0 -s 0x08000000:leave

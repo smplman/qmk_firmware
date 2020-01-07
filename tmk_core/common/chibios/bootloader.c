@@ -63,6 +63,15 @@ void bootloader_jump(void) {
 }
 #    endif /* defined(KIIBOHD_BOOTLOADER) */
 
+#elif defined(SN32_BOOTLOADER_ADDRESS)
+
+#if defined(SN32F24xx) /* SN32_BOOTLOADER_ADDRESS */
+void bootloader_jump(void) {
+    // *MAGIC_ADDR = BOOTLOADER_MAGIC;  // set magic flag => reset handler will jump into boot loader
+    // NVIC_SystemReset();
+}
+#endif
+
 #else /* neither STM32 nor KINETIS */
 __attribute__((weak)) void bootloader_jump(void) {}
 #endif

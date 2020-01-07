@@ -57,5 +57,5 @@ docker run --rm -it $usb_args \
 	-e ALT_GET_KEYBOARDS=true \
 	-e SKIP_GIT="$SKIP_GIT" \
 	-e MAKEFLAGS="$MAKEFLAGS" \
-	qmkfm/base_container \
+	qmk \
 	make "$keyboard${keymap:+:$keymap}${target:+:$target}"
