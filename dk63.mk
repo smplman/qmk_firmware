@@ -1,15 +1,16 @@
 # Upload firmware
 
 # start openocd
-openocd:
+openocd-run:
 	# "openocd.exe" "-c" "gdb_port 3333" "-s" "C:\Users\smplman\projects\qmk_firmware-19" "-f" "C:\Users\smplman\projects\dk63\stlink.cfg" "-f" "C:\Users\smplman\projects\dk63\vs11k09a-1.cfg"
-	openocd -c "gdb_port 3333" -s /qmk_firmware -f /qmk_firmware/util/dk63/stlink.cfg -f /qmk_firmware/util/dk63/vs11k09a-1.cfg &
+	openocd -c "gdb_port 3333" -s /qmk_firmware -f /qmk_firmware/util/dk63/stlink.cfg -f /qmk_firmware/util/dk63/vs11k09a-1.cfg
 
 openocd-remote:
-	docker run -it --privileged -w /qmk_firmware -p 3333:3333 -v /dev:/dev -v /c/Users/smplman/projects/qmk_firmware-19:/qmk_firmware qmk make -f dk63.mk openocd
+	# docker run -it --privileged -w /qmk_firmware -p 3333:3333 -v /dev:/dev -v /c/Users/smplman/projects/qmk_firmware-19:/qmk_firmware qmk make -f dk63.mk openocd
+	docker run -it --rm --privileged -w /qmk_firmware -p 3333:3333 -v /dev:/dev -v /Users/speery/projects/personal/qmk_firmware-9:/qmk_firmware qmk make -f dk63.mk openocd-run
 
 openocd-start:
-	openocd-run &
+	openocd -c "gdb_port 3333" -s /qmk_firmware -f /qmk_firmware/util/dk63/stlink.cfg -f /qmk_firmware/util/dk63/vs11k09a-1.cfg &
 
 # stop openocd
 openocd-stop:
@@ -54,4 +55,4 @@ remote-gdb:
 	arm-none-eabi-gdb ../qmk_firmware-9/.build/kmove_dk63_default.elf -ex "target remote 192.168.99.102:3333" -ex "set confirm off" -ex "set pagination off"
 
 # dfu and upload
-all: openocd dfu openocd-stop upload
+all: openocd-start dfu openocd-stop upload
