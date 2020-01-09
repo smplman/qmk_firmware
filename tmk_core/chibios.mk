@@ -292,13 +292,10 @@ teensy: $(BUILD_DIR)/$(TARGET).hex cpfirmware sizeafter
 bin: $(BUILD_DIR)/$(TARGET).bin sizeafter
 	$(COPY) $(BUILD_DIR)/$(TARGET).bin $(TARGET).bin;
 
-
 flash:
 	make -f $(TOP_DIR)/dk63.mk all
-	# pip3 install wheel && \
-	# pip3 install pyusb && \
-	# python3 $(TOP_DIR)/util/dk63/flash-firmware.py $(BUILD_DIR)/$(TARGET).bin --vid 0x0c45 --pid 0x7040
-# $(call python3 ../util/dk63/flash-firmware.py ../.build/kmove_dk63_default.bin --vid 0x0c45 --pid 0x7040)
+	# $(call make -f $(TOP_DIR)/dk63.mk all)
+
 # flash: $(BUILD_DIR)/$(TARGET).bin cpfirmware sizeafter
 # ifeq ($(strip $(BOOTLOADER)),dfu)
 # 	$(call EXEC_DFU_UTIL)
@@ -307,8 +304,7 @@ flash:
 # else ifeq ($(strip $(MCU_FAMILY)),STM32)
 # 	$(call EXEC_DFU_UTIL)
 # else ifeq ($(strip $(MCU_FAMILY)),SN32)
-# 	# $(call EXEC_DFU_UTIL)
-# 	$(call python3 ../util/dk63/flash-firmware.py ../.build/kmove_dk63_default.bin --vid 0x0c45 --pid 0x7040)
+# 	$(call make -f $(TOP_DIR)/dk63.mk all)
 # else
 # 	$(PRINT_OK); $(SILENT) || printf "$(MSG_FLASH_BOOTLOADER)"
 # endif

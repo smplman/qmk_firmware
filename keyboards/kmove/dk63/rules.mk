@@ -23,7 +23,9 @@ MCU  = cortex-m0
 # ARM version, CORTEX-M0/M1 are 6, CORTEX-M3/M4/M7 are 7
 ARMV = 6
 
-# OPT_DEFS = -O0
+# BOOTLOADER = flash
+
+OPT_DEFS = -O0
 
 # Options to pass to dfu-util when flashing
 # DFU_ARGS = -d 0483:df11 -a 0 -s 0x08000000:leave
