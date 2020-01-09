@@ -35,6 +35,8 @@ ARMV = 6
 # EXTRAFLAGS+=-flto
 LINK_TIME_OPTIMIZATION_ENABLE = yes
 BACKLIGHT_ENABLE = no
+MAGIC_ENABLE = no
+MAGIC_KEYCODE_ENABLE = no
 BOOTMAGIC_ENABLE = no  # Virtual DIP switch configuration
 ## (Note that for BOOTMAGIC on Teensy LC you have to use a custom .ld script.)
 MOUSEKEY_ENABLE = no # Mouse keys

@@ -3,7 +3,7 @@ FROM qmkfm/base_container
 VOLUME /qmk_firmware
 WORKDIR /qmk_firmware
 COPY . .
-RUN usermod -u 1000 /qmk_firmware
+# RUN usermod -u 1000 /qmk_firmware
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
     usbutils \

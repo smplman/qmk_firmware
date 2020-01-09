@@ -14,7 +14,7 @@ gdb += ' -ex "ni 39" '
 gdb += ' -ex "q"'
 
 proc = subprocess.Popen(gdb, shell=True)
-time.sleep(10)
+time.sleep(20)
 # os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
 # os.kill(proc.pid,signal.CTRL_C_EVENT)
 # os.kill(proc.pid, signal.CTRL_BREAK_EVENT)

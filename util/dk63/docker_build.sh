@@ -38,7 +38,7 @@ else
 	fi
 fi
 if [ -n "$target" ]; then
-	if [ "$(uname)" = "Darwin" ] || docker-machine active >/dev/null 2>&1; then
+	if [ "$(uname)" = "Linux" ] || docker-machine active >/dev/null 2>&1; then
 		usb_args="--privileged -v /dev:/dev"
 	else
 		errcho "Error: target requires docker-machine to work on your platform"
@@ -48,14 +48,15 @@ if [ -n "$target" ]; then
 	fi
 fi
 dir=$(pwd -W 2>/dev/null) || dir=$PWD  # Use Windows path if on Windows
-
+echo $dir
+dir="/c/Users/smplman/projects/qmk_firmware-19"
 # Run container and build firmware
 docker run --rm -it $usb_args \
-	--user $(id -u):$(id -g) \
 	-w /qmk_firmware \
 	-v "$dir":/qmk_firmware \
 	-e ALT_GET_KEYBOARDS=true \
 	-e SKIP_GIT="$SKIP_GIT" \
 	-e MAKEFLAGS="$MAKEFLAGS" \
+    -p 3333:3333 \
 	qmk \
 	make "$keyboard${keymap:+:$keymap}${target:+:$target}"
