@@ -3,9 +3,9 @@ import os
 import signal
 import time
 
-# gdb = 'arm-none-eabi-gdb.exe C:/Users/smplman/projects/qmk_firmware-19/.build/kemove_dk63_default.elf -ex "target remote :3333"'
-# gdb = 'arm-none-eabi-gdb /qmk_firmware/.build/kemove_dk63_default.elf -ex "target remote :3333"'
-gdb = 'arm-none-eabi-gdb.exe .build/kemove_dk63_default.elf -ex "target remote :3333"'
+# gdb = 'arm-none-eabi-gdb.exe C:/Users/smplman/projects/qmk_firmware-19/.build/kmove_dk63_default.elf -ex "target remote :3333"'
+gdb = 'arm-none-eabi-gdb /qmk_firmware/.build/kmove_dk63_default.elf -ex "target remote :3333"'
+# gdb = 'arm-none-eabi-gdb ../qmk_firmware-9/.build/kmove_dk63_default.elf -ex "target remote :3333"'
 gdb += ' -ex "set confirm off" '
 gdb += ' -ex "set pagination off" '
 gdb += ' -ex "load" '
