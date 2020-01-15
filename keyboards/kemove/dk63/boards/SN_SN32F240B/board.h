@@ -51,11 +51,6 @@
 #define GPIOA_PIN13 13U
 #define GPIOA_PIN14 14U
 #define GPIOA_PIN15 15U
-// #define GPIOA_USB_DM 11U
-// #define GPIOA_USB_DP 12U
-// #define GPIOA_SWDIO 13U
-// #define GPIOA_SWCLK 14U
-
 
 #define GPIOB_PIN0 0U
 #define GPIOB_PIN1 1U

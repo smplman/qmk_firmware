@@ -68,7 +68,7 @@ def main():
     if dev is None:
         raise RuntimeError("device not found")
 
-    detach_drivers(dev)
+    # detach_drivers(dev)
 
     print("Initialize")
     hid_set_feature(dev, struct.pack("<I", CMD_BASE + 1))

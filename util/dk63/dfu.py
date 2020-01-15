@@ -3,8 +3,9 @@ import os
 import signal
 import time
 
-# gdb = 'arm-none-eabi-gdb.exe C:/Users/smplman/projects/qmk_firmware-19/.build/kmove_dk63_default.elf -ex "target remote :3333"'
-gdb = 'arm-none-eabi-gdb /qmk_firmware/.build/kmove_dk63_default.elf -ex "target remote :3333"'
+# gdb = 'arm-none-eabi-gdb.exe C:/Users/smplman/projects/qmk_firmware-19/.build/kemove_dk63_default.elf -ex "target remote :3333"'
+# gdb = 'arm-none-eabi-gdb /qmk_firmware/.build/kemove_dk63_default.elf -ex "target remote :3333"'
+gdb = 'arm-none-eabi-gdb.exe .build/kemove_dk63_default.elf -ex "target remote :3333"'
 gdb += ' -ex "set confirm off" '
 gdb += ' -ex "set pagination off" '
 gdb += ' -ex "load" '
@@ -15,8 +16,8 @@ gdb += ' -ex "q"'
 
 proc = subprocess.Popen(gdb, shell=True)
 time.sleep(20)
-# os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
 # os.kill(proc.pid,signal.CTRL_C_EVENT)
 # os.kill(proc.pid, signal.CTRL_BREAK_EVENT)
-proc.kill()
+# proc.kill()
 # proc.terminate()
