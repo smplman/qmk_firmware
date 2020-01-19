@@ -517,8 +517,11 @@ void eeprom_write_block(const void *buf, void *addr, uint32_t len) {
 #else
 // No EEPROM supported, so emulate it
 
-#    define EEPROM_SIZE 32
-static uint8_t buffer[EEPROM_SIZE];
+#    ifndef EEPROM_SIZE
+#        include "eeconfig.h"
+#        define EEPROM_SIZE (((EECONFIG_SIZE+3)/4)*4)  // based off eeconfig's current usage, aligned to 4-byte sizes, to deal with LTO
+#    endif
+__attribute__((aligned(4))) static uint8_t buffer[EEPROM_SIZE];
 
 uint8_t eeprom_read_byte(const uint8_t *addr) {
     uint32_t offset = (uint32_t)addr;
