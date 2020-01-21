@@ -7,7 +7,7 @@
 	branch = k-type-fix
 [submodule "lib/ugfx"]
 	path = lib/ugfx
-	url = git@github.com:tzarc/qmk-uGFX.git
+	url = https://github.com/tzarc/qmk-uGFX
 [submodule "lib/googletest"]
 	path = lib/googletest
 	url = https://github.com/google/googletest

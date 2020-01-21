@@ -157,6 +157,7 @@
  */
 #if !defined(HAL_USE_SPI) || defined(__DOXYGEN__)
 #define HAL_USE_SPI                         TRUE
+#endif
 
 /**
  * @brief   Enables the TRNG subsystem.
