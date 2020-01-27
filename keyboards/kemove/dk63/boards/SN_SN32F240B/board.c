@@ -28,16 +28,16 @@
  *          This variable is used by the HAL when initializing the PAL driver.
  */
 const PALConfig pal_default_config = {
-  #if STM32_HAS_GPIOA
+  #if SN32_HAS_GPIOA
   {VAL_GPIOA_MODER},
   #endif
-  #if STM32_HAS_GPIOB
+  #if SN32_HAS_GPIOB
   {VAL_GPIOB_MODER},
   #endif
-  #if STM32_HAS_GPIOC
+  #if SN32_HAS_GPIOC
   {VAL_GPIOC_MODER},
   #endif
-  #if STM32_HAS_GPIOD
+  #if SN32_HAS_GPIOD
   {VAL_GPIOD_MODER},
   #endif
 };

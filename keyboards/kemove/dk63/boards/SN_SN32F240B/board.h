@@ -90,8 +90,10 @@
 // #define GPIOD_PIN1 1U
 // #define GPIOD_PIN2 2U
 #define GPIOD_PIN3 3U
-#define GPIOD_PIN4 4U
-#define GPIOD_PIN5 5U
+// #define GPIOD_PIN4 4U
+// #define GPIOD_PIN5 5U
+#define GPIOD_PIN4 0U // Don't use SWD pins
+#define GPIOD_PIN5 0U // Don't use SWD pins
 #define GPIOD_PIN6 6U
 #define GPIOD_PIN7 7U
 #define GPIOD_PIN8 8U
@@ -107,16 +109,16 @@
 /*
  * IO lines assignments.
  */
-#define LINE_L3GD20_SDI PAL_LINE(GPIOA, 7U)
-#define LINE_USB_DM PAL_LINE(GPIOA, 11U)
-#define LINE_USB_DP PAL_LINE(GPIOA, 12U)
-#define LINE_SWDIO PAL_LINE(GPIOA, 13U)
-#define LINE_SWCLK PAL_LINE(GPIOA, 14U)
+// #define LINE_L3GD20_SDI PAL_LINE(GPIOA, 7U)
+// #define LINE_USB_DM PAL_LINE(GPIOA, 11U)
+// #define LINE_USB_DP PAL_LINE(GPIOA, 12U)
+#define LINE_SWDIO PAL_LINE(GPIOD, 5U)
+#define LINE_SWCLK PAL_LINE(GPIOD, 6U)
 
-#define LINE_PIN6 PAL_LINE(GPIOF, 0U)
-#define LINE_PIN7 PAL_LINE(GPIOF, 1U)
+// #define LINE_PIN6 PAL_LINE(GPIOF, 0U)
+// #define LINE_PIN7 PAL_LINE(GPIOF, 1U)
 
-#define LINE_CAPS_LOCK PAL_LINE(GPIOB, 7U)
+// #define LINE_CAPS_LOCK PAL_LINE(GPIOB, 7U)
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset
@@ -128,20 +130,6 @@
 #define PIN_MODE_PULLUP(n) (0U << ((n)))
 #define PIN_MODE_SCHMITT_EN(n) (10U << ((n)))
 #define PIN_MODE_SCHMITT_DIS(n) (11U << ((n)))
-// #define PIN_MODE_ALTERNATE(n) (2U << ((n)))
-// #define PIN_MODE_ANALOG(n) (3U << ((n)*2U))
-// #define PIN_ODR_LOW(n) (0U << (n))
-// #define PIN_ODR_HIGH(n) (1U << (n))
-// #define PIN_OTYPE_PUSHPULL(n) (0U << (n))
-// #define PIN_OTYPE_OPENDRAIN(n) (1U << (n))
-// #define PIN_OSPEED_VERYLOW(n) (0U << ((n)*2U))
-// #define PIN_OSPEED_LOW(n) (1U << ((n)*2U))
-// #define PIN_OSPEED_MEDIUM(n) (2U << ((n)*2U))
-// #define PIN_OSPEED_HIGH(n) (3U << ((n)*2U))
-// #define PIN_PUPDR_FLOATING(n) (0U << ((n)*2U))
-// #define PIN_PUPDR_PULLUP(n) (1U << ((n)*2U))
-// #define PIN_PUPDR_PULLDOWN(n) (2U << ((n)*2U))
-// #define PIN_AFIO_AF(n, v) ((v) << (((n) % 8U) * 4U))
 
 /*
  * GPIOA setup:
@@ -229,21 +217,6 @@
  * PD15 - PIN15                     (input pullup).
  */
 #define VAL_GPIOD_MODER (PIN_MODE_INPUT(GPIOD_PIN3) | PIN_MODE_INPUT(GPIOD_PIN4) | PIN_MODE_INPUT(GPIOD_PIN5) | PIN_MODE_INPUT(GPIOD_PIN6) | PIN_MODE_INPUT(GPIOD_PIN7) | PIN_MODE_INPUT(GPIOD_PIN8) | PIN_MODE_INPUT(GPIOD_PIN9) | PIN_MODE_INPUT(GPIOD_PIN10) | PIN_MODE_INPUT(GPIOD_PIN11))
-
-/*
- * USB bus activation macro, required by the USB driver.
- */
-// #define usb_lld_connect_bus(usbp)
-// #define usb_lld_connect_bus(usbp) (palSetPadMode(GPIOA, GPIOA_USB_DP, PAL_MODE_ALTERNATE(14)))
-// #define usb_lld_connect_bus(usbp) palSetPadMode(GPIOA, 12, PAL_MODE_INPUT)
-/*
- * USB bus de-activation macro, required by the USB driver.
- */
-// #define usb_lld_disconnect_bus(usbp)
-// #define usb_lld_disconnect_bus(usbp)
-//     (palSetPadMode(GPIOA, GPIOA_USB_DP, PAL_MODE_OUTPUT_PUSHPULL));
-//     palClearPad(GPIOA, GPIOA_USB_DP)
-// #define usb_lld_disconnect_bus(usbp) palSetPadMode(GPIOA, 12, PAL_MODE_OUTPUT_PUSHPULL); palClearPad(GPIOA, 12)
 
 #if !defined(_FROM_ASM_)
 #    ifdef __cplusplus
