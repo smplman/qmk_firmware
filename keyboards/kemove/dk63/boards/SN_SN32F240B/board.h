@@ -127,31 +127,31 @@
  */
 #define PIN_MODE_INPUT(n) (0U << ((n)))
 #define PIN_MODE_OUTPUT(n) (1U << ((n)))
-#define PIN_MODE_PULLUP(n) (0U << ((n)))
-#define PIN_MODE_SCHMITT_EN(n) (10U << ((n)))
-#define PIN_MODE_SCHMITT_DIS(n) (11U << ((n)))
+#define PIN_MODE_PULLUP(n) (0U << ((n*2)))
+#define PIN_MODE_SCHMITT_EN(n) (10U << ((n*2)))
+#define PIN_MODE_SCHMITT_DIS(n) (11U << ((n*2)))
 
 /*
  * GPIOA setup:
  *
- * PA0  - NC
- * PA1  - NC
- * PA2  - COL1
- * PA3  - COL2
- * PA4  - SPEAKER1
- * PA5  - SPEAKER2
- * PA6  - COL3
- * PA7  - COL8
- * PA8  - COL6
- * PA9  - COL7
- * PA10 - ROW5
- * PA11 - USB_DM                    (alternate 14).
- * PA12 - USB_DP                    (alternate 14).
- * PA13 - SWDIO                     (alternate 0).
- * PA14 - SWCLK                     (alternate 0).
- * PA15 - ROW4
+ * PA0  - PIN0                      (input pullup).
+ * PA1  - PIN1                      (input pullup).
+ * PA2  - PIN2                      (input pullup).
+ * PA3  - PIN3                      (input pullup).
+ * PA4  - PIN4                      (input pullup).
+ * PA5  - PIN5                      (input pullup).
+ * PA6  - PIN6                      (input pullup).
+ * PA7  - PIN7                      (input pullup).
+ * PA8  - PIN8                      (input pullup).
+ * PA9  - PIN9                      (input pullup).
+ * PA11 - PIN10                     (input pullup).
+ * PA11 - PIN11                     (input pullup).
+ * PA12 - PIN12                     (input pullup).
+ * PA13 - PIN13                     (input pullup).
+ * PA14 - PIN14                     (input pullup).
+ * PA15 - PIN15                     (input pullup).
  */
-#define VAL_GPIOA_MODER (PIN_MODE_INPUT(GPIOA_PIN0) | PIN_MODE_INPUT(GPIOA_PIN1) | PIN_MODE_INPUT(GPIOA_PIN2) | PIN_MODE_INPUT(GPIOA_PIN3) | PIN_MODE_INPUT(GPIOA_PIN4) | PIN_MODE_INPUT(GPIOA_PIN5) | PIN_MODE_INPUT(GPIOA_PIN6) | PIN_MODE_INPUT(GPIOA_PIN7) | PIN_MODE_INPUT(GPIOA_PIN8) | PIN_MODE_INPUT(GPIOA_PIN9) | PIN_MODE_INPUT(GPIOA_PIN10) | PIN_MODE_INPUT(GPIOA_PIN11) | PIN_MODE_INPUT(GPIOA_PIN12) | PIN_MODE_INPUT(GPIOA_PIN13) | PIN_MODE_INPUT(GPIOA_PIN14) | PIN_MODE_INPUT(GPIOA_PIN15))
+#define VAL_GPIOA_MODE (PIN_MODE_INPUT(GPIOA_PIN0) | PIN_MODE_INPUT(GPIOA_PIN1) | PIN_MODE_INPUT(GPIOA_PIN2) | PIN_MODE_INPUT(GPIOA_PIN3) | PIN_MODE_INPUT(GPIOA_PIN4) | PIN_MODE_INPUT(GPIOA_PIN5) | PIN_MODE_INPUT(GPIOA_PIN6) | PIN_MODE_INPUT(GPIOA_PIN7) | PIN_MODE_INPUT(GPIOA_PIN8) | PIN_MODE_INPUT(GPIOA_PIN9) | PIN_MODE_INPUT(GPIOA_PIN10) | PIN_MODE_INPUT(GPIOA_PIN11) | PIN_MODE_INPUT(GPIOA_PIN12) | PIN_MODE_INPUT(GPIOA_PIN13) | PIN_MODE_INPUT(GPIOA_PIN14) | PIN_MODE_INPUT(GPIOA_PIN15))
 
 /*
  * GPIOB setup:
@@ -159,11 +159,11 @@
  * PB0  - PIN0                      (input pullup).
  * PB1  - PIN1                      (input pullup).
  * PB2  - PIN2                      (input pullup).
- * PB3  - PIN3                       (alternate 0).
+ * PB3  - PIN3                      (input pullup).
  * PB4  - PIN4                      (input pullup).
  * PB5  - PIN5                      (input pullup).
- * PB6  - PIN6 LSM303DLHC_SCL   (alternate 4).
- * PB7  - PIN7 LSM303DLHC_SDA   (alternate 4).
+ * PB6  - PIN6                      (input pullup).
+ * PB7  - PIN7                      (input pullup).
  * PB8  - PIN8                      (input pullup).
  * PB9  - PIN9                      (input pullup).
  * PB10 - PIN10                     (input pullup).
@@ -173,7 +173,7 @@
  * PB14 - PIN14                     (input pullup).
  * PB15 - PIN15                     (input pullup).
  */
-#define VAL_GPIOB_MODER (PIN_MODE_INPUT(GPIOB_PIN0) | PIN_MODE_INPUT(GPIOB_PIN1) | PIN_MODE_INPUT(GPIOB_PIN2) | PIN_MODE_INPUT(GPIOB_PIN3) | PIN_MODE_INPUT(GPIOB_PIN4) | PIN_MODE_INPUT(GPIOB_PIN5) | PIN_MODE_INPUT(GPIOB_PIN6) | PIN_MODE_OUTPUT(GPIOB_PIN7) | PIN_MODE_INPUT(GPIOB_PIN8) | PIN_MODE_INPUT(GPIOB_PIN9) | PIN_MODE_INPUT(GPIOB_PIN10) | PIN_MODE_INPUT(GPIOB_PIN11) | PIN_MODE_INPUT(GPIOB_PIN12) | PIN_MODE_INPUT(GPIOB_PIN13) | PIN_MODE_INPUT(GPIOB_PIN14) | PIN_MODE_INPUT(GPIOB_PIN15))
+#define VAL_GPIOB_MODE (PIN_MODE_INPUT(GPIOB_PIN0) | PIN_MODE_INPUT(GPIOB_PIN1) | PIN_MODE_INPUT(GPIOB_PIN2) | PIN_MODE_INPUT(GPIOB_PIN3) | PIN_MODE_INPUT(GPIOB_PIN4) | PIN_MODE_INPUT(GPIOB_PIN5) | PIN_MODE_INPUT(GPIOB_PIN6) | PIN_MODE_OUTPUT(GPIOB_PIN7) | PIN_MODE_INPUT(GPIOB_PIN8) | PIN_MODE_INPUT(GPIOB_PIN9) | PIN_MODE_INPUT(GPIOB_PIN10) | PIN_MODE_INPUT(GPIOB_PIN11) | PIN_MODE_INPUT(GPIOB_PIN12) | PIN_MODE_INPUT(GPIOB_PIN13) | PIN_MODE_INPUT(GPIOB_PIN14) | PIN_MODE_INPUT(GPIOB_PIN15))
 /*
  * GPIOC setup:
  *
@@ -191,10 +191,10 @@
  * PC11 - PIN11                     (input pullup).
  * PC12 - PIN12                     (input pullup).
  * PC13 - PIN13                     (input pullup).
- * PC14 - PIN14                  (input floating).
- * PC15 - PIN15                 (input floating).
+ * PC14 - PIN14                     (input pullup).
+ * PC15 - PIN15                     (input pullup).
  */
-#define VAL_GPIOC_MODER (PIN_MODE_INPUT(GPIOC_PIN0) | PIN_MODE_INPUT(GPIOC_PIN1) | PIN_MODE_INPUT(GPIOC_PIN2) | PIN_MODE_INPUT(GPIOC_PIN3) | PIN_MODE_INPUT(GPIOC_PIN4) | PIN_MODE_INPUT(GPIOC_PIN5) | PIN_MODE_INPUT(GPIOC_PIN6) | PIN_MODE_INPUT(GPIOC_PIN7) | PIN_MODE_INPUT(GPIOC_PIN8) | PIN_MODE_INPUT(GPIOC_PIN9) | PIN_MODE_INPUT(GPIOC_PIN10) | PIN_MODE_INPUT(GPIOC_PIN11) | PIN_MODE_INPUT(GPIOC_PIN12) | PIN_MODE_INPUT(GPIOC_PIN13) | PIN_MODE_INPUT(GPIOC_PIN14) | PIN_MODE_INPUT(GPIOC_PIN15))
+#define VAL_GPIOC_MODE (PIN_MODE_INPUT(GPIOC_PIN0) | PIN_MODE_INPUT(GPIOC_PIN1) | PIN_MODE_INPUT(GPIOC_PIN2) | PIN_MODE_INPUT(GPIOC_PIN3) | PIN_MODE_INPUT(GPIOC_PIN4) | PIN_MODE_INPUT(GPIOC_PIN5) | PIN_MODE_INPUT(GPIOC_PIN6) | PIN_MODE_INPUT(GPIOC_PIN7) | PIN_MODE_INPUT(GPIOC_PIN8) | PIN_MODE_INPUT(GPIOC_PIN9) | PIN_MODE_INPUT(GPIOC_PIN10) | PIN_MODE_INPUT(GPIOC_PIN11) | PIN_MODE_INPUT(GPIOC_PIN12) | PIN_MODE_INPUT(GPIOC_PIN13) | PIN_MODE_INPUT(GPIOC_PIN14) | PIN_MODE_INPUT(GPIOC_PIN15))
 
 /*
  * GPIOD setup:
@@ -216,7 +216,7 @@
  * PD14 - PIN14                     (input pullup).
  * PD15 - PIN15                     (input pullup).
  */
-#define VAL_GPIOD_MODER (PIN_MODE_INPUT(GPIOD_PIN3) | PIN_MODE_INPUT(GPIOD_PIN4) | PIN_MODE_INPUT(GPIOD_PIN5) | PIN_MODE_INPUT(GPIOD_PIN6) | PIN_MODE_INPUT(GPIOD_PIN7) | PIN_MODE_INPUT(GPIOD_PIN8) | PIN_MODE_INPUT(GPIOD_PIN9) | PIN_MODE_INPUT(GPIOD_PIN10) | PIN_MODE_INPUT(GPIOD_PIN11))
+#define VAL_GPIOD_MODE (PIN_MODE_INPUT(GPIOC_PIN0) | PIN_MODE_INPUT(GPIOC_PIN1) | PIN_MODE_INPUT(GPIOC_PIN2) | PIN_MODE_INPUT(GPIOD_PIN3) | PIN_MODE_INPUT(GPIOD_PIN4) | PIN_MODE_INPUT(GPIOD_PIN5) | PIN_MODE_INPUT(GPIOD_PIN6) | PIN_MODE_INPUT(GPIOD_PIN7) | PIN_MODE_INPUT(GPIOD_PIN8) | PIN_MODE_INPUT(GPIOD_PIN9) | PIN_MODE_INPUT(GPIOD_PIN10) | PIN_MODE_INPUT(GPIOD_PIN11) | PIN_MODE_INPUT(GPIOC_PIN12) | PIN_MODE_INPUT(GPIOC_PIN13) | PIN_MODE_INPUT(GPIOC_PIN14) | PIN_MODE_INPUT(GPIOC_PIN15))
 
 #if !defined(_FROM_ASM_)
 #    ifdef __cplusplus

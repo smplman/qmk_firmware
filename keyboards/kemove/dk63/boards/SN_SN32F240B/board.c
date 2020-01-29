@@ -29,16 +29,16 @@
  */
 const PALConfig pal_default_config = {
   #if SN32_HAS_GPIOA
-  {VAL_GPIOA_MODER},
+  {VAL_GPIOA_MODE},
   #endif
   #if SN32_HAS_GPIOB
-  {VAL_GPIOB_MODER},
+  {VAL_GPIOB_MODE},
   #endif
   #if SN32_HAS_GPIOC
-  {VAL_GPIOC_MODER},
+  {VAL_GPIOC_MODE},
   #endif
   #if SN32_HAS_GPIOD
-  {VAL_GPIOD_MODER},
+  {VAL_GPIOD_MODE},
   #endif
 };
 #endif
@@ -69,8 +69,19 @@ void boardInit(void) {
   // set P3.0~P3.1, P3.4~P3.8 to input pull-up
   SN_GPIO3->CFG = 0xAAA800A0;
 
-  SN_GPIO0->MODE = 0xffff;
-  SN_GPIO2->CFG  = 0x00;  // Enable P2 internal pull-up resistor
-  SN_GPIO2->MODE = 0xFFFF;
-  SN_GPIO2->DATA = 0x0000;
+//   SN_GPIO0->CFG  = 0x00; // Enable P0 internal pull-up resistor
+// //   SN_GPIO0->MODE = 0x00;
+// //   SN_GPIO0->DATA = 0x00;
+
+//   SN_GPIO1->CFG  = 0x00; // Enable P1 internal pull-up resistor
+// //   SN_GPIO1->MODE = 0x00;
+// //   SN_GPIO1->DATA = 0x00;
+
+//   SN_GPIO2->CFG  = 0x00;  // Enable P2 internal pull-up resistor
+// //   SN_GPIO2->MODE = 0x00;
+// //   SN_GPIO2->DATA = 0x00;
+
+//   SN_GPIO3->CFG  = 0x00; // Enable P3 internal pull-up resistor
+// //   SN_GPIO3->MODE = 0x00;
+// //   SN_GPIO3->DATA = 0x00;
 }

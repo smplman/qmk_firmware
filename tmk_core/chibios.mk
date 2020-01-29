@@ -292,19 +292,15 @@ teensy: $(BUILD_DIR)/$(TARGET).hex cpfirmware sizeafter
 bin: $(BUILD_DIR)/$(TARGET).bin sizeafter
 	$(COPY) $(BUILD_DIR)/$(TARGET).bin $(TARGET).bin;
 
-flash:
-	make -f $(TOP_DIR)/dk63.mk all
-	# $(call make -f $(TOP_DIR)/dk63.mk all)
-
-# flash: $(BUILD_DIR)/$(TARGET).bin cpfirmware sizeafter
-# ifeq ($(strip $(BOOTLOADER)),dfu)
-# 	$(call EXEC_DFU_UTIL)
-# else ifeq ($(strip $(MCU_FAMILY)),KINETIS)
-# 	$(call EXEC_TEENSY)
-# else ifeq ($(strip $(MCU_FAMILY)),STM32)
-# 	$(call EXEC_DFU_UTIL)
-# else ifeq ($(strip $(MCU_FAMILY)),SN32)
-# 	$(call make -f $(TOP_DIR)/dk63.mk all)
-# else
-# 	$(PRINT_OK); $(SILENT) || printf "$(MSG_FLASH_BOOTLOADER)"
-# endif
+flash: $(BUILD_DIR)/$(TARGET).bin cpfirmware sizeafter
+ifeq ($(strip $(BOOTLOADER)),dfu)
+	$(call EXEC_DFU_UTIL)
+else ifeq ($(strip $(MCU_FAMILY)),KINETIS)
+	$(call EXEC_TEENSY)
+else ifeq ($(strip $(MCU_FAMILY)),STM32)
+	$(call EXEC_DFU_UTIL)
+else ifeq ($(strip $(MCU_FAMILY)),SN32)
+	$(call make -f $(TOP_DIR)/dk63.mk all)
+else
+	$(PRINT_OK); $(SILENT) || printf "$(MSG_FLASH_BOOTLOADER)"
+endif
