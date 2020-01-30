@@ -49,7 +49,8 @@
 // #define MATRIX_ROW_PINS { GPIOC_PIN3, GPIOC_PIN4, GPIOC_PIN5, GPIOC_PIN6, GPIOC_PIN7 }
 
 #define MATRIX_COL_PINS { B5, B4, B3, B2, B1, B0, A15, A14, A13, A12, A11, A10, A9, A8 }
-#define MATRIX_ROW_PINS { C3, C4, C5, C6, C7 }
+// #define MATRIX_ROW_PINS { C3, C4, C5, C6, C7 }
+#define MATRIX_ROW_PINS { C3, C4, C0, C0, C7 }
 
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
