@@ -39,8 +39,8 @@
 
 #ifndef EEPROM_PAGE_SIZE
 #    if defined(MCU_SN32F240B)
-#        define FEE_PAGE_SIZE (uint16_t)0x3F  // Page size = 64 bytes
-#        define FEE_DENSITY_PAGES 48            // How many pages are used
+#        define FEE_PAGE_SIZE       0x40     // Page size = 64 bytes
+#        define FEE_DENSITY_PAGES   1024     // How many pages are used
 #    else
 #        error "No MCU type specified. Add something like -DMCU_SN32F240B to your compiler arguments (probably in a Makefile)."
 #    endif
@@ -54,9 +54,8 @@
 #    endif
 #endif
 
-// DONT CHANGE
 // Choose location for the first EEPROM Page address on the top of flash
-#define FEE_PAGE_BASE_ADDRESS ((uint32_t)(0x0000000 + FEE_MCU_FLASH_SIZE * 1024 - FEE_DENSITY_PAGES * FEE_PAGE_SIZE))
+#define FEE_PAGE_BASE_ADDRESS ((uint32_t)(0x0000FFC0 + FEE_MCU_FLASH_SIZE * 1024 - FEE_DENSITY_PAGES * FEE_PAGE_SIZE))
 #define FEE_DENSITY_BYTES ((FEE_PAGE_SIZE / 2) * FEE_DENSITY_PAGES - 1)
 #define FEE_LAST_PAGE_ADDRESS (FEE_PAGE_BASE_ADDRESS + (FEE_PAGE_SIZE * FEE_DENSITY_PAGES))
 #define FEE_EMPTY_WORD ((uint16_t)0xFFFF)

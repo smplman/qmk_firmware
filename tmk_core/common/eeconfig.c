@@ -89,6 +89,9 @@ void eeconfig_disable(void) {
 #ifdef STM32_EEPROM_ENABLE
     EEPROM_Erase();
 #endif
+#ifdef SN32_EEPROM_ENABLE
+    EEPROM_Erase();
+#endif
     eeprom_update_word(EECONFIG_MAGIC, EECONFIG_MAGIC_NUMBER_OFF);
 }
 

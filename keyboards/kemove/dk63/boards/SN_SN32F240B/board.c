@@ -60,33 +60,33 @@ void __early_init(void) {
  * @todo    Add your board-specific code, if any.
  */
 void boardInit(void) {
-  // setP0.0~P0.1, P0.6~P0.7, P0.10~P0.15 to input pull-up
-  SN_GPIO0->CFG = 0x000A0AA0;
-  // set P1.2~1.9, P1.12~P1.15 to input pull-up
-  SN_GPIO1->CFG = 0x00A0000A;
-  // set P2.4~P2.15 to input pull-up
-  SN_GPIO2->CFG = 0x000000AA;
-  // set P3.0~P3.1, P3.4~P3.8 to input pull-up
-  SN_GPIO3->CFG = 0xAAA800A0;
+//   // setP0.0~P0.1, P0.6~P0.7, P0.10~P0.15 to input pull-up
+//   SN_GPIO0->CFG = 0x000A0AA0;
+//   // set P1.2~1.9, P1.12~P1.15 to input pull-up
+//   SN_GPIO1->CFG = 0x00A0000A;
+//   // set P2.4~P2.15 to input pull-up
+//   SN_GPIO2->CFG = 0x000000AA;
+//   // set P3.0~P3.1, P3.4~P3.8 to input pull-up
+//   SN_GPIO3->CFG = 0xAAA800A0;
 
-  SN_GPIO0->MODE = 0xffff;
-  SN_GPIO2->CFG  = 0x00;  // Enable P2 internal pull-up resistor
-  SN_GPIO2->MODE = 0xFFFF;
-  SN_GPIO2->DATA = 0x0000;
-
-//   SN_GPIO0->CFG  = 0x00; // Enable P0 internal pull-up resistor
-// //   SN_GPIO0->MODE = 0x00;
-// //   SN_GPIO0->DATA = 0x00;
-
-//   SN_GPIO1->CFG  = 0x00; // Enable P1 internal pull-up resistor
-// //   SN_GPIO1->MODE = 0x00;
-// //   SN_GPIO1->DATA = 0x00;
-
+//   SN_GPIO0->MODE = 0xffff;
 //   SN_GPIO2->CFG  = 0x00;  // Enable P2 internal pull-up resistor
-// //   SN_GPIO2->MODE = 0x00;
-// //   SN_GPIO2->DATA = 0x00;
+//   SN_GPIO2->MODE = 0xFFFF;
+//   SN_GPIO2->DATA = 0x0000;
 
-//   SN_GPIO3->CFG  = 0x00; // Enable P3 internal pull-up resistor
-// //   SN_GPIO3->MODE = 0x00;
-// //   SN_GPIO3->DATA = 0x00;
+//   SN_GPIO0->CFG  = 0xFFFF; // Enable P0 internal pull-up resistor
+  SN_GPIO0->MODE = 0x00; // Input
+  SN_GPIO0->DATA = 0x00;
+
+//   SN_GPIO1->CFG  = 0xFFFF; // Enable P1 internal pull-up resistor
+  SN_GPIO1->MODE = 0x00; // Input
+  SN_GPIO1->DATA = 0x00;
+
+//   SN_GPIO2->CFG  = 0xFFFF; // Enable P2 internal pull-up resistor
+  SN_GPIO2->MODE = 0x00; // Input
+  SN_GPIO2->DATA = 0x00;
+
+//   SN_GPIO3->CFG  = 0xFFFF; // Enable P3 internal pull-up resistor
+  SN_GPIO3->MODE = 0x00; // Input
+  SN_GPIO3->DATA = 0x00;
 }
