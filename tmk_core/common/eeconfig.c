@@ -9,6 +9,11 @@
 #    include "eeprom_stm32.h"
 #endif
 
+#ifdef SN32_EEPROM_ENABLE
+#    include "hal.h"
+#    include "eeprom_sn32.h"
+#endif
+
 /** \brief eeconfig enable
  *
  * FIXME: needs doc
@@ -30,6 +35,9 @@ __attribute__((weak)) void eeconfig_init_kb(void) {
  */
 void eeconfig_init_quantum(void) {
 #ifdef STM32_EEPROM_ENABLE
+    EEPROM_Erase();
+#endif
+#ifdef SN32_EEPROM_ENABLE
     EEPROM_Erase();
 #endif
     eeprom_update_word(EECONFIG_MAGIC, EECONFIG_MAGIC_NUMBER);

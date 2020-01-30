@@ -69,6 +69,11 @@ void boardInit(void) {
   // set P3.0~P3.1, P3.4~P3.8 to input pull-up
   SN_GPIO3->CFG = 0xAAA800A0;
 
+  SN_GPIO0->MODE = 0xffff;
+  SN_GPIO2->CFG  = 0x00;  // Enable P2 internal pull-up resistor
+  SN_GPIO2->MODE = 0xFFFF;
+  SN_GPIO2->DATA = 0x0000;
+
 //   SN_GPIO0->CFG  = 0x00; // Enable P0 internal pull-up resistor
 // //   SN_GPIO0->MODE = 0x00;
 // //   SN_GPIO0->DATA = 0x00;
