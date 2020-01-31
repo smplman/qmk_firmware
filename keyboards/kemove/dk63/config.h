@@ -41,7 +41,7 @@
  *
 */
 
-#define DIODE_DIRECTION COL2ROW
+#define DIODE_DIRECTION ROW2COL
 
 // 1.5(40), 1.4(38), 1.3(37), 1.2(36), 1.1(35), 1.0(34), 0.15(32), 0.14(31), 0.13(30), 0.12(29), 0.11(28), 0.10(27), 0.9(26), 0.8(25)
 // #define MATRIX_COL_PINS { GPIOB_PIN5, GPIOB_PIN4, GPIOB_PIN3, GPIOB_PIN2, GPIOB_PIN1, GPIOB_PIN0, GPIOA_PIN15, GPIOA_PIN14, GPIOA_PIN13, GPIOA_PIN12, GPIOA_PIN11, GPIOA_PIN10, GPIOA_PIN9, GPIOA_PIN8 }
@@ -50,7 +50,7 @@
 
 #define MATRIX_COL_PINS { B5, B4, B3, B2, B1, B0, A15, A14, A13, A12, A11, A10, A9, A8 }
 // #define MATRIX_ROW_PINS { C3, C4, C5, C6, C7 }
-#define MATRIX_ROW_PINS { D3, D4, D0, D0, D7 }
+#define MATRIX_ROW_PINS { D3, D4, D3, D3, D7 }
 
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
