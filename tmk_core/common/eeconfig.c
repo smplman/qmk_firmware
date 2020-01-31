@@ -11,7 +11,11 @@
 
 #ifdef SN32_EEPROM_ENABLE
 #    include "hal.h"
-#    include "eeprom_sn32.h"
+#    include "eeprom_stm32.h"
+#endif
+
+#if defined(EEPROM_DRIVER)
+#    include "eeprom_driver.h"
 #endif
 
 /** \brief eeconfig enable
@@ -39,6 +43,9 @@ void eeconfig_init_quantum(void) {
 #endif
 #ifdef SN32_EEPROM_ENABLE
     EEPROM_Erase();
+#endif
+#if defined(EEPROM_DRIVER)
+    eeprom_driver_erase();
 #endif
     eeprom_update_word(EECONFIG_MAGIC, EECONFIG_MAGIC_NUMBER);
     eeprom_update_byte(EECONFIG_DEBUG, 0);
@@ -91,6 +98,9 @@ void eeconfig_disable(void) {
 #endif
 #ifdef SN32_EEPROM_ENABLE
     EEPROM_Erase();
+#endif
+#if defined(EEPROM_DRIVER)
+    eeprom_driver_erase();
 #endif
     eeprom_update_word(EECONFIG_MAGIC, EECONFIG_MAGIC_NUMBER_OFF);
 }
