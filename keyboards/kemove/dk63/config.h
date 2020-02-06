@@ -53,11 +53,11 @@
 // #define MATRIX_ROW_PINS { C3, C4, C5, C6, C7 }
 // #define MATRIX_ROW_PINS { D3, D4, D3, D3, D7 }
 #define MATRIX_COL_PINS { A8, A9, A10, A11, A12, A13, A14, A15, B0, B1, B2, B3, B4, B5 }
-#define MATRIX_ROW_PINS { D3, D3, D3, D4, D3 }
-// #define MATRIX_ROW_PINS { D7, D6, D5, D4, D3 }
+// #define MATRIX_ROW_PINS { D3, D3, D3, D4, D3 }
+#define MATRIX_ROW_PINS { D7, D6, D5, D4, D3 }
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
-#define DEBOUNCE 5
+#define DEBOUNCE 0
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 //#define LOCKING_SUPPORT_ENABLE

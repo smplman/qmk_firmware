@@ -95,6 +95,8 @@ uint16_t EEPROM_WriteDataByte(uint16_t Address, uint8_t DataByte) {
         // Erase Page
         FlashStatus = FLASH_EraseSector(FEE_PAGE_BASE_ADDRESS + (page * FEE_PAGE_SIZE));
 
+        // __asm__ volatile ("bkpt");
+
         // Write new data (whole page) to flash if data has been changed
         for (i = 0; i < (FEE_PAGE_SIZE / 2); i++) {
             if ((__IO uint16_t)(0xFF00 | DataBuf[FEE_ADDR_OFFSET(i)]) != 0xFFFF) {

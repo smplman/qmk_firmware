@@ -7,7 +7,8 @@ COPY . .
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
     usbutils \
-    procps
+    procps \
+    evtest
 
 WORKDIR /
 RUN wget https://github.com/xpack-dev-tools/openocd-xpack/releases/download/v0.10.0-13/xpack-openocd-0.10.0-13-linux-x64.tgz
