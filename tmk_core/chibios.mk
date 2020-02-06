@@ -38,6 +38,7 @@ endif
 include $(STARTUP_MK)
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS_CONTRIB)/os/hal/hal.mk
 
 ifeq ("$(PLATFORM_NAME)","")
 	PLATFORM_NAME = platform
@@ -80,7 +81,8 @@ ifeq ("$(wildcard $(BOARD_MK))","")
 endif
 
 include $(BOARD_MK)
-include $(CHIBIOS)/os/hal/osal/rt/osal.mk
+-include $(CHIBIOS)/os/hal/osal/rt/osal.mk         # ChibiOS <= 19.x
+-include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk     # ChibiOS >= 20.x
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 # Compability with old version
@@ -121,6 +123,7 @@ CHIBISRC = $(STARTUPSRC) \
        $(PORTSRC) \
        $(OSALSRC) \
        $(HALSRC) \
+       $(HALSRC_CONTRIB) \
        $(PLATFORMSRC) \
        $(PLATFORMSRC_CONTRIB) \
        $(BOARDSRC) \
@@ -133,8 +136,8 @@ CHIBISRC := $(patsubst $(TOP_DIR)/%,%,$(CHIBISRC))
 
 EXTRAINCDIRS += $(CHIBIOS)/os/license $(CHIBIOS)/os/oslib/include \
          $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) $(PLATFORMINC_CONTRIB) $(BOARDINC) $(TESTINC) \
-         $(STREAMSINC) $(CHIBIOS)/os/various $(COMMON_VPATH)
+         $(HALINC) $(HALINC_CONTRIB) $(PLATFORMINC) $(PLATFORMINC_CONTRIB) $(BOARDINC) $(TESTINC) \
+         $(STREAMSINC) $(CHIBIOS)/os/various $(CHIBIOS_CONTRIB)/os/various $(COMMON_VPATH)
 
 #
 # Project, sources and paths
