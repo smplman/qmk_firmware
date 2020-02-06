@@ -140,7 +140,12 @@ else
         SRC += $(PLATFORM_COMMON_DIR)/eeprom_stm32.c
         SRC += $(PLATFORM_COMMON_DIR)/flash_stm32.c
         OPT_DEFS += -DEEPROM_EMU_STM32F072xB
-        OPT_DEFS += -DSTM32_EEPROM_ENABLE
+        OPT_DEFS += -
+	#   else ifeq ($(MCU_SERIES)_$(MCU_LDSCRIPT), SN32F240_SN32F240B)
+	# 	SRC += $(PLATFORM_COMMON_DIR)/eeprom_sn32.c
+    #     SRC += $(PLATFORM_COMMON_DIR)/flash_sn32.c
+	# 	OPT_DEFS += -DEEPROM_EMU_SN32F240B
+	# 	OPT_DEFS += -DSN32_EEPROM_ENABLE
       else
         # This will effectively work the same as "transient" if not supported by the chip
         SRC += $(PLATFORM_COMMON_DIR)/eeprom_teensy.c

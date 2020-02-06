@@ -72,8 +72,6 @@ uint16_t EEPROM_WriteDataByte(uint16_t Address, uint8_t DataByte) {
         return 0;
     }
 
-    // __asm__ volatile ("bkpt");
-
     // calculate which page is affected (Pagenum1/Pagenum2...PagenumN)
     page = FEE_ADDR_OFFSET(Address) / FEE_PAGE_SIZE;
 
@@ -96,8 +94,6 @@ uint16_t EEPROM_WriteDataByte(uint16_t Address, uint8_t DataByte) {
 
         // Erase Page
         FlashStatus = FLASH_EraseSector(FEE_PAGE_BASE_ADDRESS + (page * FEE_PAGE_SIZE));
-
-        __asm__ volatile ("bkpt");
 
         // Write new data (whole page) to flash if data has been changed
         for (i = 0; i < (FEE_PAGE_SIZE / 2); i++) {

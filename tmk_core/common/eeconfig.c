@@ -11,7 +11,7 @@
 
 #ifdef SN32_EEPROM_ENABLE
 #    include "hal.h"
-#    include "eeprom_stm32.h"
+#    include "eeprom_sn32.h"
 #endif
 
 #if defined(EEPROM_DRIVER)

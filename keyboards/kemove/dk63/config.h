@@ -41,17 +41,20 @@
  *
 */
 
-#define DIODE_DIRECTION ROW2COL
+// #define DIODE_DIRECTION ROW2COL
+#define DIODE_DIRECTION COL2ROW
 
 // 1.5(40), 1.4(38), 1.3(37), 1.2(36), 1.1(35), 1.0(34), 0.15(32), 0.14(31), 0.13(30), 0.12(29), 0.11(28), 0.10(27), 0.9(26), 0.8(25)
 // #define MATRIX_COL_PINS { GPIOB_PIN5, GPIOB_PIN4, GPIOB_PIN3, GPIOB_PIN2, GPIOB_PIN1, GPIOB_PIN0, GPIOA_PIN15, GPIOA_PIN14, GPIOA_PIN13, GPIOA_PIN12, GPIOA_PIN11, GPIOA_PIN10, GPIOA_PIN9, GPIOA_PIN8 }
 // 3.3(50), 3.4(51), 3.5(57), 3.6(58), 3.7(59)
 // #define MATRIX_ROW_PINS { GPIOC_PIN3, GPIOC_PIN4, GPIOC_PIN5, GPIOC_PIN6, GPIOC_PIN7 }
 
-#define MATRIX_COL_PINS { B5, B4, B3, B2, B1, B0, A15, A14, A13, A12, A11, A10, A9, A8 }
+// #define MATRIX_COL_PINS { B5, B4, B3, B2, B1, B0, A15, A14, A13, A12, A11, A10, A9, A8 }
 // #define MATRIX_ROW_PINS { C3, C4, C5, C6, C7 }
-#define MATRIX_ROW_PINS { D3, D4, D3, D3, D7 }
-
+// #define MATRIX_ROW_PINS { D3, D4, D3, D3, D7 }
+#define MATRIX_COL_PINS { A8, A9, A10, A11, A12, A13, A14, A15, B0, B1, B2, B3, B4, B5 }
+#define MATRIX_ROW_PINS { D3, D3, D3, D4, D3 }
+// #define MATRIX_ROW_PINS { D7, D6, D5, D4, D3 }
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
@@ -60,6 +63,8 @@
 //#define LOCKING_SUPPORT_ENABLE
 /* Locking resynchronize hack */
 //#define LOCKING_RESYNC_ENABLE
+
+// #define EEPROM_DRIVER vendor
 
 /*
  * Force NKRO
