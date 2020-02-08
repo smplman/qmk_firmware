@@ -19,8 +19,8 @@
 #include "config_common.h"
 
 /* USB Device descriptor parameter */
-#define VENDOR_ID       0x0C45
-#define PRODUCT_ID      0x766B
+#define VENDOR_ID       0xFEED
+#define PRODUCT_ID      0x4B42
 #define DEVICE_VER      0x0001
 #define MANUFACTURER    Womier
 #define PRODUCT         K66
@@ -30,26 +30,10 @@
 #define MATRIX_ROWS 5
 #define MATRIX_COLS 14
 
-/*
- * Keyboard Matrix Assignments
- *
- * Change this to how you wired your keyboard
- * COLS: AVR pins used for columns, left to right
- * ROWS: AVR pins used for rows, top to bottom
- * DIODE_DIRECTION: COL2ROW = COL = Anode (+), ROW = Cathode (-, marked on diode)
- *                  ROW2COL = ROW = Anode (+), COL = Cathode (-, marked on diode)
- *
-*/
+#define DIODE_DIRECTION ROW2COL
 
-#define DIODE_DIRECTION COL2ROW
-
-//
-// 1.5(40), 1.4(38), 1.3(37), 1.2(36), 1.1(35), 1.0(34), 0.15(32), 0.14(31), 0.13(30), 0.12(29), 0.11(28), 0.10(27), 0.9(26), 0.8(25)
-// #define MATRIX_COL_PINS { GPIOB_PIN5, GPIOB_PIN4, GPIOB_PIN3, GPIOB_PIN2, GPIOB_PIN1, GPIOB_PIN0, GPIOA_PIN15, GPIOA_PIN14, GPIOA_PIN13, GPIOA_PIN12, GPIOA_PIN11, GPIOA_PIN10, GPIOA_PIN9, GPIOA_PIN8 }
-// 3.3(50), 3.4(51), 3.5(57), 3.6(58), 3.7(59)
-// #define MATRIX_ROW_PINS { GPIOC_PIN3, GPIOC_PIN4, GPIOC_PIN5, GPIOC_PIN6, GPIOC_PIN7 }
-#define MATRIX_COL_PINS { B10 }
-#define MATRIX_ROW_PINS { B10 }
+#define MATRIX_ROW_PINS { B1, B2, B3, B4, B5 }
+#define MATRIX_COL_PINS { D1, D2, D3, D4, D5, D6, D7, D8, C3, C4, C5, C6, C7, C8 }
 
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */

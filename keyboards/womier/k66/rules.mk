@@ -25,7 +25,7 @@ ARMV = 6
 
 # BOOTLOADER = flash
 
-OPT_DEFS = -Os
+OPT_DEFS = -Og
 
 # Options to pass to dfu-util when flashing
 # DFU_ARGS = -d 0483:df11 -a 0 -s 0x08000000:leave
@@ -54,3 +54,5 @@ SERIAL_LINK_ENABLE = no
 EXTRALDFLAGS = --specs=nano.specs
 USE_PROCESS_STACKSIZE = 0x200
 USE_EXCEPTIONS_STACKSIZE = 0x200
+
+ALLOW_WARNINGS=yes
