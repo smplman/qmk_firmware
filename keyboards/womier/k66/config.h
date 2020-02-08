@@ -36,6 +36,9 @@
 #define MATRIX_COL_PINS { D1, D2, D3, D4, D5, D6, D7, D8, C3, C4, C5, C6, C7, C8 }
 
 
+#define USB_POLLING_INTERVAL_MS 1
+#define QMK_KEYS_PER_SCAN 4
+
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
 
