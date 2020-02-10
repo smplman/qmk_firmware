@@ -20,24 +20,21 @@
 
 /* USB Device descriptor parameter */
 #define VENDOR_ID       0xFEED
-#define PRODUCT_ID      0x4B42
+#define PRODUCT_ID      0xB739
 #define DEVICE_VER      0x0001
-#define MANUFACTURER    Womier
-#define PRODUCT         K66
-#define DESCRIPTION     K66 Keyboard
+#define MANUFACTURER    Ganss
+#define PRODUCT         GK87PRO
+#define DESCRIPTION     Ganss GK87PRO Keyboard
 
 /* key matrix size */
-#define MATRIX_ROWS 5
-#define MATRIX_COLS 14
+#define MATRIX_ROWS 6
+#define MATRIX_COLS 17
 
 #define DIODE_DIRECTION ROW2COL
 
-#define MATRIX_ROW_PINS { B1, B2, B3, B4, B5 }
-#define MATRIX_COL_PINS { D1, D2, D3, D4, D5, D6, D7, D8, C3, C4, C5, C6, C7, C8 }
+#define MATRIX_ROW_PINS { C3, C4, C5, C6, C7, C8 }
+#define MATRIX_COL_PINS { A7, A8, A9, A10, A11, A12, A13, A14, A15, D0, D1, D2, D3, D4, A6, A5, A4 }
 
-
-#define USB_POLLING_INTERVAL_MS 1
-#define QMK_KEYS_PER_SCAN 4
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
