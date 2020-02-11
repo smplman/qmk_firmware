@@ -95,13 +95,14 @@ void console_task(void);
 //   (void)arg;
 //   chRegSetThreadName("blinker");
 //   while (true) {
-//     systime_t time;
+//     // systime_t time;
 
-//     time = USB_DRIVER.state == USB_ACTIVE ? 250 : 500;
-//     palClearLine(LINE_CAPS_LOCK);
-//     chSysPolledDelayX(MS2RTC(STM32_HCLK, time));
+//     // time = USB_DRIVER.state == USB_ACTIVE ? 250 : 500;
+//     // palClearLine(LINE_CAPS_LOCK);
+//     // chSysPolledDelayX(MS2RTC(STM32_HCLK, time));
+//     // palSetLine(LINE_CAPS_LOCK);
+//     // chSysPolledDelayX(MS2RTC(SN32_HCLK, time));
 //     palSetLine(LINE_CAPS_LOCK);
-//     chSysPolledDelayX(MS2RTC(STM32_HCLK, time));
 //   }
 // }
 
@@ -116,7 +117,7 @@ int main(void) {
     EEPROM_Init();
 #endif
 #ifdef SN32_EEPROM_ENABLE
-    EEPROM_Init();
+    // EEPROM_Init();
 #endif
 
     // TESTING
