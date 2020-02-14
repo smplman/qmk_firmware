@@ -92,22 +92,40 @@ void midi_ep_task(void);
  * Amber LED blinker thread, times are in milliseconds.
  */
 /* set this variable to non-zero anywhere to blink once */
-// static THD_WORKING_AREA(waThread1, 128);
-// static THD_FUNCTION(Thread1, arg) {
+static THD_WORKING_AREA(waThread1, 0);
+static THD_FUNCTION(Thread1, arg) {
 
-//   (void)arg;
-//   chRegSetThreadName("blinker");
-//   while (true) {
-//     // systime_t time;
+  (void)arg;
+  chRegSetThreadName("blinker");
+//   palSetLineMode(8U, PAL_MODE_OUTPUT_PUSHPULL);
+//   palSetPadMode(GPIOC, GPIOC_PIN14, PAL_MODE_OUTPUT_PUSHPULL);
+//   palSetPadMode(GPIOC, GPIOC_PIN14, PAL_MODE_INPUT_PULLUP);
+  palSetPadMode(GPIOC, GPIOC_PIN14, PAL_MODE_INPUT_PULLDOWN);
 
-//     // time = USB_DRIVER.state == USB_ACTIVE ? 250 : 500;
-//     // palClearLine(LINE_CAPS_LOCK);
-//     // chSysPolledDelayX(MS2RTC(STM32_HCLK, time));
-//     // palSetLine(LINE_CAPS_LOCK);
-//     // chSysPolledDelayX(MS2RTC(SN32_HCLK, time));
-//     palSetLine(LINE_CAPS_LOCK);
-//   }
-// }
+  while (true) {
+    // systime_t time;
+
+    // time = USB_DRIVER.state == USB_ACTIVE ? 250 : 500;
+    // palClearLine(LINE_CAPS_LOCK);
+    palClearPad(GPIOC, GPIOC_PIN14);
+    // palClearPad(GPIOA, GPIOC_PIN8);
+    // palSetPadMode(GPIOA, GPIOC_PIN9, PAL_MODE_INPUT_PULLUP);
+
+    // chSysPolledDelayX(MS2RTC(48000000, time));
+    // chThdSleep(MS2RTC(48000000, time));
+    chThdSleepMilliseconds(1000);
+
+    // palSetLine(LINE_CAPS_LOCK);
+    palSetPad(GPIOC, GPIOC_PIN14);
+    // palClearPad(GPIOA, GPIOC_PIN8);
+    // palSetPadMode(GPIOA, GPIOC_PIN9, PAL_MODE_OUTPUT_PUSHPULL);
+
+    // chSysPolledDelayX(MS2RTC(48000000, time));
+    // chThdSleep(MS2RTC(48000000, time));
+    chThdSleepMilliseconds(1000);
+    // palSetLine(LINE_CAPS_LOCK);
+  }
+}
 
 /* Main thread
  */
@@ -124,7 +142,7 @@ int main(void) {
 #endif
 
     // TESTING
-    // chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
     keyboard_setup();
 

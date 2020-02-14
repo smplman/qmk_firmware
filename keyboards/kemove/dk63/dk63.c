@@ -19,3 +19,10 @@
 void matrix_init_kb(void) {
     matrix_init_user();
 }
+
+// void reset_keyboard_kb(){
+// // #ifdef SN32_BOOTLOADER_ADDRESS
+//     // enter_bootloader_mode_if_requested();
+//     bootloader_jump();
+// // #endif
+// }

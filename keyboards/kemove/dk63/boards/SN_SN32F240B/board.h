@@ -116,7 +116,7 @@
 // #define LINE_PINB8 PAL_LINE(GPIOB, 8U)
 // #define LINE_PINB9 PAL_LINE(GPIOB, 9U)
 
-#define LINE_CAPS_LOCK PAL_LINE(GPIOB, 8U)
+#define LINE_CAPS_LOCK PAL_LINE(GPIOC, 8U)
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset
