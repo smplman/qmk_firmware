@@ -6,6 +6,11 @@ WS2812_DRIVER = bitbang
 
 # Force task driven PWM until ARM can provide automatic configuration
 BACKLIGHT_DRIVER = software
+RGBLIGHT_ENABLE = no
+
+ifneq ($(strip $(LED_MATRIX_ENABLE)), direct)
+    BACKLIGHT_ENABLE = no
+endif
 
 # The rest of these settings shouldn't change
 
