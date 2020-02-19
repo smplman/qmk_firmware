@@ -1,28 +1,42 @@
-// COLS
-// PWM PWM08A - PWM21A
-// 2ty transistors PNP driven high
-// base      - GPIO
-// collector - LED Col pins
-// emitter   - VDD
+/*
+    COLS key / led
+    PWM PWM08A - PWM21A
+    2ty transistors PNP driven high
+    base      - GPIO
+    collector - LED Col pins
+    emitter   - VDD
+*/
+/*
+  VDD     GPIO
+  (E)     (B)
+   |       |
+   |_______|
+       |
+       |
+      (C)
+      LED
+*/
 
-//        GPIO
-//(E)     (B)
-// |       |
-//     |
-//    (C)
-
-// ROWS RGB
-// PWM PWM08B - PWM23B
-// C 0-15
-// j3y transistors NPM driven low
-// base      - GPIO
-// collector - LED RGB row pins
-// emitter   - GND
-//     (C)
-//      |
-//  |       |
-// (B)     (E)
-//
+/*
+    ROWS RGB
+    PWM PWM08B - PWM23B
+    C 0-15
+    j3y transistors NPM driven low
+    base      - GPIO
+    collector - LED RGB row pins
+    emitter   - GND
+*/
+/*
+      LED
+      (C)
+       |
+       |
+    _______
+   |       |
+   |       |
+  (B)     (E)
+  GPIO    GND
+*/
 
 #include <SN32F240B.h>
 #include <string.h>
