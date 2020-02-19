@@ -16,9 +16,9 @@
 
 #include "dk63.h"
 
-void matrix_init_kb(void) {
-    matrix_init_user();
-}
+// void matrix_init_kb(void) {
+//     matrix_init_user();
+// }
 
 // void reset_keyboard_kb(){
 // // #ifdef SN32_BOOTLOADER_ADDRESS

@@ -30,7 +30,7 @@
 #include "ch.h"
 #include "hal.h"
 
-uint32_t led_pwm_values[16] = {12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000}; // Extra for the boot pin not in use
+uint32_t led_pwm_values[16] = {1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200}; // Extra for the boot pin (2.2) not in use
 
 void setup_led_pwm(void) {
     // Enable Timer Clock
@@ -38,10 +38,9 @@ void setup_led_pwm(void) {
 
     // PFPA
     // 8 - 23 = top half 16 bits
-    // SN_PFPA->CT16B1 = 0x00FFFF00;
+    SN_PFPA->CT16B1 = 0x00FFFF00; // Set PWM8 - PWM24 to B pins
 
-	//Set MR23 value for 1ms PWM period ==> count value = 1000*12 = 12000
-	// SN_CT16B1->MR22 = 12000;
+	//Set MR9 - MR23 value for 1ms PWM period ==> count value = 1000*12 = 12000
     // base 0x40002000
     // MR0 at Offset:0x20
     // MR24 at Offset:0x80
@@ -49,30 +48,25 @@ void setup_led_pwm(void) {
     memcpy((void*) 0x40002040, led_pwm_values, sizeof(led_pwm_values));
 
     //Enable PWM function, IOs and select the PWM modes
-    // SN_CT16B1->PWMIOENB = 0x00FFFF00;//Enable PWM19 IO
-    // SN_CT16B1->PWMENB = 0x00FFFF00;//Enable PWM19 function
+    SN_CT16B1->PWMIOENB = 0x00FFFF00; // Enable PWM8 - PWM24 IO
+    SN_CT16B1->PWMENB   =   0x00FFFF00; // Enable PWM8 - PWM24 function
 
-    // SN_CT16B1->PWMCTRL = 0x55550000;
-    // SN_CT16B1->PWMCTRL2 = 0x5555;	//PWM19 select as PWM mode 1
+    SN_CT16B1->PWMCTRL  = 0x55550000; // PWM0 - PWM15 Mode 2
+    SN_CT16B1->PWMCTRL2 = 0x5555;	// PWM16 - PWM23 Mode 2
 
     // Set match interrupts and TC rest
-    // PWM8 & PWM9
-	// SN_CT16B1->MCTRL = 0x1B000000;
-    // // PWM10 - PWM19
-    // SN_CT16B1->MCTRL2 = 0x1B6DB6DB;
-    // // PWM20 - PWM24
-    // SN_CT16B1->MCTRL3 = 0x36DB;
+	SN_CT16B1->MCTRL   = 0x1B000000; // PWM8 & PWM9
+    SN_CT16B1->MCTRL2  = 0x1B6DB6DB; // PWM10 - PWM19
+    SN_CT16B1->MCTRL3   = 0x36DB; // PWM20 - PWM24
 
-	// SN_CT16B1->MCTRL3 = ((1<<8)|(1<<7));
 
-    SN_PFPA->CT16B1 = (1<<16);
-    SN_CT16B1->MR16 = 12000;
-
-    SN_CT16B1->PWMIOENB = (1<<16); // Enable PWM16 IO
-    SN_CT16B1->PWMENB = (1<<16); // Enable PWM16 function
-    SN_CT16B1->PWMCTRL2 = (3<<0); // PWM16 select as PWM mode 2
-
-    SN_CT16B1->MCTRL2 = ((1<<18)|(1<<19)); // PWM16 TC and RESET
+    // PWM16 Test
+    // SN_PFPA->CT16B1 = (1<<16); // Set PWM16 to pin 2.8
+    // SN_CT16B1->MR16 = 12000; // Set MR16 value for 1ms PWM period ==> count value = 1000*12 = 12000
+    // SN_CT16B1->PWMIOENB = (1<<16); // Enable PWM16 IO
+    // SN_CT16B1->PWMENB = (1<<16); // Enable PWM16 function
+    // SN_CT16B1->PWMCTRL2 = (2<<0); // PWM16 select as PWM mode 2
+    // SN_CT16B1->MCTRL2 = ((1<<18)|(1<<19)); // PWM16 TC and RESET
 
     //Set CT16B1 as the up-counting mode.
     // SN_CT16B1->TMRCTRL = ((1<<1)|(0<<4));
@@ -81,7 +75,7 @@ void setup_led_pwm(void) {
     while (SN_CT16B1->TMRCTRL & (1<<1));
 
     //Let TC start counting.
-    SN_CT16B1->TMRCTRL |= (1<<0);
+    // SN_CT16B1->TMRCTRL |= (1<<0);
 
     nvicEnableVector(CT16B1_IRQn, 15);
 }

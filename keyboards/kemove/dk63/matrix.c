@@ -35,7 +35,7 @@ Ported to QMK by Stephen Peery <https://github.com/smp4488/>
 
 static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
-// static const pin_t led_row_pins[MATRIX_ROWS][3] = LED_MATRIX_ROW_PINS;
+static const pin_t led_row_pins[MATRIX_ROWS][3] = LED_MATRIX_ROW_PINS;
 // LED COL pins are the same as the keyboard matrix
 
 static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
@@ -55,20 +55,28 @@ void matrix_print(void) {}
 
 static void select_col(uint8_t col) {
     setPinInput(col_pins[col]);
+    writePinHigh(col_pins[col]);
 }
 
 static void unselect_col(uint8_t col) {
     setPinOutput(col_pins[col]);
+    writePinLow(col_pins[col]);
+    // Enable led row
 }
 
 static void select_row(uint8_t row) {
     //Disable led row
     // led_row_pins[row][0]
-    // SN_CT16B1->PWMIOENB = (0<<(led_row_pins[row][0] + 8));//Enable PWM19 IO
-    // SN_CT16B1->PWMIOENB = (0<<(led_row_pins[row][1] + 8));//Enable PWM19 IO
-    // SN_CT16B1->PWMIOENB = (0<<(led_row_pins[row][2] + 8));//Enable PWM19 IO
+    SN_CT16B1->PWMIOENB = (0<<(led_row_pins[row][0] + 8));//Disable PWM19 IO
+    SN_CT16B1->PWMIOENB = (0<<(led_row_pins[row][1] + 8));//Disable PWM19 IO
+    SN_CT16B1->PWMIOENB = (0<<(led_row_pins[row][2] + 8));//Disable PWM19 IO
     // setPinOutput(row_pins[row]);
     // writePinLow(row_pins[row]);
+
+    // Disable led row
+    // writePinLow(led_row_pins[row][0]);
+    // writePinLow(led_row_pins[row][1]);
+    // writePinLow(led_row_pins[row][2]);
 
     setPinOutput(row_pins[row]);
 }
@@ -79,9 +87,14 @@ static void unselect_row(uint8_t row) {
     setPinInput(row_pins[row]);
 
     // enable led row
-    // SN_CT16B1->PWMIOENB = (1<<(led_row_pins[row][0] + 8));//Enable PWM19 IO
-    // SN_CT16B1->PWMIOENB = (1<<(led_row_pins[row][1] + 8));//Enable PWM19 IO
-    // SN_CT16B1->PWMIOENB = (1<<(led_row_pins[row][2] + 8));//Enable PWM19 IO
+    SN_CT16B1->PWMIOENB = (1<<(led_row_pins[row][0] + 8));//Enable PWM19 IO
+    SN_CT16B1->PWMIOENB = (1<<(led_row_pins[row][1] + 8));//Enable PWM19 IO
+    SN_CT16B1->PWMIOENB = (1<<(led_row_pins[row][2] + 8));//Enable PWM19 IO
+
+    // Enable led row
+    // writePinHigh(led_row_pins[row][0]);
+    // writePinHigh(led_row_pins[row][1]);
+    // writePinHigh(led_row_pins[row][2]);
 }
 
 static void unselect_rows(void) {
@@ -100,7 +113,7 @@ static void init_pins(void) {
     for (uint8_t x = 0; x < MATRIX_COLS; x++) {
         // setPinInputHigh(col_pins[x]);
         setPinOutput(col_pins[x]);
-        writePinHigh(col_pins[x]);
+        writePinLow(col_pins[x]);
     }
 }
 
@@ -113,7 +126,7 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
 
     // Select row and wait for row selecton to stabilize
     select_row(current_row);
-    // wait_us(30);
+    wait_us(30);
 
     // For each col...
     for (uint8_t col_index = 0; col_index < MATRIX_COLS; col_index++) {

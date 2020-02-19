@@ -100,31 +100,31 @@ static THD_FUNCTION(Thread1, arg) {
 //   palSetLineMode(8U, PAL_MODE_OUTPUT_PUSHPULL);
 //   palSetPadMode(GPIOC, GPIOC_PIN14, PAL_MODE_OUTPUT_PUSHPULL);
 //   palSetPadMode(GPIOC, GPIOC_PIN14, PAL_MODE_INPUT_PULLUP);
-  palSetPadMode(GPIOC, GPIOC_PIN14, PAL_MODE_INPUT_PULLDOWN);
+//   palSetPadMode(GPIOC, GPIOC_PIN14, PAL_MODE_INPUT_PULLDOWN);
 
-  while (true) {
-    // systime_t time;
+//   while (true) {
+//     // systime_t time;
 
-    // time = USB_DRIVER.state == USB_ACTIVE ? 250 : 500;
-    // palClearLine(LINE_CAPS_LOCK);
-    palClearPad(GPIOC, GPIOC_PIN14);
-    // palClearPad(GPIOA, GPIOC_PIN8);
-    // palSetPadMode(GPIOA, GPIOC_PIN9, PAL_MODE_INPUT_PULLUP);
+//     // time = USB_DRIVER.state == USB_ACTIVE ? 250 : 500;
+//     // palClearLine(LINE_CAPS_LOCK);
+//     palClearPad(GPIOC, GPIOC_PIN14);
+//     // palClearPad(GPIOA, GPIOC_PIN8);
+//     // palSetPadMode(GPIOA, GPIOC_PIN9, PAL_MODE_INPUT_PULLUP);
 
-    // chSysPolledDelayX(MS2RTC(48000000, time));
-    // chThdSleep(MS2RTC(48000000, time));
-    chThdSleepMilliseconds(1000);
+//     // chSysPolledDelayX(MS2RTC(48000000, time));
+//     // chThdSleep(MS2RTC(48000000, time));
+//     chThdSleepMilliseconds(1000);
 
-    // palSetLine(LINE_CAPS_LOCK);
-    palSetPad(GPIOC, GPIOC_PIN14);
-    // palClearPad(GPIOA, GPIOC_PIN8);
-    // palSetPadMode(GPIOA, GPIOC_PIN9, PAL_MODE_OUTPUT_PUSHPULL);
+//     // palSetLine(LINE_CAPS_LOCK);
+//     palSetPad(GPIOC, GPIOC_PIN14);
+//     // palClearPad(GPIOA, GPIOC_PIN8);
+//     // palSetPadMode(GPIOA, GPIOC_PIN9, PAL_MODE_OUTPUT_PUSHPULL);
 
-    // chSysPolledDelayX(MS2RTC(48000000, time));
-    // chThdSleep(MS2RTC(48000000, time));
-    chThdSleepMilliseconds(1000);
-    // palSetLine(LINE_CAPS_LOCK);
-  }
+//     // chSysPolledDelayX(MS2RTC(48000000, time));
+//     // chThdSleep(MS2RTC(48000000, time));
+//     chThdSleepMilliseconds(1000);
+//     // palSetLine(LINE_CAPS_LOCK);
+//   }
 }
 
 /* Main thread
