@@ -38,10 +38,9 @@ OPT_DEFS = -O0
 # EXTRAFLAGS+=-flto
 LINK_TIME_OPTIMIZATION_ENABLE = no
 BACKLIGHT_ENABLE = no
-MAGIC_ENABLE = no
-MAGIC_KEYCODE_ENABLE = no
-BOOTMAGIC_ENABLE = no  # Virtual DIP switch configuration
-## (Note that for BOOTMAGIC on Teensy LC you have to use a custom .ld script.)
+MAGIC_ENABLE = yes
+MAGIC_KEYCODE_ENABLE = yes
+BOOTMAGIC_ENABLE = yes  # Virtual DIP switch configuration
 MOUSEKEY_ENABLE = no # Mouse keys
 EXTRAKEY_ENABLE = no # Audio control and System control
 CONSOLE_ENABLE = no  # Console for debug
@@ -51,3 +50,8 @@ NKRO_ENABLE = yes     # USB Nkey Rollover
 AUDIO_ENABLE = no
 RGBLIGHT_ENABLE = no
 SERIAL_LINK_ENABLE = no
+# BACKLIGHT_ENABLE = yes
+# LED_MATRIX_ENABLE = pinmatrix
+CUSTOM_MATRIX = yes
+
+SRC = matrix.c led_matrix.c
