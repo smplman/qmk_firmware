@@ -73,8 +73,11 @@
 // #define LED_MATRIX_ROW_PINS { A8, A9, A10, A11, A12, A13, A14, A15, B0, B1, B2, B3, B4, B5 }
 
 #define LED_MATRIX_ROWS 15
-// #define LED_MATRIX_ROW_PINS { {C15, C14, C13}, {C12, C11, C10}, {C9, C8, C7}, {C6, C5, C4}, {C3, C1, C0 } }
-#define LED_MATRIX_ROW_PINS { {15, 14, 13}, {12, 11, 10}, {9, 8, 7}, {6, 5, 4}, {3, 1, 0 } }
+#define LED_MATRIX_ROW_PINS { C14, C13, C12, C11, C10, C9, C8, C7, C6, C5, C4, C3, C1, C0, C15}
+// #define LED_MATRIX_ROWS 1
+// #define LED_MATRIX_ROW_PINS { C15 } //{ C15, C14, C13, C12, C11, C10, C9, C8, C7, C6, C5, C4, C3, C1, C0 }
+
+// #define LED_MATRIX_ROW_PINS { {15, 14, 13}, {12, 11, 10}, {9, 8, 7}, {6, 5, 4}, {3, 1, 0 } }
 
 // #define LED_MATRIX_ROWS 3
 // #define LED_MATRIX_ROW_PINS { C15, C14, C13 }

@@ -35,7 +35,8 @@ Ported to QMK by Stephen Peery <https://github.com/smp4488/>
 
 static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
-static const pin_t led_row_pins[MATRIX_ROWS][3] = LED_MATRIX_ROW_PINS;
+// static const pin_t led_row_pins[MATRIX_ROWS][3] = LED_MATRIX_ROW_PINS;
+static const pin_t led_row_pins[LED_MATRIX_ROWS] = LED_MATRIX_ROW_PINS;
 // LED COL pins are the same as the keyboard matrix
 
 static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
@@ -53,6 +54,8 @@ inline matrix_row_t matrix_get_row(uint8_t row) { return matrix[row]; }
 
 void matrix_print(void) {}
 
+void color_loop(void);
+
 static void select_col(uint8_t col) {
     setPinInput(col_pins[col]);
     writePinHigh(col_pins[col]);
@@ -61,47 +64,20 @@ static void select_col(uint8_t col) {
 static void unselect_col(uint8_t col) {
     setPinOutput(col_pins[col]);
     writePinLow(col_pins[col]);
-    // Enable led row
 }
 
 static void select_row(uint8_t row) {
-    //Disable led row
-    // led_row_pins[row][0]
-    SN_CT16B1->PWMIOENB = (0<<(led_row_pins[row][0] + 8));//Disable PWM19 IO
-    SN_CT16B1->PWMIOENB = (0<<(led_row_pins[row][1] + 8));//Disable PWM19 IO
-    SN_CT16B1->PWMIOENB = (0<<(led_row_pins[row][2] + 8));//Disable PWM19 IO
-    // setPinOutput(row_pins[row]);
-    // writePinLow(row_pins[row]);
-
-    // Disable led row
-    // writePinLow(led_row_pins[row][0]);
-    // writePinLow(led_row_pins[row][1]);
-    // writePinLow(led_row_pins[row][2]);
-
     setPinOutput(row_pins[row]);
+    writePinLow(row_pins[row]);
 }
 
 static void unselect_row(uint8_t row) {
-    // setPinInputHigh(row_pins[row]);
-
-    setPinInput(row_pins[row]);
-
-    // enable led row
-    SN_CT16B1->PWMIOENB = (1<<(led_row_pins[row][0] + 8));//Enable PWM19 IO
-    SN_CT16B1->PWMIOENB = (1<<(led_row_pins[row][1] + 8));//Enable PWM19 IO
-    SN_CT16B1->PWMIOENB = (1<<(led_row_pins[row][2] + 8));//Enable PWM19 IO
-
-    // Enable led row
-    // writePinHigh(led_row_pins[row][0]);
-    // writePinHigh(led_row_pins[row][1]);
-    // writePinHigh(led_row_pins[row][2]);
+    setPinInputHigh(row_pins[row]);
 }
 
 static void unselect_rows(void) {
     for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
-        // setPinInputHigh(row_pins[x]);
-
-        setPinInput(row_pins[x]);
+        unselect_row(x);
     }
 }
 
@@ -110,10 +86,16 @@ static void init_pins(void) {
     setup_led_pwm();
 
     unselect_rows();
+
+    // Unselect COLs
     for (uint8_t x = 0; x < MATRIX_COLS; x++) {
-        // setPinInputHigh(col_pins[x]);
-        setPinOutput(col_pins[x]);
-        writePinLow(col_pins[x]);
+        unselect_col(x);
+    }
+
+    // Init Led Pins
+    for (uint8_t z = 0; z < LED_MATRIX_ROWS; z++) {
+        setPinOutput(led_row_pins[z]);
+        writePinLow(led_row_pins[z]);
     }
 }
 
@@ -162,6 +144,8 @@ void matrix_init(void) {
 
     debounce_init(MATRIX_ROWS);
 
+    // color_loop();
+
     matrix_init_quantum();
 }
 
@@ -177,4 +161,34 @@ uint8_t matrix_scan(void) {
 
     matrix_scan_quantum();
     return (uint8_t)changed;
+}
+
+void color_loop(void) {
+
+    for (uint8_t x = 0; x < MATRIX_COLS; x++) {
+        // Turn COL On
+        setPinOutput(col_pins[x]);
+        writePinLow(col_pins[x]);
+        chThdSleepMilliseconds(100);
+
+        for (uint8_t y = 0; y < LED_MATRIX_ROWS; y++) {
+
+            // On
+            // setPinInput(led_row_pins[y]);
+            setPinOutput(led_row_pins[y]);
+            writePinHigh(led_row_pins[y]);
+
+            chThdSleepMilliseconds(100);
+
+            // Off
+            // setPinOutput(led_row_pins[y]);
+            writePinLow(led_row_pins[y]);
+
+            chThdSleepMilliseconds(100);
+        }
+        // Turn COL Off
+        setPinInput(col_pins[x]);
+        writePinHigh(col_pins[x]);
+        chThdSleepMilliseconds(100);
+    }
 }
