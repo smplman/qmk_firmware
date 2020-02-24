@@ -78,5 +78,5 @@ void boardInit(void) {
 //   SN_GPIO2->CFG = 0xFFFF;
 //   SN_GPIO2->DATA = 0x0; // Set low
 
-//   SN_SYS0->SWDCTRL_b.SWDDIS = 1; // Disable SWD
+  SN_SYS0->SWDCTRL_b.SWDDIS = 1; // Disable SWD
 }

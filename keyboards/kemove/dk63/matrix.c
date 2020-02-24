@@ -29,9 +29,6 @@ Ported to QMK by Stephen Peery <https://github.com/smp4488/>
 #include "quantum.h"
 #include "led_matrix.h"
 
-// set counter reset on MRn (setting MRn to the full period) and set the other MRs to the PWM duty cycle you want for that pin
-// on period interrupt update all the PWM MRs to the values for the next LED
-// the only issue is that when you do that, the timer has reset and may count during the ISR, so you'll have to detect low or 0 values and set the pin accordingly
 
 static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
@@ -83,7 +80,7 @@ static void unselect_rows(void) {
 
 static void init_pins(void) {
 
-    setup_led_pwm();
+    // setup_led_pwm();
 
     unselect_rows();
 
