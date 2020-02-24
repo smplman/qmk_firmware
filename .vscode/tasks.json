@@ -1,0 +1,59 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Makefile",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "make kemove/dk63:default",
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "upload",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "python3 util/dk63/flash-firmware.py .build/kemove_dk63_default.bin --vid 0x0c45 --pid 0x7040",
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": []
+        },
+
+        {
+            "label": "upload docker machine",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "eval \"$(docker-machine env default)\" ; make -f dk63.mk upload-remote",
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

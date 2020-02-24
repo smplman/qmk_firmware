@@ -1,35 +1,50 @@
-// COLS
-// PWM PWM08A - PWM21A
-// 2ty transistors PNP driven high
-// base      - GPIO
-// collector - LED Col pins
-// emitter   - VDD
-
-//        GPIO
-//(E)     (B)
-// |       |
-//     |
-//    (C)
-
-// ROWS RGB
-// PWM PWM08B - PWM23B
-// C 0-15
-// j3y transistors NPM driven low
-// base      - GPIO
-// collector - LED RGB row pins
-// emitter   - GND
-//     (C)
-//      |
-//  |       |
-// (B)     (E)
-//
-
 #include <SN32F240B.h>
 #include <string.h>
 #include "CT16.h"
 #include "ch.h"
 #include "hal.h"
 #include "rgb_matrix.h"
+
+/*
+    COLS key / led
+    PWM PWM08A - PWM21A
+    2ty transistors PNP driven high
+    base      - GPIO
+    collector - LED Col pins
+    emitter   - VDD
+
+    VDD     GPIO
+    (E)     (B)
+     |  PNP  |
+     |_______|
+         |
+         |
+        (C)
+        LED
+
+    ROWS RGB
+    PWM PWM08B - PWM23B
+    C 0-15
+    j3y transistors NPM driven low
+    base      - GPIO
+    collector - LED RGB row pins
+    emitter   - GND
+
+        LED
+        (C)
+         |
+         |
+      _______
+     |  NPM  |
+     |       |
+    (B)     (E)
+    GPIO    GND
+*/
+
+// set counter reset on MRn (setting MRn to the full period) and set the other MRs to the PWM duty cycle you want for that pin
+// on period interrupt update all the PWM MRs to the values for the next LED
+// the only issue is that when you do that, the timer has reset and may count during the ISR, so you'll have to detect low or 0 values and set the pin accordingly
+
 
 uint32_t led_pwm_values[16] = {12000, 12000, 1200, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000}; // Extra for the boot pin not in use
 
@@ -38,10 +53,6 @@ static struct {
   uint8_t b;
   uint8_t r;
 } __attribute__((packed)) led_state[DRIVER_LED_TOTAL];
-
-// set counter reset on MRn (setting MRn to the full period) and set the other MRs to the PWM duty cycle you want for that pin
-// on period interrupt update all the PWM MRs to the values for the next LED
-// the only issue is that when you do that, the timer has reset and may count during the ISR, so you'll have to detect low or 0 values and set the pin accordingly
 
 void init(void) {
     // Enable Timer Clock
