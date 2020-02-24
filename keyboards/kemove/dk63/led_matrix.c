@@ -45,6 +45,12 @@
 // on period interrupt update all the PWM MRs to the values for the next LED
 // the only issue is that when you do that, the timer has reset and may count during the ISR, so you'll have to detect low or 0 values and set the pin accordingly
 
+volatile uint32_t *mr_ptr_array[5][3] = {{&SN_CT16B1->MR23, &SN_CT16B1->MR8,  &SN_CT16B1->MR9},
+                                        {&SN_CT16B1->MR11, &SN_CT16B1->MR12, &SN_CT16B1->MR13},
+                                        {&SN_CT16B1->MR14, &SN_CT16B1->MR15, &SN_CT16B1->MR16},
+                                        {&SN_CT16B1->MR17, &SN_CT16B1->MR18, &SN_CT16B1->MR19},
+                                        {&SN_CT16B1->MR20, &SN_CT16B1->MR21, &SN_CT16B1->MR22 }};
+
 
 uint32_t led_pwm_values[16] = {12000, 12000, 1200, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000}; // Extra for the boot pin not in use
 
@@ -54,7 +60,9 @@ static struct {
   uint8_t r;
 } __attribute__((packed)) led_state[DRIVER_LED_TOTAL];
 
-void init(void) {
+void init(void){}
+
+void setup_led_pwm(void) {
     // Enable Timer Clock
     SN_SYS1->AHBCLKEN_b.CT16B1CLKEN = 1;
 
@@ -71,27 +79,32 @@ void init(void) {
     // // set all match registers the same for now
     // memcpy((void*) 0x40002040, led_pwm_values, sizeof(led_pwm_values));
 
-
     // 16 bits - max = 65535
-    SN_CT16B1->MR23 = 0;        // R
-    SN_CT16B1->MR8  = 0xFFFF;   // B
-    SN_CT16B1->MR9  = 0;        // G
+    // SN_CT16B1->MR23 = 0;        // R
+    // SN_CT16B1->MR8  = 0xFFFF;   // B
+    // SN_CT16B1->MR9  = 0;        // G
 
-    SN_CT16B1->MR11 = 0;
-    SN_CT16B1->MR12 = 0xFFFF;
-    SN_CT16B1->MR13 = 0;
+    // SN_CT16B1->MR11 = 0;
+    // SN_CT16B1->MR12 = 0xFFFF;
+    // SN_CT16B1->MR13 = 0;
 
-    SN_CT16B1->MR14 = 0;
-    SN_CT16B1->MR15 = 0xFFFF;
-    SN_CT16B1->MR16 = 0;
+    // SN_CT16B1->MR14 = 0;
+    // SN_CT16B1->MR15 = 0xFFFF;
+    // SN_CT16B1->MR16 = 0;
 
-    SN_CT16B1->MR17 = 0;
-    SN_CT16B1->MR18 = 0xFFFF;
-    SN_CT16B1->MR19 = 0;
+    // SN_CT16B1->MR17 = 0;
+    // SN_CT16B1->MR18 = 0xFFFF;
+    // SN_CT16B1->MR19 = 0;
 
-    SN_CT16B1->MR20 = 0;
-    SN_CT16B1->MR21 = 0xFFFF;
-    SN_CT16B1->MR22 = 0;
+    // SN_CT16B1->MR20 = 0;
+    // SN_CT16B1->MR21 = 0xFFFF;
+    // SN_CT16B1->MR22 = 0;
+
+    // for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
+    //     *mr_ptr_array[x][0] = 0;
+    //     *mr_ptr_array[x][1] = 0xFFFF;
+    //     *mr_ptr_array[x][2] = 0;
+    // }
 
 
     //Enable PWM function, IOs and select the PWM modes
@@ -190,7 +203,7 @@ void init(void) {
     // SN_CT16B1->MCTRL2 = (mskCT16_MR16IE_EN|mskCT16_MR16RST_EN);
 
     // Set prescale value
-    // SN_CT16B1->PRE = 0x4;
+    SN_CT16B1->PRE = 0x5;
 
     //Wait until timer reset done.
     while (SN_CT16B1->TMRCTRL & mskCT16_CRST);
@@ -223,6 +236,14 @@ const rgb_matrix_driver_t rgb_matrix_driver = {
     .set_color     = set_color,
     .set_color_all = set_color_all,
 };
+
+void set_pwm_values(uint32_t r, uint32_t g, uint32_t b) {
+    for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
+        *mr_ptr_array[x][0] = r;
+        *mr_ptr_array[x][1] = b;
+        *mr_ptr_array[x][2] = g;
+    }
+}
 
 /**
  * @brief   TIM2 interrupt handler.

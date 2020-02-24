@@ -60,7 +60,8 @@ static void select_col(uint8_t col) {
 
 static void unselect_col(uint8_t col) {
     setPinOutput(col_pins[col]);
-    writePinLow(col_pins[col]);
+    writePinHigh(col_pins[col]);
+    // writePinLow(col_pins[col]);
 }
 
 static void select_row(uint8_t row) {
@@ -78,9 +79,17 @@ static void unselect_rows(void) {
     }
 }
 
+// static void select_cols(void) {
+//     for (uint8_t x = 0; x < MATRIX_COLS; x++) {
+//         select_col(x);
+//     }
+// }
+
 static void init_pins(void) {
 
-    // setup_led_pwm();
+    setup_led_pwm();
+
+    set_pwm_values(0xFFFFFFFF, 0, 0);
 
     unselect_rows();
 
@@ -90,10 +99,10 @@ static void init_pins(void) {
     }
 
     // Init Led Pins
-    for (uint8_t z = 0; z < LED_MATRIX_ROWS; z++) {
-        setPinOutput(led_row_pins[z]);
-        writePinLow(led_row_pins[z]);
-    }
+    // for (uint8_t z = 0; z < LED_MATRIX_ROWS; z++) {
+    //     setPinOutput(led_row_pins[z]);
+    //     writePinLow(led_row_pins[z]);
+    // }
 }
 
 static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row) {
@@ -105,10 +114,14 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
 
     // Select row and wait for row selecton to stabilize
     select_row(current_row);
-    wait_us(30);
+    // wait_us(30);
 
     // For each col...
     for (uint8_t col_index = 0; col_index < MATRIX_COLS; col_index++) {
+
+        // light LEDs
+        // set_pwm_values(col_index * 4681, col_index * 4681, col_index * 4681);
+        // writePinLow(col_pins[MATRIX_COLS - 1 - col_index]);
 
         // Set pin to input
         select_col(col_index);
@@ -119,8 +132,18 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
         // Set pin to output
         unselect_col(col_index);
 
+        // stop LEDs
+        // writePinHigh(col_pins[MATRIX_COLS - 1 - col_index]);
+
         // Populate the matrix row with the state of the col pin
         current_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << col_index);
+
+        // select_cols();
+
+        // // light led col
+        // unselect_col(MATRIX_COLS - col_index);
+        // // stop led on col
+        // select_col(MATRIX_COLS - col_index);
     }
 
     // Unselect row
