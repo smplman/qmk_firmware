@@ -75,9 +75,10 @@
 #define LED_MATRIX_ROWS 15
 #define LED_MATRIX_ROW_PINS { C14, C13, C12, C11, C10, C9, C8, C7, C6, C5, C4, C3, C1, C0, C15}
 // #define LED_MATRIX_ROWS 1
+// G B R
 // #define LED_MATRIX_ROW_PINS { C15 } //{ C15, C14, C13, C12, C11, C10, C9, C8, C7, C6, C5, C4, C3, C1, C0 }
 
-// #define LED_MATRIX_ROW_PINS { {15, 14, 13}, {12, 11, 10}, {9, 8, 7}, {6, 5, 4}, {3, 1, 0 } }
+// #define LED_MATRIX_ROW_PINS { {14, 13, 12}, {11, 10, 9}, {8, 7, 6}, {5, 4, 3}, {1, 0, 15 } }
 
 // #define LED_MATRIX_ROWS 3
 // #define LED_MATRIX_ROW_PINS { C15, C14, C13 }
@@ -94,8 +95,8 @@
 // #define LED_MATRIX_COLS 1
 // #define LED_MATRIX_COL_PINS { B5 }
 
-#define LED_DRIVER_LED_COUNT 210
-
+#define LED_DRIVER_LED_COUNT 63 // * 3(rgb)
+#define DRIVER_LED_TOTAL 63
 /*
  * Force NKRO
  *
