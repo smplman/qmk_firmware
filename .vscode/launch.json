@@ -1,0 +1,54 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "cwd": "${workspaceRoot}",
+            "executable": "C:/msys64/home/Bill/qmk_firmware/.build/womier_k66_default.elf",
+            "name": "Debug Microcontroller",
+            "request": "launch",
+            "type": "cortex-debug",
+            "device": "MK66FX1M0xxx18",
+            "servertype": "external",
+            "gdbTarget": "127.0.0.1:3333",
+            "showDevDebugOutput": true,
+            "debuggerArgs": [
+                "--interpreter=mi",
+            ],
+            // "preLaunchCommands": [
+            //     "gdb_memory_map disable"
+            // ],
+            "preLaunchCommands": [
+                // "mon reset halt",
+                // "set $pc=0x1fff0009",
+                // "c"
+            ],
+            "postRestartCommands": [
+                //"monitor reset"
+            ],
+            "postLaunchCommands": [
+                // "set breakpoint pending on",
+                // "set print object on",
+                // "set print sevenbit-strings on",
+                // "set host-charset UTF-8",
+                // "set target-charset WINDOWS-1252",
+                // "set target-wide-charset UTF-16",
+                // "set mem inaccessible-by-default off",
+                // "monitor speed 1000",
+                // "monitor clrbp",
+                // "monitor reset 2",
+                // "monitor halt",
+                // "monitor regs",
+                // "flushreg",
+                // "monitor speed auto",
+                // "monitor semihosting enable",
+                // "monitor semihosting IOClient 3",
+                // "load",
+                // "monitor clrbp",
+                // "monitor reset 2",
+                // "monitor halt",
+                // "monitor semihosting enable",
+                // "monitor semihosting IOClient 3",
+            ]
+        },
+    ]
+}
