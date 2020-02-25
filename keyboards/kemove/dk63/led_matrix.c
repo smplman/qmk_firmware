@@ -3,7 +3,11 @@
 #include "CT16.h"
 #include "ch.h"
 #include "hal.h"
+#include "rgb.h"
 #include "rgb_matrix.h"
+#include "rgb_matrix_types.h"
+#include "led.h"
+#include "color.h"
 
 /*
     COLS key / led
@@ -45,6 +49,10 @@
 // on period interrupt update all the PWM MRs to the values for the next LED
 // the only issue is that when you do that, the timer has reset and may count during the ISR, so you'll have to detect low or 0 values and set the pin accordingly
 
+static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
+static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
+
+// Match Registers pointers array
 volatile uint32_t *mr_ptr_array[5][3] = {{&SN_CT16B1->MR23, &SN_CT16B1->MR8,  &SN_CT16B1->MR9},
                                         {&SN_CT16B1->MR11, &SN_CT16B1->MR12, &SN_CT16B1->MR13},
                                         {&SN_CT16B1->MR14, &SN_CT16B1->MR15, &SN_CT16B1->MR16},
@@ -52,64 +60,26 @@ volatile uint32_t *mr_ptr_array[5][3] = {{&SN_CT16B1->MR23, &SN_CT16B1->MR8,  &S
                                         {&SN_CT16B1->MR20, &SN_CT16B1->MR21, &SN_CT16B1->MR22 }};
 
 
-uint32_t led_pwm_values[16] = {12000, 12000, 1200, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000}; // Extra for the boot pin not in use
+LED_TYPE led_state[DRIVER_LED_TOTAL];
 
-static struct {
-  uint8_t g;
-  uint8_t b;
-  uint8_t r;
-} __attribute__((packed)) led_state[DRIVER_LED_TOTAL];
 
-void init(void){}
 
-void setup_led_pwm(void) {
+// void setup_led_pwm(void) {
+void init(void){
     // Enable Timer Clock
     SN_SYS1->AHBCLKEN_b.CT16B1CLKEN = 1;
 
     // // PFPA - Set PWM to port B pins
     SN_PFPA->CT16B1 = 0xFFFF00;         // 8-9, 11-23 = top half 16 bits
-    // 1111 1111 1111 1011 0000 0000
-
-	// //Set MR23 value for 1ms PWM period ==> count value = 1000*12 = 12000
-	// // SN_CT16B1->MR22 = 12000;
-    // // base 0x40002000
-    // // MR0 at Offset:0x20
-    // // MR8 at Offset:0x40
-    // // MR24 at Offset:0x80
-    // // set all match registers the same for now
-    // memcpy((void*) 0x40002040, led_pwm_values, sizeof(led_pwm_values));
-
-    // 16 bits - max = 65535
-    // SN_CT16B1->MR23 = 0;        // R
-    // SN_CT16B1->MR8  = 0xFFFF;   // B
-    // SN_CT16B1->MR9  = 0;        // G
-
-    // SN_CT16B1->MR11 = 0;
-    // SN_CT16B1->MR12 = 0xFFFF;
-    // SN_CT16B1->MR13 = 0;
-
-    // SN_CT16B1->MR14 = 0;
-    // SN_CT16B1->MR15 = 0xFFFF;
-    // SN_CT16B1->MR16 = 0;
-
-    // SN_CT16B1->MR17 = 0;
-    // SN_CT16B1->MR18 = 0xFFFF;
-    // SN_CT16B1->MR19 = 0;
-
-    // SN_CT16B1->MR20 = 0;
-    // SN_CT16B1->MR21 = 0xFFFF;
-    // SN_CT16B1->MR22 = 0;
 
     // for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
-    //     *mr_ptr_array[x][0] = 0;
-    //     *mr_ptr_array[x][1] = 0xFFFF;
-    //     *mr_ptr_array[x][2] = 0;
+    //     *mr_ptr_array[x][0] = 0;       // R
+    //     *mr_ptr_array[x][1] = 0xFFFF;  // B
+    //     *mr_ptr_array[x][2] = 0;       // G
     // }
 
-
-    //Enable PWM function, IOs and select the PWM modes
-    // SN_CT16B1->PWMENB   = 0xFFFB00;     //Enable PWM8-PWM9, PWM11-PWM23 function
-    // |mskCT16_PWM10EN_EN
+    // Enable PWM function, IOs and select the PWM modes
+    // Enable PWM8-PWM9, PWM11-PWM23 function
     SN_CT16B1->PWMENB   =   (mskCT16_PWM8EN_EN  \
                             |mskCT16_PWM9EN_EN  \
                             |mskCT16_PWM11EN_EN \
@@ -126,8 +96,7 @@ void setup_led_pwm(void) {
                             |mskCT16_PWM22EN_EN \
                             |mskCT16_PWM23EN_EN);
 
-    // SN_CT16B1->PWMIOENB = 0xFFFB00;     //Enable PWM8-PWM9 PWM12-PWM23 IO
-    // |mskCT16_PWM10IOEN_EN
+    //Enable PWM8-PWM9 PWM12-PWM23 IO
     SN_CT16B1->PWMIOENB =   (mskCT16_PWM8IOEN_EN  \
                             |mskCT16_PWM9IOEN_EN  \
                             |mskCT16_PWM11IOEN_EN \
@@ -144,8 +113,7 @@ void setup_led_pwm(void) {
                             |mskCT16_PWM22IOEN_EN \
                             |mskCT16_PWM23IOEN_EN);
 
-    // SN_CT16B1->PWMCTRL  = 0x55650000;   //PWM08-PWM9 , PWM11-PWM15 select as PWM mode 2
-    // |mskCT16_PWM10MODE_2
+    // Select as PWM mode 2
     SN_CT16B1->PWMCTRL =    (mskCT16_PWM8MODE_2  \
                             |mskCT16_PWM9MODE_2  \
                             |mskCT16_PWM11MODE_2 \
@@ -153,8 +121,6 @@ void setup_led_pwm(void) {
                             |mskCT16_PWM13MODE_2 \
                             |mskCT16_PWM14MODE_2 \
                             |mskCT16_PWM15MODE_2);
-    // 0101 0101 0110 0101 0000 0000 0000 0000
-    // SN_CT16B1->PWMCTRL2 = 0x5555;	    //PWM16-PWM23 select as PWM mode 2
     SN_CT16B1->PWMCTRL2 =   (mskCT16_PWM16MODE_2 \
                             |mskCT16_PWM17MODE_2 \
                             |mskCT16_PWM18MODE_2 \
@@ -165,12 +131,8 @@ void setup_led_pwm(void) {
                             |mskCT16_PWM23MODE_2);
 
     // Set match interrupts and TC rest
-	// SN_CT16B1->MCTRL  = 0x1B000000; // PWM8-PWM9
-    // |mskCT16_MR10RST_EN|mskCT16_MR10IE_EN
-    SN_CT16B1->MCTRL  = (mskCT16_MR8IE_EN|mskCT16_MR9IE_EN);
-    // 01 1011 0000 0000 0000 0000 0000 0000
-    // SN_CT16B1->MCTRL2 = 0x1B6DB6D8; // PWM11-PWM19
-    // mskCT16_MR10RST_EN|mskCT16_MR10IE_EN
+    SN_CT16B1->MCTRL  = (mskCT16_MR8IE_EN  \
+                        |mskCT16_MR9IE_EN);
     SN_CT16B1->MCTRL2 = (mskCT16_MR11IE_EN \
                         |mskCT16_MR12IE_EN \
                         |mskCT16_MR13IE_EN \
@@ -180,15 +142,11 @@ void setup_led_pwm(void) {
                         |mskCT16_MR17IE_EN \
                         |mskCT16_MR18IE_EN \
                         |mskCT16_MR19IE_EN);
-    // 01 1011 0110 1101 1011 0110 1101 1000
-    // SN_CT16B1->MCTRL3 = 0x36DB;     // PWM20-PWM23
     SN_CT16B1->MCTRL3 = (mskCT16_MR20IE_EN \
                         |mskCT16_MR21IE_EN \
                         |mskCT16_MR22IE_EN \
                         |mskCT16_MR23IE_EN);
-    // 011 0110 1101 1011
 
-    // Green 14 11 8 5 1
 
     // // Testing individual PWMs
     // SN_PFPA->CT16B1 = ((1<<16)|(1<<17));
@@ -203,7 +161,7 @@ void setup_led_pwm(void) {
     // SN_CT16B1->MCTRL2 = (mskCT16_MR16IE_EN|mskCT16_MR16RST_EN);
 
     // Set prescale value
-    SN_CT16B1->PRE = 0x5;
+    // SN_CT16B1->PRE = 0x5;
 
     //Wait until timer reset done.
     while (SN_CT16B1->TMRCTRL & mskCT16_CRST);
@@ -211,11 +169,28 @@ void setup_led_pwm(void) {
     //Let TC start counting.
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
-    nvicEnableVector(CT16B1_IRQn, 15);
+    // nvicEnableVector(CT16B1_IRQn, 15);
 }
 
 static void flush(void) {
+    for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+        setPinOutput(col_pins[col]);
+        writePinLow(col_pins[col]);
+        for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+            setPinOutput(row_pins[row]);
+            writePinLow(row_pins[row]);
 
+            LED_TYPE state = led_state[g_led_config.matrix_co[row][col]];
+            *mr_ptr_array[row][0] = state.r; // R
+            *mr_ptr_array[row][1] = state.b; // B
+            *mr_ptr_array[row][2] = state.g; // G
+
+            setPinInputHigh(row_pins[row]);
+        }
+
+        setPinInput(col_pins[col]);
+        writePinHigh(col_pins[col]);
+    }
 }
 
 static void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
@@ -229,7 +204,6 @@ static void set_color_all(uint8_t r, uint8_t g, uint8_t b) {
     set_color(i, r, g, b);
 }
 
-
 const rgb_matrix_driver_t rgb_matrix_driver = {
     .init          = init,
     .flush         = flush,
@@ -237,11 +211,30 @@ const rgb_matrix_driver_t rgb_matrix_driver = {
     .set_color_all = set_color_all,
 };
 
+void set_col_pwm(uint8_t col, uint8_t row) {
+    LED_TYPE state = led_state[g_led_config.matrix_co[col][row]];
+    *mr_ptr_array[row][0] = state.r; // R
+    *mr_ptr_array[row][1] = state.b; // B
+    *mr_ptr_array[row][2] = state.g; // G
+}
+
 void set_pwm_values(uint32_t r, uint32_t g, uint32_t b) {
     for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
-        *mr_ptr_array[x][0] = r;
-        *mr_ptr_array[x][1] = b;
-        *mr_ptr_array[x][2] = g;
+        *mr_ptr_array[x][0] = r * 200;
+        *mr_ptr_array[x][1] = b * 257;
+        *mr_ptr_array[x][2] = g * 257;
+    }
+}
+
+// byte order: R,B,G
+static uint8_t caps_lock_color[3] = { 0x00, 0x00, 0xFF };
+
+void led_set(uint8_t usb_led) {
+    // dk63 has only CAPS indicator
+    if (usb_led >> USB_LED_CAPS_LOCK & 1) {
+        set_color(11, caps_lock_color[0], caps_lock_color[2], caps_lock_color[1]);
+    } else {
+        set_color(11, 0x00, 0x00, 0x00);
     }
 }
 

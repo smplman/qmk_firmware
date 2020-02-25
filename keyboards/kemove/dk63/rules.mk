@@ -53,6 +53,7 @@ SERIAL_LINK_ENABLE = no
 WAIT_FOR_USB = yes
 CUSTOM_MATRIX = yes
 # RGB_MATRIX_ENABLE = yes
+RGB_MATRIX_ENABLE= custom
 
 
 SRC = matrix.c led_matrix.c

@@ -87,9 +87,9 @@ static void unselect_rows(void) {
 
 static void init_pins(void) {
 
-    setup_led_pwm();
+    // setup_led_pwm();
 
-    set_pwm_values(0xFFFFFFFF, 0, 0);
+    // set_pwm_values(0xFFFFFFFF, 0, 0);
 
     unselect_rows();
 
@@ -98,7 +98,7 @@ static void init_pins(void) {
         unselect_col(x);
     }
 
-    // Init Led Pins
+    // // Init Led Pins
     // for (uint8_t z = 0; z < LED_MATRIX_ROWS; z++) {
     //     setPinOutput(led_row_pins[z]);
     //     writePinLow(led_row_pins[z]);
@@ -119,9 +119,17 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
     // For each col...
     for (uint8_t col_index = 0; col_index < MATRIX_COLS; col_index++) {
 
-        // light LEDs
-        // set_pwm_values(col_index * 4681, col_index * 4681, col_index * 4681);
-        // writePinLow(col_pins[MATRIX_COLS - 1 - col_index]);
+        // set_col_pwm(col_index, current_row);
+
+        // // loop led cols
+        // for (uint8_t led_col_index = 0; led_col_index < MATRIX_COLS; led_col_index++) {
+        //     // light LEDs
+        //     set_col_pwm(led_col_index, current_row);
+        //     writePinLow(col_pins[led_col_index]);
+
+        //     // stop prev led on col
+        //     writePinHigh(col_pins[led_col_index]);
+        // }
 
         // Set pin to input
         select_col(col_index);
@@ -137,13 +145,6 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
 
         // Populate the matrix row with the state of the col pin
         current_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << col_index);
-
-        // select_cols();
-
-        // // light led col
-        // unselect_col(MATRIX_COLS - col_index);
-        // // stop led on col
-        // select_col(MATRIX_COLS - col_index);
     }
 
     // Unselect row
