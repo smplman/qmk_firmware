@@ -36,6 +36,8 @@ static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 static const pin_t led_row_pins[LED_MATRIX_ROWS] = LED_MATRIX_ROW_PINS;
 // LED COL pins are the same as the keyboard matrix
 
+uint8_t led_col_index = 0;
+
 static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
 static matrix_row_t matrix[MATRIX_ROWS]; //debounced values
 
@@ -99,10 +101,10 @@ static void init_pins(void) {
     }
 
     // // Init Led Pins
-    // for (uint8_t z = 0; z < LED_MATRIX_ROWS; z++) {
-    //     setPinOutput(led_row_pins[z]);
-    //     writePinLow(led_row_pins[z]);
-    // }
+    for (uint8_t z = 0; z < LED_MATRIX_ROWS; z++) {
+        setPinOutput(led_row_pins[z]);
+        writePinLow(led_row_pins[z]);
+    }
 }
 
 static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row) {
@@ -119,7 +121,8 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
     // For each col...
     for (uint8_t col_index = 0; col_index < MATRIX_COLS; col_index++) {
 
-        // set_col_pwm(col_index, current_row);
+        // set_col_pwm(MATRIX_COLS - 1 - col_index, current_row);
+        // writePinLow(col_pins[MATRIX_COLS - 1 - col_index]);
 
         // // loop led cols
         // for (uint8_t led_col_index = 0; led_col_index < MATRIX_COLS; led_col_index++) {
@@ -177,6 +180,14 @@ uint8_t matrix_scan(void) {
     for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
         changed |= read_cols_on_row(raw_matrix, current_row);
     }
+
+    if (led_col_index == MATRIX_COLS) {
+        led_col_index = 0;
+    }
+
+    set_col_pwm(led_col_index, 0);
+    writePinLow(col_pins[led_col_index]);
+    led_col_index++;
 
     debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
 

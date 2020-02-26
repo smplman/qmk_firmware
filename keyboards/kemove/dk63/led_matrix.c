@@ -49,8 +49,8 @@
 // on period interrupt update all the PWM MRs to the values for the next LED
 // the only issue is that when you do that, the timer has reset and may count during the ISR, so you'll have to detect low or 0 values and set the pin accordingly
 
-static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
-static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
+// static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
+// static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 
 // Match Registers pointers array
 volatile uint32_t *mr_ptr_array[5][3] = {{&SN_CT16B1->MR23, &SN_CT16B1->MR8,  &SN_CT16B1->MR9},
@@ -173,24 +173,26 @@ void init(void){
 }
 
 static void flush(void) {
-    for (uint8_t col = 0; col < MATRIX_COLS; col++) {
-        setPinOutput(col_pins[col]);
-        writePinLow(col_pins[col]);
-        for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
-            setPinOutput(row_pins[row]);
-            writePinLow(row_pins[row]);
+    // for (uint8_t col = 0; col < MATRIX_COLS; col++) {
 
-            LED_TYPE state = led_state[g_led_config.matrix_co[row][col]];
-            *mr_ptr_array[row][0] = state.r; // R
-            *mr_ptr_array[row][1] = state.b; // B
-            *mr_ptr_array[row][2] = state.g; // G
+    //     setPinOutput(col_pins[col]);
+    //     writePinLow(col_pins[col]);
 
-            setPinInputHigh(row_pins[row]);
-        }
+    //     for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+    //         // setPinOutput(row_pins[row]);
+    //         // writePinLow(row_pins[row]);
 
-        setPinInput(col_pins[col]);
-        writePinHigh(col_pins[col]);
-    }
+    //         LED_TYPE state = led_state[g_led_config.matrix_co[row][col]];
+    //         *mr_ptr_array[row][0] = state.r * 257; // R
+    //         *mr_ptr_array[row][1] = state.b * 257; // B
+    //         *mr_ptr_array[row][2] = state.g * 257; // G
+
+    //         // setPinInputHigh(row_pins[row]);
+    //     }
+
+    //     setPinInput(col_pins[col]);
+    //     writePinHigh(col_pins[col]);
+    // }
 }
 
 static void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
@@ -211,18 +213,20 @@ const rgb_matrix_driver_t rgb_matrix_driver = {
     .set_color_all = set_color_all,
 };
 
-void set_col_pwm(uint8_t col, uint8_t row) {
-    LED_TYPE state = led_state[g_led_config.matrix_co[col][row]];
-    *mr_ptr_array[row][0] = state.r; // R
-    *mr_ptr_array[row][1] = state.b; // B
-    *mr_ptr_array[row][2] = state.g; // G
+void set_col_pwm(uint8_t col) {
+    for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
+        LED_TYPE state = led_state[g_led_config.matrix_co[col][x]];
+        *mr_ptr_array[x][0] = state.r; // R
+        *mr_ptr_array[x][1] = state.b; // B
+        *mr_ptr_array[x][2] = state.g; // G
+    }
 }
 
 void set_pwm_values(uint32_t r, uint32_t g, uint32_t b) {
     for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
-        *mr_ptr_array[x][0] = r * 200;
-        *mr_ptr_array[x][1] = b * 257;
-        *mr_ptr_array[x][2] = g * 257;
+        *mr_ptr_array[x][0] = r;
+        *mr_ptr_array[x][1] = b;
+        *mr_ptr_array[x][2] = g;
     }
 }
 
