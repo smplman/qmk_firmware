@@ -184,7 +184,7 @@ void set_col_pwm(uint8_t col) {
 static void flush(void) {
     for (uint8_t col = 0; col < MATRIX_COLS; col++) {
 
-        setPinOutput(col_pins[col]);
+        // setPinOutput(col_pins[col]);
         writePinLow(col_pins[col]);
 
         for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
@@ -196,16 +196,17 @@ static void flush(void) {
             *mr_ptr_array[row][1] = state.b * 255; // B
             *mr_ptr_array[row][2] = state.g * 255; // G
 
+            // wait_us(350);
+
             // setPinInputHigh(row_pins[row]);
         }
 
+        wait_us(700);
+        // wait_us(350);
 
-        wait_us(2500);
-
-        setPinInput(col_pins[col]);
+        // setPinInput(col_pins[col]);
         writePinHigh(col_pins[col]);
     }
-
 
     // set_col_pwm(0);
     // writePinLow(col_pins[0]);
