@@ -50,7 +50,7 @@
 // the only issue is that when you do that, the timer has reset and may count during the ISR, so you'll have to detect low or 0 values and set the pin accordingly
 
 // static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
-// static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
+static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 
 // Match Registers pointers array
 volatile uint32_t *mr_ptr_array[5][3] = {{&SN_CT16B1->MR23, &SN_CT16B1->MR8,  &SN_CT16B1->MR9},
@@ -169,49 +169,8 @@ void init(void){
     //Let TC start counting.
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
-    // nvicEnableVector(CT16B1_IRQn, 15);
+    nvicEnableVector(CT16B1_IRQn, 15);
 }
-
-static void flush(void) {
-    // for (uint8_t col = 0; col < MATRIX_COLS; col++) {
-
-    //     setPinOutput(col_pins[col]);
-    //     writePinLow(col_pins[col]);
-
-    //     for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
-    //         // setPinOutput(row_pins[row]);
-    //         // writePinLow(row_pins[row]);
-
-    //         LED_TYPE state = led_state[g_led_config.matrix_co[row][col]];
-    //         *mr_ptr_array[row][0] = state.r * 257; // R
-    //         *mr_ptr_array[row][1] = state.b * 257; // B
-    //         *mr_ptr_array[row][2] = state.g * 257; // G
-
-    //         // setPinInputHigh(row_pins[row]);
-    //     }
-
-    //     setPinInput(col_pins[col]);
-    //     writePinHigh(col_pins[col]);
-    // }
-}
-
-static void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
-  led_state[index].r = r;
-  led_state[index].g = g;
-  led_state[index].b = b;
-}
-
-static void set_color_all(uint8_t r, uint8_t g, uint8_t b) {
-  for (int i=0; i<DRIVER_LED_TOTAL; i++)
-    set_color(i, r, g, b);
-}
-
-const rgb_matrix_driver_t rgb_matrix_driver = {
-    .init          = init,
-    .flush         = flush,
-    .set_color     = set_color,
-    .set_color_all = set_color_all,
-};
 
 void set_col_pwm(uint8_t col) {
     for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
@@ -222,12 +181,68 @@ void set_col_pwm(uint8_t col) {
     }
 }
 
-void set_pwm_values(uint32_t r, uint32_t g, uint32_t b) {
-    for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
-        *mr_ptr_array[x][0] = r;
-        *mr_ptr_array[x][1] = b;
-        *mr_ptr_array[x][2] = g;
+static void flush(void) {
+    for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+
+        setPinOutput(col_pins[col]);
+        writePinLow(col_pins[col]);
+
+        for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+            // setPinOutput(row_pins[row]);
+            // writePinLow(row_pins[row]);
+
+            LED_TYPE state = led_state[g_led_config.matrix_co[row][col]];
+            *mr_ptr_array[row][0] = state.r * 255; // R
+            *mr_ptr_array[row][1] = state.b * 255; // B
+            *mr_ptr_array[row][2] = state.g * 255; // G
+
+            // setPinInputHigh(row_pins[row]);
+        }
+
+
+        wait_us(2500);
+
+        setPinInput(col_pins[col]);
+        writePinHigh(col_pins[col]);
     }
+
+
+    // set_col_pwm(0);
+    // writePinLow(col_pins[0]);
+}
+
+static void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
+    led_state[index].r = r;
+    led_state[index].g = g;
+    led_state[index].b = b;
+}
+
+static void set_color_all(uint8_t r, uint8_t g, uint8_t b) {
+    for (int i=0; i<DRIVER_LED_TOTAL; i++)
+        set_color(i, r, g, b);
+}
+
+const rgb_matrix_driver_t rgb_matrix_driver = {
+    .init          = init,
+    .flush         = flush,
+    .set_color     = set_color,
+    .set_color_all = set_color_all,
+};
+
+void set_row_pwm(uint8_t row) {
+    for (uint8_t y = 0; y < MATRIX_COLS; y++) {
+        LED_TYPE state = led_state[g_led_config.matrix_co[y][row]];
+        *mr_ptr_array[row][0] = state.r; // R
+        *mr_ptr_array[row][1] = state.b; // B
+        *mr_ptr_array[row][2] = state.g; // G
+    }
+}
+
+void set_pwm_values(uint8_t col, uint8_t row) {
+    LED_TYPE state = led_state[g_led_config.matrix_co[col][row]];
+    *mr_ptr_array[row][0] = state.r; // R
+    *mr_ptr_array[row][1] = state.b; // B
+    *mr_ptr_array[row][2] = state.g; // G
 }
 
 // byte order: R,B,G
@@ -260,94 +275,120 @@ OSAL_IRQ_HANDLER(Vector80) {
 
     // return;
 
-	//MR8
+    /*
+        ROW 1
+    */
+
+	// MR23 R
+	if (iwRisStatus & mskCT16_MR23IF)
+	{
+        SN_CT16B1->IC = mskCT16_MR23IC; // Clear match interrupt status
+	}
+
+	// MR8 B
 	if (iwRisStatus & mskCT16_MR8IF)
 	{
 		SN_CT16B1->IC = mskCT16_MR8IC;	// Clear match interrupt status
 	}
 
-	//MR9
+	// MR9 G
 	if (iwRisStatus & mskCT16_MR9IF)
 	{
 		SN_CT16B1->IC = mskCT16_MR9IC;	// Clear match interrupt status
 	}
 
-	//MR11
+
+
+    /*
+        ROW 2
+    */
+
+	// MR11 R
 	if (iwRisStatus & mskCT16_MR11IF)
 	{
         SN_CT16B1->IC = mskCT16_MR11IC; // Clear match interrupt status
 	}
 
-	//MR12
+	// MR12 B
 	if (iwRisStatus & mskCT16_MR12IF)
 	{
         SN_CT16B1->IC = mskCT16_MR12IC; // Clear match interrupt status
 	}
 
-	//MR13
+	// MR13 G
 	if (iwRisStatus & mskCT16_MR13IF)
 	{
 		SN_CT16B1->IC = mskCT16_MR13IC; // Clear match interrupt status
 	}
 
-	//MR14
+
+
+    /*
+        ROW 3
+    */
+
+	// MR14 R
 	if (iwRisStatus & mskCT16_MR14IF)
 	{
         SN_CT16B1->IC = mskCT16_MR14IC; // Clear match interrupt status
 	}
 
-	//MR15
+	// MR15 B
 	if (iwRisStatus & mskCT16_MR15IF)
 	{
         SN_CT16B1->IC = mskCT16_MR15IC; // Clear match interrupt status
 	}
 
-	//MR16
+	// MR16 G
 	if (iwRisStatus & mskCT16_MR16IF)
 	{
         SN_CT16B1->IC = mskCT16_MR16IC; // Clear match interrupt status
 	}
 
-	//MR17
+
+    /*
+        ROW 4
+    */
+
+	// MR17 R
 	if (iwRisStatus & mskCT16_MR17IF)
     {
         SN_CT16B1->IC = mskCT16_MR17IC; // Clear match interrupt status
 	}
 
-	//MR18
+	// MR18 B
 	if (iwRisStatus & mskCT16_MR18IF)
 	{
         SN_CT16B1->IC = mskCT16_MR18IC; // Clear match interrupt status
 	}
 
-	//MR19
+	// MR19 G
 	if (iwRisStatus & mskCT16_MR19IF)
 	{
         SN_CT16B1->IC = mskCT16_MR19IC; // Clear match interrupt status
 	}
 
-	//MR20
+
+    /*
+        ROW 5
+    */
+
+	// MR20 R
 	if (iwRisStatus & mskCT16_MR20IF)
 	{
         SN_CT16B1->IC = mskCT16_MR20IC; // Clear match interrupt status
 	}
 
-	//MR21
+	// MR21 B
 	if (iwRisStatus & mskCT16_MR21IF)
 	{
         SN_CT16B1->IC = mskCT16_MR21IC; // Clear match interrupt status
 	}
 
-	//MR22
+	// MR22 G
 	if (iwRisStatus & mskCT16_MR22IF)
 	{
         SN_CT16B1->IC = mskCT16_MR22IC; // Clear match interrupt status
-	}
-
-	//MR23
-	if (iwRisStatus & mskCT16_MR23IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR23IC; // Clear match interrupt status
 	}
 
     OSAL_IRQ_EPILOGUE();

@@ -32,11 +32,10 @@ Ported to QMK by Stephen Peery <https://github.com/smp4488/>
 
 static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
+
 // static const pin_t led_row_pins[MATRIX_ROWS][3] = LED_MATRIX_ROW_PINS;
 static const pin_t led_row_pins[LED_MATRIX_ROWS] = LED_MATRIX_ROW_PINS;
 // LED COL pins are the same as the keyboard matrix
-
-uint8_t led_col_index = 0;
 
 static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
 static matrix_row_t matrix[MATRIX_ROWS]; //debounced values
@@ -62,8 +61,7 @@ static void select_col(uint8_t col) {
 
 static void unselect_col(uint8_t col) {
     setPinOutput(col_pins[col]);
-    writePinHigh(col_pins[col]);
-    // writePinLow(col_pins[col]);
+    writePinLow(col_pins[col]);
 }
 
 static void select_row(uint8_t row) {
@@ -81,12 +79,6 @@ static void unselect_rows(void) {
     }
 }
 
-// static void select_cols(void) {
-//     for (uint8_t x = 0; x < MATRIX_COLS; x++) {
-//         select_col(x);
-//     }
-// }
-
 static void init_pins(void) {
 
     // setup_led_pwm();
@@ -101,13 +93,14 @@ static void init_pins(void) {
     }
 
     // // Init Led Pins
-    for (uint8_t z = 0; z < LED_MATRIX_ROWS; z++) {
-        setPinOutput(led_row_pins[z]);
-        writePinLow(led_row_pins[z]);
-    }
+    // for (uint8_t z = 0; z < LED_MATRIX_ROWS; z++) {
+    //     setPinOutput(led_row_pins[z]);
+    //     writePinLow(led_row_pins[z]);
+    // }
 }
 
 static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row) {
+    return false;
     // Store last value of row prior to reading
     matrix_row_t last_row_value = current_matrix[current_row];
 
@@ -116,23 +109,10 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
 
     // Select row and wait for row selecton to stabilize
     select_row(current_row);
-    // wait_us(30);
+    wait_us(30);
 
     // For each col...
     for (uint8_t col_index = 0; col_index < MATRIX_COLS; col_index++) {
-
-        // set_col_pwm(MATRIX_COLS - 1 - col_index, current_row);
-        // writePinLow(col_pins[MATRIX_COLS - 1 - col_index]);
-
-        // // loop led cols
-        // for (uint8_t led_col_index = 0; led_col_index < MATRIX_COLS; led_col_index++) {
-        //     // light LEDs
-        //     set_col_pwm(led_col_index, current_row);
-        //     writePinLow(col_pins[led_col_index]);
-
-        //     // stop prev led on col
-        //     writePinHigh(col_pins[led_col_index]);
-        // }
 
         // Set pin to input
         select_col(col_index);
@@ -143,8 +123,8 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
         // Set pin to output
         unselect_col(col_index);
 
-        // stop LEDs
-        // writePinHigh(col_pins[MATRIX_COLS - 1 - col_index]);
+        set_col_pwm(col_index);
+        writePinLow(col_pins[col_index]);
 
         // Populate the matrix row with the state of the col pin
         current_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << col_index);
@@ -181,13 +161,9 @@ uint8_t matrix_scan(void) {
         changed |= read_cols_on_row(raw_matrix, current_row);
     }
 
-    if (led_col_index == MATRIX_COLS) {
-        led_col_index = 0;
-    }
-
-    set_col_pwm(led_col_index, 0);
-    writePinLow(col_pins[led_col_index]);
-    led_col_index++;
+    // set_col_pwm(led_col_index);
+    // writePinLow(col_pins[led_col_index]);
+    // led_col_index++;
 
     debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
 
