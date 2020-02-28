@@ -6,19 +6,7 @@
     "files.exclude": {
         "**/.build": true,
         "**/*.hex": true,
-        "**/*.bin": true
-    },
-    "files.associations": {
-        "*.h": "c",
-        "*.c": "c",
-        "*.cpp": "cpp",
-        "*.hpp": "cpp",
-        "xstddef": "c",
-        "type_traits": "c",
-        "utility": "c"
-    },
-    "files.exclude": {
-        "**/.git": true,
+        "**/*.bin": true,
         "**/1upkeyboards": true,
         "**/2_milk": true,
         "**/2key2crawl": true,
@@ -396,4 +384,20 @@
         "**/zj68": true,
         "**/zlant": true,
     },
+    "files.associations": {
+      "*.conf": "NGINX",
+      "*.h": "c",
+      "*.c": "c",
+      "*.cpp": "cpp",
+      "*.hpp": "cpp",
+      "xstddef": "c",
+      "type_traits": "c",
+      "utility": "c",
+      "array": "c",
+      "string": "c",
+      "string_view": "c",
+      "vector": "c",
+      "ostream": "c",
+      "*.tcc": "c"
+    }
 }
