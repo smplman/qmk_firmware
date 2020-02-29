@@ -62,7 +62,6 @@ static void select_col(uint8_t col) {
 
 static void unselect_col(uint8_t col) {
     setPinOutput(col_pins[col]);
-    // writePinLow(col_pins[col]);
     writePinHigh(col_pins[col]);
 }
 
@@ -82,10 +81,6 @@ static void unselect_rows(void) {
 }
 
 static void init_pins(void) {
-
-    // setup_led_pwm();
-
-    // set_pwm_values(0xFFFFFFFF, 0, 0);
 
     unselect_rows();
 
@@ -158,22 +153,7 @@ uint8_t matrix_scan(void) {
     // Set row, read cols
     for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
         changed |= read_cols_on_row(raw_matrix, current_row);
-
-        // After each row do an led scan
-        // led_scan();
     }
-
-    led_scan();
-
-    // // Turn off previous column
-    // writePinHigh(col_pins[led_col_index]);
-
-    // led_col_index = led_col_index == MATRIX_COLS ? 0 : led_col_index;
-
-    // set_col_pwm(led_col_index);
-    // writePinLow(col_pins[led_col_index]);
-    // led_col_index++;
-    // // wait_us(700);
 
     debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
 

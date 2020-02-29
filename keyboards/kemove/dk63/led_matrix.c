@@ -51,13 +51,14 @@
 
 // static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
+static uint8_t current_col = 0;
 
 // Match Registers pointers array
 volatile uint32_t *mr_ptr_array[5][3] = {{&SN_CT16B1->MR23, &SN_CT16B1->MR8,  &SN_CT16B1->MR9},
-                                        {&SN_CT16B1->MR11, &SN_CT16B1->MR12, &SN_CT16B1->MR13},
-                                        {&SN_CT16B1->MR14, &SN_CT16B1->MR15, &SN_CT16B1->MR16},
-                                        {&SN_CT16B1->MR17, &SN_CT16B1->MR18, &SN_CT16B1->MR19},
-                                        {&SN_CT16B1->MR20, &SN_CT16B1->MR21, &SN_CT16B1->MR22 }};
+                                         {&SN_CT16B1->MR11, &SN_CT16B1->MR12, &SN_CT16B1->MR13},
+                                         {&SN_CT16B1->MR14, &SN_CT16B1->MR15, &SN_CT16B1->MR16},
+                                         {&SN_CT16B1->MR17, &SN_CT16B1->MR18, &SN_CT16B1->MR19},
+                                         {&SN_CT16B1->MR20, &SN_CT16B1->MR21, &SN_CT16B1->MR22 }};
 
 
 LED_TYPE led_state[DRIVER_LED_TOTAL];
@@ -131,21 +132,7 @@ void init(void){
                             |mskCT16_PWM23MODE_2);
 
     // Set match interrupts and TC rest
-    SN_CT16B1->MCTRL  = (mskCT16_MR8IE_EN  \
-                        |mskCT16_MR9IE_EN);
-    SN_CT16B1->MCTRL2 = (mskCT16_MR11IE_EN \
-                        |mskCT16_MR12IE_EN \
-                        |mskCT16_MR13IE_EN \
-                        |mskCT16_MR14IE_EN \
-                        |mskCT16_MR15IE_EN \
-                        |mskCT16_MR16IE_EN \
-                        |mskCT16_MR17IE_EN \
-                        |mskCT16_MR18IE_EN \
-                        |mskCT16_MR19IE_EN);
-    SN_CT16B1->MCTRL3 = (mskCT16_MR20IE_EN \
-                        |mskCT16_MR21IE_EN \
-                        |mskCT16_MR22IE_EN \
-                        |mskCT16_MR23IE_EN);
+    SN_CT16B1->MCTRL = (mskCT16_MR1IE_EN);
 
 
     // Testing individual PWMs
@@ -160,8 +147,11 @@ void init(void){
     // SN_CT16B1->MCTRL2 = ((1<<18)|(1<<19)); // PWM16 TC and RESET
     // SN_CT16B1->MCTRL2 = (mskCT16_MR16IE_EN|mskCT16_MR16RST_EN);
 
+    // COL match register
+    SN_CT16B1->MR1 = 0;
+
     // Set prescale value
-    SN_CT16B1->PRE = 15;
+    // SN_CT16B1->PRE = 1;
 
     // Wait until timer reset done.
     while (SN_CT16B1->TMRCTRL & mskCT16_CRST);
@@ -169,7 +159,7 @@ void init(void){
     // Let TC start counting.
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
-    // nvicEnableVector(CT16B1_IRQn, 15);
+    nvicEnableVector(CT16B1_IRQn, 1);
 }
 
 void set_pwm_values(uint8_t col, uint8_t row) {
@@ -210,7 +200,7 @@ static void flush(void) {
     // writePinLow(col_pins[0]);
 }
 
-static void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
+void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
     led_state[index].r = r;
     led_state[index].g = g;
     led_state[index].b = b;
@@ -219,6 +209,14 @@ static void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
 static void set_color_all(uint8_t r, uint8_t g, uint8_t b) {
     for (int i=0; i<DRIVER_LED_TOTAL; i++)
         set_color(i, r, g, b);
+}
+
+void set_col_color(uint8_t r, uint8_t g, uint8_t b) {
+    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+        *mr_ptr_array[row][0] = r * 255; // R
+        *mr_ptr_array[row][1] = b * 255; // B
+        *mr_ptr_array[row][2] = g * 255; // G
+    }
 }
 
 const rgb_matrix_driver_t rgb_matrix_driver = {
@@ -252,127 +250,37 @@ OSAL_IRQ_HANDLER(Vector80) {
 	uint32_t iwRisStatus;
 
 	iwRisStatus = SN_CT16B1->RIS;	//Save the interrupt status.
-    // SN_CT16B1->IC = 0x3FFFFFF;     // Clear all for now
 
-    // OSAL_IRQ_EPILOGUE();
-
-    // return;
-
-    /*
-        ROW 1
-    */
-
-	// MR23 R
-	if (iwRisStatus & mskCT16_MR23IF)
+	// MR1 used to move light col
+	if (iwRisStatus & mskCT16_MR1IF)
 	{
-        SN_CT16B1->IC = mskCT16_MR23IC; // Clear match interrupt status
-	}
+        SN_CT16B1->IC = mskCT16_MR1IC; // Clear match interrupt status
 
-	// MR8 B
-	if (iwRisStatus & mskCT16_MR8IF)
-	{
-		SN_CT16B1->IC = mskCT16_MR8IC;	// Clear match interrupt status
-	}
+        // Turn off previous COL
+        if (current_col == MATRIX_COLS - 1) {
+            writePinHigh(col_pins[MATRIX_COLS - 2]);
+        }
+        else if (current_col - 1 < 0) {
+            writePinHigh(col_pins[MATRIX_COLS - 1]);
+        } else {
+            writePinHigh(col_pins[current_col - 1]);
+        }
 
-	// MR9 G
-	if (iwRisStatus & mskCT16_MR9IF)
-	{
-		SN_CT16B1->IC = mskCT16_MR9IC;	// Clear match interrupt status
-	}
-
-
-
-    /*
-        ROW 2
-    */
-
-	// MR11 R
-	if (iwRisStatus & mskCT16_MR11IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR11IC; // Clear match interrupt status
-	}
-
-	// MR12 B
-	if (iwRisStatus & mskCT16_MR12IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR12IC; // Clear match interrupt status
-	}
-
-	// MR13 G
-	if (iwRisStatus & mskCT16_MR13IF)
-	{
-		SN_CT16B1->IC = mskCT16_MR13IC; // Clear match interrupt status
-	}
+        // Set RBG for current col
+        set_col_pwm(current_col);
 
 
+        if (current_col == MATRIX_COLS - 1) {
+            current_col = 0;
+            // Turn on next col
+            writePinLow(col_pins[current_col]);
+        } else {
+            // Turn on next col
+            writePinLow(col_pins[current_col]);
+            current_col++;
+        }
 
-    /*
-        ROW 3
-    */
-
-	// MR14 R
-	if (iwRisStatus & mskCT16_MR14IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR14IC; // Clear match interrupt status
-	}
-
-	// MR15 B
-	if (iwRisStatus & mskCT16_MR15IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR15IC; // Clear match interrupt status
-	}
-
-	// MR16 G
-	if (iwRisStatus & mskCT16_MR16IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR16IC; // Clear match interrupt status
-	}
-
-
-    /*
-        ROW 4
-    */
-
-	// MR17 R
-	if (iwRisStatus & mskCT16_MR17IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR17IC; // Clear match interrupt status
-	}
-
-	// MR18 B
-	if (iwRisStatus & mskCT16_MR18IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR18IC; // Clear match interrupt status
-	}
-
-	// MR19 G
-	if (iwRisStatus & mskCT16_MR19IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR19IC; // Clear match interrupt status
-	}
-
-
-    /*
-        ROW 5
-    */
-
-	// MR20 R
-	if (iwRisStatus & mskCT16_MR20IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR20IC; // Clear match interrupt status
-	}
-
-	// MR21 B
-	if (iwRisStatus & mskCT16_MR21IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR21IC; // Clear match interrupt status
-	}
-
-	// MR22 G
-	if (iwRisStatus & mskCT16_MR22IF)
-	{
-        SN_CT16B1->IC = mskCT16_MR22IC; // Clear match interrupt status
-	}
+    }
 
     OSAL_IRQ_EPILOGUE();
 }
