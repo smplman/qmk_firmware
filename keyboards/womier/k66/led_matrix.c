@@ -25,7 +25,7 @@
 // (B)     (E)
 //
 
-#include <SN32F240B.h>
+#include <SN32F260.h>
 #include <string.h>
 #include "CT16.h"
 #include "ch.h"
@@ -66,108 +66,85 @@ void init (void) {
     // memcpy((void*) 0x40002040, led_pwm_values, sizeof(led_pwm_values));
 
     // 16 bits - max = 65535
-    SN_CT16B1->MR23 = 0;               // R
-    SN_CT16B1->MR8  = 0xFFFF;          // B
-    SN_CT16B1->MR9  = 0;               // G
+    SN_CT16B1->MR[0] = 0;              // R
+    SN_CT16B1->MR[1] = 0xFFFF;         // B
+    SN_CT16B1->MR[2] = 0;              // G
 
-    SN_CT16B1->MR11 = 0;
-    SN_CT16B1->MR12 = 0xFFFF;
-    SN_CT16B1->MR13 = 0;
+    SN_CT16B1->MR[3] = 0;
+    SN_CT16B1->MR[4] = 0xFFFF;
+    SN_CT16B1->MR[5] = 0;
 
-    SN_CT16B1->MR14 = 0;
-    SN_CT16B1->MR15 = 0xFFFF;
-    SN_CT16B1->MR16 = 0;
+    SN_CT16B1->MR[6] = 0;
+    SN_CT16B1->MR[7] = 0xFFFF;
+    SN_CT16B1->MR[8] = 0;
 
-    SN_CT16B1->MR17 = 0;
-    SN_CT16B1->MR18 = 0xFFFF;
-    SN_CT16B1->MR19 = 0;
+    SN_CT16B1->MR[9]  = 0;
+    SN_CT16B1->MR[10] = 0xFFFF;
+    SN_CT16B1->MR[11] = 0;
 
-    SN_CT16B1->MR20 = 0;
-    SN_CT16B1->MR21 = 0xFFFF;
-    SN_CT16B1->MR22 = 0;
+    SN_CT16B1->MR[12] = 0;
+    SN_CT16B1->MR[13] = 0xFFFF;
+    SN_CT16B1->MR[14] = 0;
 
     // Enable PWM function, IOs and select the PWM modes
     // SN_CT16B1->PWMENB   = 0xFFFB00;     //Enable PWM8-PWM9, PWM11-PWM23 function
     // |mskCT16_PWM10EN_EN
-    SN_CT16B1->PWMENB = (mskCT16_PWM8EN_EN |  \
+    SN_CT16B1->PWMENB = (mskCT16_PWM0EN_EN |  \
+                         mskCT16_PWM1EN_EN |  \
+                         mskCT16_PWM2EN_EN |  \
+                         mskCT16_PWM3EN_EN |  \
+                         mskCT16_PWM4EN_EN |  \
+                         mskCT16_PWM5EN_EN |  \
+                         mskCT16_PWM6EN_EN |  \
+                         mskCT16_PWM7EN_EN |  \
+                         mskCT16_PWM8EN_EN |  \
                          mskCT16_PWM9EN_EN |  \
+                         mskCT16_PWM10EN_EN | \
                          mskCT16_PWM11EN_EN | \
                          mskCT16_PWM12EN_EN | \
                          mskCT16_PWM13EN_EN | \
-                         mskCT16_PWM14EN_EN | \
-                         mskCT16_PWM15EN_EN | \
-                         mskCT16_PWM16EN_EN | \
-                         mskCT16_PWM17EN_EN | \
-                         mskCT16_PWM18EN_EN | \
-                         mskCT16_PWM19EN_EN | \
-                         mskCT16_PWM20EN_EN | \
-                         mskCT16_PWM21EN_EN | \
-                         mskCT16_PWM22EN_EN | \
-                         mskCT16_PWM23EN_EN);
+                         mskCT16_PWM14EN_EN);
 
     // SN_CT16B1->PWMIOENB = 0xFFFB00;     //Enable PWM8-PWM9 PWM12-PWM23 IO
-    // |mskCT16_PWM10IOEN_EN
-    SN_CT16B1->PWMIOENB = (mskCT16_PWM8IOEN_EN |  \
+    // |mskCT16_PWM0IOEN_EN
+    SN_CT16B1->PWMIOENB = (mskCT16_PWM0IOEN_EN |  \
+                           mskCT16_PWM1IOEN_EN |  \
+                           mskCT16_PWM2IOEN_EN |  \
+                           mskCT16_PWM3IOEN_EN |  \
+                           mskCT16_PWM4IOEN_EN |  \
+                           mskCT16_PWM5IOEN_EN |  \
+                           mskCT16_PWM6IOEN_EN |  \
+                           mskCT16_PWM7IOEN_EN |  \
+                           mskCT16_PWM8IOEN_EN |  \
                            mskCT16_PWM9IOEN_EN |  \
+                           mskCT16_PWM10IOEN_EN | \
                            mskCT16_PWM11IOEN_EN | \
                            mskCT16_PWM12IOEN_EN | \
                            mskCT16_PWM13IOEN_EN | \
-                           mskCT16_PWM14IOEN_EN | \
-                           mskCT16_PWM15IOEN_EN | \
-                           mskCT16_PWM16IOEN_EN | \
-                           mskCT16_PWM17IOEN_EN | \
-                           mskCT16_PWM18IOEN_EN | \
-                           mskCT16_PWM19IOEN_EN | \
-                           mskCT16_PWM20IOEN_EN | \
-                           mskCT16_PWM21IOEN_EN | \
-                           mskCT16_PWM22IOEN_EN | \
-                           mskCT16_PWM23IOEN_EN);
+                           mskCT16_PWM14IOEN_EN);
 
     // SN_CT16B1->PWMCTRL  = 0x55650000;   //PWM08-PWM9 , PWM11-PWM15 select as PWM mode 2
     // |mskCT16_PWM10MODE_2
-    SN_CT16B1->PWMCTRL = (mskCT16_PWM8MODE_2 |  \
+    SN_CT16B1->PWMCTRL = (mskCT16_PWM0MODE_2 |  \
+                          mskCT16_PWM1MODE_2 |  \
+                          mskCT16_PWM2MODE_2 |  \
+                          mskCT16_PWM3MODE_2 |  \
+                          mskCT16_PWM4MODE_2 |  \
+                          mskCT16_PWM5MODE_2 |  \
+                          mskCT16_PWM6MODE_2 |  \
+                          mskCT16_PWM7MODE_2 |  \
+                          mskCT16_PWM8MODE_2 |  \
                           mskCT16_PWM9MODE_2 |  \
+                          mskCT16_PWM10MODE_2 | \
                           mskCT16_PWM11MODE_2 | \
                           mskCT16_PWM12MODE_2 | \
                           mskCT16_PWM13MODE_2 | \
-                          mskCT16_PWM14MODE_2 | \
-                          mskCT16_PWM15MODE_2);
-
-    // 0101 0101 0110 0101 0000 0000 0000 0000
-    // SN_CT16B1->PWMCTRL2 = 0x5555;        //PWM16-PWM23 select as PWM mode 2
-    SN_CT16B1->PWMCTRL2 = (mskCT16_PWM16MODE_2 | \
-                           mskCT16_PWM17MODE_2 | \
-                           mskCT16_PWM18MODE_2 | \
-                           mskCT16_PWM19MODE_2 | \
-                           mskCT16_PWM20MODE_2 | \
-                           mskCT16_PWM21MODE_2 | \
-                           mskCT16_PWM22MODE_2 | \
-                           mskCT16_PWM23MODE_2);
-
-    // Set match interrupts and TC rest
-    // SN_CT16B1->MCTRL  = 0x1B000000; // PWM8-PWM9
-    // |mskCT16_MR10RST_EN|mskCT16_MR10IE_EN
-    SN_CT16B1->MCTRL = (mskCT16_MR8IE_EN | mskCT16_MR9IE_EN);
+                          mskCT16_PWM14MODE_2);
 
     // 01 1011 0000 0000 0000 0000 0000 0000
     // SN_CT16B1->MCTRL2 = 0x1B6DB6D8; // PWM11-PWM19
     // mskCT16_MR10RST_EN|mskCT16_MR10IE_EN
-    SN_CT16B1->MCTRL2 = (mskCT16_MR11IE_EN | \
-                         mskCT16_MR12IE_EN | \
-                         mskCT16_MR13IE_EN | \
-                         mskCT16_MR14IE_EN | \
-                         mskCT16_MR15IE_EN | \
-                         mskCT16_MR16IE_EN | \
-                         mskCT16_MR17IE_EN | \
-                         mskCT16_MR18IE_EN | \
-                         mskCT16_MR19IE_EN);
-
-    // 01 1011 0110 1101 1011 0110 1101 1000
-    // SN_CT16B1->MCTRL3 = 0x36DB;     // PWM20-PWM23
-    SN_CT16B1->MCTRL3 = (mskCT16_MR20IE_EN | \
-                         mskCT16_MR21IE_EN | \
-                         mskCT16_MR22IE_EN | \
-                         mskCT16_MR23IE_EN);
+    SN_CT16B1->MCTRL2 = (mskCT16_MR15IE_EN);
 
     // 011 0110 1101 1011
 

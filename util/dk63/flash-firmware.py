@@ -69,7 +69,7 @@ def main():
     if end > 0x7800:
         raise RuntimeError("firmware too big")
 
-    if args.swd and ars.openocd:
+    if args.swd and args.openocd:
         host, port = args.openocd.split(":")
         port = int(port)
 
