@@ -18,7 +18,6 @@
 #ifdef RGB_MATRIX_ENABLE
 
 // #include "is31fl3731-simple.h"
-
 led_config_t g_led_config =
 {
     {
@@ -30,6 +29,7 @@ led_config_t g_led_config =
     },
     {0}
 };
+ #if 0
 
 const is31_led g_is31_leds[DRIVER_LED_TOTAL] =
 {
@@ -112,7 +112,7 @@ const is31_led g_is31_leds[DRIVER_LED_TOTAL] =
     {0, C5_15} // k97 KC_RGHT
 };
 
- #if 0
+  #if 0
 const led_matrix g_leds[DRIVER_LED_TOTAL] =
 {
     /*{row | col << 4}
@@ -195,6 +195,7 @@ const led_matrix g_leds[DRIVER_LED_TOTAL] =
     {{4 | (13 << 4)}, {209.525,   64}, 1}, // k96 KC_DOWN
     {{4 | (14 << 4)}, {224,       64}, 1} // k97 KC_RGHT
 };
+  #endif
  #endif
 #endif
 

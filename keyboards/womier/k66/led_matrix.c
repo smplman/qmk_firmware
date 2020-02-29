@@ -174,7 +174,7 @@ void init (void) {
     // Let TC start counting.
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
-    nvicEnableVector(CT16B1_IRQn, 15);
+    // nvicEnableVector(CT16B1_IRQn, 15);
 }
 
 static void flush (void) {
@@ -206,7 +206,7 @@ const rgb_matrix_driver_t rgb_matrix_driver =
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(Vector80)
+OSAL_IRQ_HANDLER(Vector84)
 {
     OSAL_IRQ_PROLOGUE();
 
@@ -215,100 +215,6 @@ OSAL_IRQ_HANDLER(Vector80)
     iwRisStatus = SN_CT16B1->RIS;      // Save the interrupt status.
 
     SN_CT16B1->IC = iwRisStatus;       // Clear all for now
-
-    // OSAL_IRQ_EPILOGUE();
-
-    // return;
-
-    // MR8
-    if (iwRisStatus & mskCT16_MR8IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR8IC; // Clear match interrupt status
-    }
-
-    // MR9
-    if (iwRisStatus & mskCT16_MR9IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR9IC; // Clear match interrupt status
-    }
-
-    // MR11
-    if (iwRisStatus & mskCT16_MR11IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR11IC; // Clear match interrupt status
-    }
-
-    // MR12
-    if (iwRisStatus & mskCT16_MR12IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR12IC; // Clear match interrupt status
-    }
-
-    // MR13
-    if (iwRisStatus & mskCT16_MR13IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR13IC; // Clear match interrupt status
-    }
-
-    // MR14
-    if (iwRisStatus & mskCT16_MR14IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR14IC; // Clear match interrupt status
-    }
-
-    // MR15
-    if (iwRisStatus & mskCT16_MR15IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR15IC; // Clear match interrupt status
-    }
-
-    // MR16
-    if (iwRisStatus & mskCT16_MR16IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR16IC; // Clear match interrupt status
-    }
-
-    // MR17
-    if (iwRisStatus & mskCT16_MR17IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR17IC; // Clear match interrupt status
-    }
-
-    // MR18
-    if (iwRisStatus & mskCT16_MR18IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR18IC; // Clear match interrupt status
-    }
-
-    // MR19
-    if (iwRisStatus & mskCT16_MR19IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR19IC; // Clear match interrupt status
-    }
-
-    // MR20
-    if (iwRisStatus & mskCT16_MR20IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR20IC; // Clear match interrupt status
-    }
-
-    // MR21
-    if (iwRisStatus & mskCT16_MR21IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR21IC; // Clear match interrupt status
-    }
-
-    // MR22
-    if (iwRisStatus & mskCT16_MR22IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR22IC; // Clear match interrupt status
-    }
-
-    // MR23
-    if (iwRisStatus & mskCT16_MR23IF)
-    {
-        SN_CT16B1->IC = mskCT16_MR23IC; // Clear match interrupt status
-    }
 
     OSAL_IRQ_EPILOGUE();
 }
