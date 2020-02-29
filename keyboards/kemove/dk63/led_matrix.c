@@ -96,7 +96,7 @@ void init(void){
                             |mskCT16_PWM22EN_EN \
                             |mskCT16_PWM23EN_EN);
 
-    //Enable PWM8-PWM9 PWM12-PWM23 IO
+    // Enable PWM8-PWM9 PWM12-PWM23 IO
     SN_CT16B1->PWMIOENB =   (mskCT16_PWM8IOEN_EN  \
                             |mskCT16_PWM9IOEN_EN  \
                             |mskCT16_PWM11IOEN_EN \
@@ -148,7 +148,7 @@ void init(void){
                         |mskCT16_MR23IE_EN);
 
 
-    // // Testing individual PWMs
+    // Testing individual PWMs
     // SN_PFPA->CT16B1 = ((1<<16)|(1<<17));
     // SN_CT16B1->MR16 = 1200;
     // SN_CT16B1->MR17 = 1200;
@@ -161,52 +161,50 @@ void init(void){
     // SN_CT16B1->MCTRL2 = (mskCT16_MR16IE_EN|mskCT16_MR16RST_EN);
 
     // Set prescale value
-    // SN_CT16B1->PRE = 0x5;
+    SN_CT16B1->PRE = 15;
 
-    //Wait until timer reset done.
+    // Wait until timer reset done.
     while (SN_CT16B1->TMRCTRL & mskCT16_CRST);
 
-    //Let TC start counting.
+    // Let TC start counting.
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
-    nvicEnableVector(CT16B1_IRQn, 15);
+    // nvicEnableVector(CT16B1_IRQn, 15);
+}
+
+void set_pwm_values(uint8_t col, uint8_t row) {
+    LED_TYPE state = led_state[g_led_config.matrix_co[row][col]];
+    *mr_ptr_array[row][0] = state.r * 255; // R
+    *mr_ptr_array[row][1] = state.b * 255; // B
+    *mr_ptr_array[row][2] = state.g * 255; // G
 }
 
 void set_col_pwm(uint8_t col) {
-    for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
-        LED_TYPE state = led_state[g_led_config.matrix_co[col][x]];
-        *mr_ptr_array[x][0] = state.r; // R
-        *mr_ptr_array[x][1] = state.b; // B
-        *mr_ptr_array[x][2] = state.g; // G
+    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+        set_pwm_values(col, row);
+    }
+}
+
+void led_scan(void) {
+    for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+
+        // Set RBG for single col
+        set_col_pwm(col);
+
+        // Turn on col
+        writePinLow(col_pins[col]);
+
+        wait_us(700);
+        // wait_ms(1000);
+
+        // Turn off col
+        writePinHigh(col_pins[col]);
     }
 }
 
 static void flush(void) {
-    for (uint8_t col = 0; col < MATRIX_COLS; col++) {
 
-        // setPinOutput(col_pins[col]);
-        writePinLow(col_pins[col]);
-
-        for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
-            // setPinOutput(row_pins[row]);
-            // writePinLow(row_pins[row]);
-
-            LED_TYPE state = led_state[g_led_config.matrix_co[row][col]];
-            *mr_ptr_array[row][0] = state.r * 255; // R
-            *mr_ptr_array[row][1] = state.b * 255; // B
-            *mr_ptr_array[row][2] = state.g * 255; // G
-
-            // wait_us(350);
-
-            // setPinInputHigh(row_pins[row]);
-        }
-
-        wait_us(700);
-        // wait_us(350);
-
-        // setPinInput(col_pins[col]);
-        writePinHigh(col_pins[col]);
-    }
+    // led_scan();
 
     // set_col_pwm(0);
     // writePinLow(col_pins[0]);
@@ -229,22 +227,6 @@ const rgb_matrix_driver_t rgb_matrix_driver = {
     .set_color     = set_color,
     .set_color_all = set_color_all,
 };
-
-void set_row_pwm(uint8_t row) {
-    for (uint8_t y = 0; y < MATRIX_COLS; y++) {
-        LED_TYPE state = led_state[g_led_config.matrix_co[y][row]];
-        *mr_ptr_array[row][0] = state.r; // R
-        *mr_ptr_array[row][1] = state.b; // B
-        *mr_ptr_array[row][2] = state.g; // G
-    }
-}
-
-void set_pwm_values(uint8_t col, uint8_t row) {
-    LED_TYPE state = led_state[g_led_config.matrix_co[col][row]];
-    *mr_ptr_array[row][0] = state.r; // R
-    *mr_ptr_array[row][1] = state.b; // B
-    *mr_ptr_array[row][2] = state.g; // G
-}
 
 // byte order: R,B,G
 static uint8_t caps_lock_color[3] = { 0x00, 0x00, 0xFF };

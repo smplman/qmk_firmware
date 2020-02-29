@@ -36,6 +36,7 @@ static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 // static const pin_t led_row_pins[MATRIX_ROWS][3] = LED_MATRIX_ROW_PINS;
 static const pin_t led_row_pins[LED_MATRIX_ROWS] = LED_MATRIX_ROW_PINS;
 // LED COL pins are the same as the keyboard matrix
+// static uint8_t led_col_index = 0;
 
 static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
 static matrix_row_t matrix[MATRIX_ROWS]; //debounced values
@@ -61,7 +62,8 @@ static void select_col(uint8_t col) {
 
 static void unselect_col(uint8_t col) {
     setPinOutput(col_pins[col]);
-    writePinLow(col_pins[col]);
+    // writePinLow(col_pins[col]);
+    writePinHigh(col_pins[col]);
 }
 
 static void select_row(uint8_t row) {
@@ -100,7 +102,7 @@ static void init_pins(void) {
 }
 
 static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row) {
-    return false;
+    // return false;
     // Store last value of row prior to reading
     matrix_row_t last_row_value = current_matrix[current_row];
 
@@ -122,9 +124,6 @@ static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row)
 
         // Set pin to output
         unselect_col(col_index);
-
-        set_col_pwm(col_index);
-        writePinLow(col_pins[col_index]);
 
         // Populate the matrix row with the state of the col pin
         current_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << col_index);
@@ -159,11 +158,22 @@ uint8_t matrix_scan(void) {
     // Set row, read cols
     for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
         changed |= read_cols_on_row(raw_matrix, current_row);
+
+        // After each row do an led scan
+        // led_scan();
     }
+
+    led_scan();
+
+    // // Turn off previous column
+    // writePinHigh(col_pins[led_col_index]);
+
+    // led_col_index = led_col_index == MATRIX_COLS ? 0 : led_col_index;
 
     // set_col_pwm(led_col_index);
     // writePinLow(col_pins[led_col_index]);
     // led_col_index++;
+    // // wait_us(700);
 
     debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
 
