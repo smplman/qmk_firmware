@@ -35,7 +35,7 @@
 #define MATRIX_ROW_PINS        {B1, B2, B3, B4, B5}
 #define MATRIX_COL_PINS        {D1, D2, D3, D4, D5, D6, D7, D8, C3, C4, C5, C6, C7, C8}
 
-#define HAL_USE_I2C            TRUE
+// #define HAL_USE_I2C            TRUE
 
 #define DRIVER_ADDR_1          0b1110100
 #define DRIVER_ADDR_2          0b1110110
@@ -79,9 +79,9 @@
 // #define LED_MATRIX_COL_PINS { B5 }
 
 #define LED_DRIVER_LED_COUNT       63  // * 3(rgb)
-#define DRIVER_LED_TOTAL           63
+// #define DRIVER_LED_TOTAL           63
 
-#define SW_I2C_USE_I2C1            1
+// #define SW_I2C_USE_I2C1            1
 
 #define GFX_EMULATE_MALLOC         TRUE
 

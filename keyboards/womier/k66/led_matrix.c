@@ -66,25 +66,25 @@ void init (void) {
     // memcpy((void*) 0x40002040, led_pwm_values, sizeof(led_pwm_values));
 
     // 16 bits - max = 65535
-    SN_CT16B1->MR[0] = 0;              // R
-    SN_CT16B1->MR[1] = 0xFFFF;         // B
-    SN_CT16B1->MR[2] = 0;              // G
+    SN_CT16B1->MR0 = 0;                // R
+    SN_CT16B1->MR1 = 0xFFFF;           // B
+    SN_CT16B1->MR2 = 0;                // G
 
-    SN_CT16B1->MR[3] = 0;
-    SN_CT16B1->MR[4] = 0xFFFF;
-    SN_CT16B1->MR[5] = 0;
+    SN_CT16B1->MR3 = 0;
+    SN_CT16B1->MR4 = 0xFFFF;
+    SN_CT16B1->MR5 = 0;
 
-    SN_CT16B1->MR[6] = 0;
-    SN_CT16B1->MR[7] = 0xFFFF;
-    SN_CT16B1->MR[8] = 0;
+    SN_CT16B1->MR6 = 0;
+    SN_CT16B1->MR7 = 0xFFFF;
+    SN_CT16B1->MR8 = 0;
 
-    SN_CT16B1->MR[9]  = 0;
-    SN_CT16B1->MR[10] = 0xFFFF;
-    SN_CT16B1->MR[11] = 0;
+    SN_CT16B1->MR9  = 0;
+    SN_CT16B1->MR10 = 0xFFFF;
+    SN_CT16B1->MR11 = 0;
 
-    SN_CT16B1->MR[12] = 0;
-    SN_CT16B1->MR[13] = 0xFFFF;
-    SN_CT16B1->MR[14] = 0;
+    SN_CT16B1->MR12 = 0;
+    SN_CT16B1->MR13 = 0xFFFF;
+    SN_CT16B1->MR14 = 0;
 
     // Enable PWM function, IOs and select the PWM modes
     // SN_CT16B1->PWMENB   = 0xFFFB00;     //Enable PWM8-PWM9, PWM11-PWM23 function
