@@ -95,9 +95,11 @@ static void init_pins (void) {
 static bool read_rows_on_col (matrix_row_t current_matrix[], uint8_t current_col) {
     bool matrix_changed = false;
 
+    uint32_t rows[MATRIX_ROWS];
+
     // Select col and wait for col selecton to stabilize
     select_col(current_col);
-    wait_us(30);
+    wait_us(3);
 
     // For each row...
     for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
@@ -106,7 +108,20 @@ static bool read_rows_on_col (matrix_row_t current_matrix[], uint8_t current_col
         matrix_row_t last_row_value = current_matrix[row_index];
 
         // Check row pin state
-        if (readPin(row_pins[row_index]) == 0)
+        rows[row_index] = readPin(row_pins[row_index]);
+    }
+
+    // Unselect col
+    unselect_col(current_col);
+
+    // For each row...
+    for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
+    {
+        // Store last value of row prior to reading
+        matrix_row_t last_row_value = current_matrix[row_index];
+
+        // Check row pin state
+        if (rows[row_index] == 0)
         {
             // Pin LO, set col bit
             current_matrix[row_index] |= (MATRIX_ROW_SHIFTER << current_col);
@@ -123,9 +138,6 @@ static bool read_rows_on_col (matrix_row_t current_matrix[], uint8_t current_col
             matrix_changed = true;
         }
     }
-
-    // Unselect col
-    unselect_col(current_col);
 
     return matrix_changed;
 }
@@ -146,18 +158,33 @@ void matrix_init (void) {
     matrix_init_quantum();
 }
 
+static uint16_t debouncing_time;
 uint8_t matrix_scan (void) {
-    bool changed = false;
+    bool   changed         = false;
+    static debouncing_time = 0;        // timer_read();
 
-    // Set col, read rows
-    for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++)
+    if ((timer_elapsed(debouncing_time) > 5))
     {
-        changed |= read_rows_on_col(raw_matrix, current_col);
+        debouncing_time = timer_read();
+        unselect_cols();
+
+        // memset(raw_matrix, 0, sizeof(raw_matrix));
+
+        // Set col, read rows
+        for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++)
+        {
+            changed |= read_rows_on_col(raw_matrix, current_col);
+        }
+
+        for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++)
+        {
+            select_col(current_col);
+        }
+
+        debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
+
+        matrix_scan_quantum();
     }
-
-    debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
-
-    matrix_scan_quantum();
 
     return (uint8_t) changed;
 }

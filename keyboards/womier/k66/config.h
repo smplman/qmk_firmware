@@ -79,7 +79,6 @@
 // #define LED_MATRIX_COL_PINS { B5 }
 
 #define LED_DRIVER_LED_COUNT       63  // * 3(rgb)
-// #define DRIVER_LED_TOTAL           63
 
 // #define SW_I2C_USE_I2C1            1
 
