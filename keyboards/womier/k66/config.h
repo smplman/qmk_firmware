@@ -40,10 +40,10 @@
 #define DRIVER_ADDR_1          0b1110100
 #define DRIVER_ADDR_2          0b1110110
 
-#define DRIVER_COUNT           1
-#define DRIVER_1_LED_TOTAL     5
-#define DRIVER_2_LED_TOTAL     0
-#define DRIVER_LED_TOTAL       (DRIVER_1_LED_TOTAL + DRIVER_2_LED_TOTAL)
+// #define DRIVER_COUNT           1
+// #define DRIVER_1_LED_TOTAL     5
+// #define DRIVER_2_LED_TOTAL     0
+#define DRIVER_LED_TOTAL       (66)
 
 /* Backlight configuration
  */

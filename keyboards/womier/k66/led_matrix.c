@@ -37,6 +37,11 @@
 #include "led.h"
 #include "color.h"
 
+volatile SN_CT16B1_Type * ct_b1 = (SN_CT16B1_Type *) SN_CT16B1_BASE;
+
+extern volatile matrix_row_t raw_matrix[MATRIX_ROWS];  // raw values
+static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
+
 uint32_t led_pwm_values[16] =
 {
     12000, 12000, 1200, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000
@@ -48,6 +53,10 @@ static struct
     uint8_t b;
     uint8_t r;
 } __attribute__((packed)) led_state[DRIVER_LED_TOTAL];
+
+static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
+
+static uint8_t col_index = 0;
 
 // set counter reset on MRn (setting MRn to the full period) and set the other MRs to the PWM duty cycle you want for that pin
 // on period interrupt update all the PWM MRs to the values for the next LED
@@ -71,24 +80,24 @@ void init (void) {
     // memcpy((void*) 0x40002040, led_pwm_values, sizeof(led_pwm_values));
 
     // 16 bits - max = 65535
-    SN_CT16B1->MR[0] = 0;              // R
-    SN_CT16B1->MR[1] = 0xFFFF;         // B
-    SN_CT16B1->MR[2] = 0;              // G
+    SN_CT16B1->MR[0] = 0xFFFF;
+    SN_CT16B1->MR[1] = 0;
+    SN_CT16B1->MR[2] = 0;
 
-    SN_CT16B1->MR[3] = 0;
-    SN_CT16B1->MR[4] = 0xFFFF;
+    SN_CT16B1->MR[3] = 0xFFFF;
+    SN_CT16B1->MR[4] = 0;
     SN_CT16B1->MR[5] = 0;
 
-    SN_CT16B1->MR[6] = 0;
-    SN_CT16B1->MR[7] = 0xFFFF;
+    SN_CT16B1->MR[6] = 0xFFFF;
+    SN_CT16B1->MR[7] = 0;
     SN_CT16B1->MR[8] = 0;
 
-    SN_CT16B1->MR[9]  = 0;
-    SN_CT16B1->MR[10] = 0xFFFF;
+    SN_CT16B1->MR[9]  = 0xFFFF;
+    SN_CT16B1->MR[10] = 0;
     SN_CT16B1->MR[11] = 0;
 
-    SN_CT16B1->MR[12] = 0;
-    SN_CT16B1->MR[13] = 0xFFFF;
+    SN_CT16B1->MR[12] = 0xFFFF;
+    SN_CT16B1->MR[13] = 0;
     SN_CT16B1->MR[14] = 0;
 
     // Enable PWM function, IOs and select the PWM modes
@@ -149,7 +158,11 @@ void init (void) {
     // 01 1011 0000 0000 0000 0000 0000 0000
     // SN_CT16B1->MCTRL2 = 0x1B6DB6D8; // PWM11-PWM19
     // mskCT16_MR10RST_EN|mskCT16_MR10IE_EN
+
+#if 1
+    SN_CT16B1->MR[15] = 0xFF;
     SN_CT16B1->MCTRL2 = (mskCT16_MR15IE_EN);
+#endif
 
     // 011 0110 1101 1011
 
@@ -168,9 +181,26 @@ void init (void) {
     // SN_CT16B1->MCTRL2 = (mskCT16_MR16IE_EN|mskCT16_MR16RST_EN);
 
     // Set prescale value
-    // SN_CT16B1->PRE = 0x4;
+    SN_CT16B1->PRE = 0x4;
 
     // Vector84();
+
+    // Let TC start counting.
+    SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
+
+    //Set col, read rows
+    for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++)
+    {
+        setPinOutput(col_pins[current_col]);
+    }
+    writePinLow(col_pins[col_index]);
+
+    // for (uint8_t current_col = col_first; current_col < col_last; current_col++)
+    // {
+    //     writePinLow(col_pins[current_col]);
+    // }
+
+    SN_CT16B1->MCTRL2_b.MR15RST = 1;
 
     // Wait until timer reset done.
     while (SN_CT16B1->TMRCTRL & mskCT16_CRST)
@@ -178,11 +208,10 @@ void init (void) {
         ;
     }
 
-    // Let TC start counting.
-    SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
+    // SN_CT16B1->PRE = 0x3;
 
     NVIC_ClearPendingIRQ(CT16B1_IRQn);
-    nvicEnableVector(CT16B1_IRQn, 15);
+    nvicEnableVector(CT16B1_IRQn, 4);
 }
 
 static void flush (void) {
@@ -208,23 +237,87 @@ const rgb_matrix_driver_t rgb_matrix_driver =
     .set_color     = set_color,
     .set_color_all = set_color_all,
 };
+static void select_col (uint8_t col) {
+    // setPinOutput(col_pins[col]);
+}
+
+static void unselect_col (uint8_t col) {
+}
 
 /**
  * @brief   TIM2 interrupt handler.
  *
  * @isr
  */
+extern volatile bool matrix_changed;
 
 // OSAL_IRQ_HANDLER(Vector84)
 void RgbIsr ()
 {
-    OSAL_IRQ_PROLOGUE();
+    // OSAL_IRQ_PROLOGUE();
 
-    uint32_t iwRisStatus;
+    volatile uint32_t shit = SN_CT16B1->TC;
 
-    iwRisStatus = SN_CT16B1->RIS;      // Save the interrupt status.
+    // unselect_col(col);
+    writePinHigh(col_pins[col_index]);
 
-    SN_CT16B1->IC = iwRisStatus;       // Clear all for now
+    col_index = (col_index + 1) % MATRIX_COLS;
 
-    OSAL_IRQ_EPILOGUE();
+    // volatile uint32_t shit =
+    writePinLow(col_pins[col_index]);
+
+    SN_CT16B1->MR[0] = led_state[(col_index) + 0].g;
+    SN_CT16B1->MR[1] = led_state[(col_index) + 0].b;
+    SN_CT16B1->MR[2] = led_state[(col_index) + 0].r;
+
+    SN_CT16B1->MR[3] = led_state[(col_index) + 1].g;
+    SN_CT16B1->MR[4] = led_state[(col_index) + 1].b;
+    SN_CT16B1->MR[5] = led_state[(col_index) + 1].r;
+
+    SN_CT16B1->MR[6] = led_state[(col_index) + 2].g;
+    SN_CT16B1->MR[7] = led_state[(col_index) + 2].b;
+    SN_CT16B1->MR[8] = led_state[(col_index) + 2].r;
+
+    SN_CT16B1->MR[9]  = led_state[(col_index) + 3].g;
+    SN_CT16B1->MR[10] = led_state[(col_index) + 3].b;
+    SN_CT16B1->MR[11] = led_state[(col_index) + 3].r;
+
+    SN_CT16B1->MR[12] = led_state[(col_index) + 4].g;
+    SN_CT16B1->MR[13] = led_state[(col_index) + 4].b;
+    SN_CT16B1->MR[14] = led_state[(col_index) + 4].r;
+#if 1
+    // if(0 == col_index)
+    // {
+    //     matrix_changed = 0;
+    // }
+
+    for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
+    {
+        matrix_row_t last_row_value = raw_matrix[row_index];
+        // Check row pin state
+        if (readPin(row_pins[row_index]) == 0)
+        {
+            // Pin LO, set col bit
+            raw_matrix[row_index] |= (MATRIX_ROW_SHIFTER << col_index);
+        }
+        else
+        {
+            // Pin HI, clear col bit
+            raw_matrix[row_index] &= ~(MATRIX_ROW_SHIFTER << col_index);
+        }
+
+        // Determine if the matrix changed state
+        if ((last_row_value != raw_matrix[row_index]))
+        {
+            matrix_changed |= true;
+        }
+    }
+    #endif
+
+    // select_col(col);
+
+    SN_CT16B1->IC = SN_CT16B1->RIS;    // Clear all for now
+    // SN_CT16B1->TC = 0;
+
+    // OSAL_IRQ_EPILOGUE();
 }
