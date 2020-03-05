@@ -56,27 +56,27 @@ void matrix_print(void) {}
 void color_loop(void);
 
 static void select_col(uint8_t col) {
-    setPinInput(col_pins[col]);
+    // setPinInput(col_pins[col]);
     writePinHigh(col_pins[col]);
 }
 
 static void unselect_col(uint8_t col) {
-    setPinOutput(col_pins[col]);
+    // setPinOutput(col_pins[col]);
     writePinHigh(col_pins[col]);
 }
 
 static void select_row(uint8_t row) {
-    setPinOutput(row_pins[row]);
     writePinLow(row_pins[row]);
 }
 
 static void unselect_row(uint8_t row) {
-    setPinInputHigh(row_pins[row]);
+    writePinHigh(row_pins[row]);
 }
 
 static void unselect_rows(void) {
     for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
         unselect_row(x);
+        setPinOutput(row_pins[x]);
     }
 }
 
@@ -87,6 +87,7 @@ static void init_pins(void) {
     // Unselect COLs
     for (uint8_t x = 0; x < MATRIX_COLS; x++) {
         unselect_col(x);
+        setPinInput(col_pins[x]);
     }
 
     // // Init Led Pins
@@ -154,6 +155,8 @@ uint8_t matrix_scan(void) {
     for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
         changed |= read_cols_on_row(raw_matrix, current_row);
     }
+
+    // led_scan();
 
     debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
 

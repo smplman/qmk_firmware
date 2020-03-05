@@ -133,6 +133,7 @@ void init(void){
 
     // Set match interrupts and TC rest
     SN_CT16B1->MCTRL = (mskCT16_MR1IE_EN);
+    // SN_CT16B1->MCTRL = (mskCT16_MR1RST_EN|mskCT16_MR1IE_EN);
 
 
     // Testing individual PWMs
@@ -148,10 +149,13 @@ void init(void){
     // SN_CT16B1->MCTRL2 = (mskCT16_MR16IE_EN|mskCT16_MR16RST_EN);
 
     // COL match register
-    SN_CT16B1->MR1 = 0;
+    SN_CT16B1->MR1 = 1;
 
     // Set prescale value
-    // SN_CT16B1->PRE = 1;
+    // SN_CT16B1->PRE = 99;
+
+    //Set CT16B1 as the up-counting mode.
+	SN_CT16B1->TMRCTRL = (mskCT16_CRST);
 
     // Wait until timer reset done.
     while (SN_CT16B1->TMRCTRL & mskCT16_CRST);
@@ -159,7 +163,7 @@ void init(void){
     // Let TC start counting.
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
-    nvicEnableVector(CT16B1_IRQn, 1);
+    nvicEnableVector(CT16B1_IRQn, 15);
 }
 
 void set_pwm_values(uint8_t col, uint8_t row) {
@@ -254,22 +258,23 @@ OSAL_IRQ_HANDLER(Vector80) {
 	// MR1 used to move light col
 	if (iwRisStatus & mskCT16_MR1IF)
 	{
+        uint8_t col_num;
         SN_CT16B1->IC = mskCT16_MR1IC; // Clear match interrupt status
 
+
         // Turn off previous COL
-        if (current_col == MATRIX_COLS - 1) {
-            writePinHigh(col_pins[MATRIX_COLS - 2]);
-        }
-        else if (current_col - 1 < 0) {
-            writePinHigh(col_pins[MATRIX_COLS - 1]);
+        if (current_col - 1 < 0) {
+            col_num = col_pins[MATRIX_COLS - 1];
         } else {
-            writePinHigh(col_pins[current_col - 1]);
+           col_num = col_pins[current_col - 1];
         }
+
+        writePinHigh(col_num);
 
         // Set RBG for current col
         set_col_pwm(current_col);
 
-
+        setPinOutput(col_pins[current_col]);
         if (current_col == MATRIX_COLS - 1) {
             current_col = 0;
             // Turn on next col
@@ -279,6 +284,8 @@ OSAL_IRQ_HANDLER(Vector80) {
             writePinLow(col_pins[current_col]);
             current_col++;
         }
+
+        // SN_CT16B1->MCTRL |= (mskCT16_MR1STOP_DIS);
 
     }
 
