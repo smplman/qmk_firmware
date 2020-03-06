@@ -95,7 +95,7 @@
 // #define LED_MATRIX_COLS 1
 // #define LED_MATRIX_COL_PINS { B5 }
 
-#define LED_DRIVER_LED_COUNT 63 // * 3(rgb)
+// #define LED_DRIVER_LED_COUNT 63 // * 3(rgb)
 #define DRIVER_LED_TOTAL 63
 /*
  * Force NKRO

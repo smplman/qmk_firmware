@@ -17,10 +17,6 @@
 #include "dk63.h"
 #include "rgb_matrix.h"
 
-// void matrix_init_kb(void) {
-//     matrix_init_user();
-// }
-
 // void reset_keyboard_kb(){
 // // #ifdef SN32_BOOTLOADER_ADDRESS
 //     // enter_bootloader_mode_if_requested();
@@ -33,7 +29,7 @@ led_config_t g_led_config = { {
   {  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27 },
   {  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38, 39, 40 },
   {  41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  52,  53 },
-  {  54,  55,  56,  NO_LED, NO_LED, 57, NO_LED, NO_LED,  NO_LED, 58,  59,  60}
+  {  54,  55,  56,  NO_LED, 57, NO_LED,  NO_LED, 58,  59,  60, 61, 62}
 }, {
     // Esc, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, -, =, Backspace
     {   0,   0 }, {  15,   0 }, {  30,   0 }, {  45,   0 }, {  60,   0 }, {  75,   0 }, {  90,   0 }, { 105,   0 }, { 120,   0 }, { 135,   0 }, { 150,   0 }, { 165,   0 }, { 180,   0 }, { 202,   0 },

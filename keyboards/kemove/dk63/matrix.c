@@ -55,19 +55,19 @@ void matrix_print(void) {}
 
 void color_loop(void);
 
-static void select_col(uint8_t col) {
-    // setPinInput(col_pins[col]);
-    writePinHigh(col_pins[col]);
-}
+// static void select_col(uint8_t col) {
+//     setPinInput(col_pins[col]);
+//     writePinHigh(col_pins[col]);
+// }
 
 static void unselect_col(uint8_t col) {
-    // setPinOutput(col_pins[col]);
+    setPinOutput(col_pins[col]);
     writePinHigh(col_pins[col]);
 }
 
-static void select_row(uint8_t row) {
-    writePinLow(row_pins[row]);
-}
+// static void select_row(uint8_t row) {
+//     writePinLow(row_pins[row]);
+// }
 
 static void unselect_row(uint8_t row) {
     writePinHigh(row_pins[row]);
@@ -97,39 +97,39 @@ static void init_pins(void) {
     // }
 }
 
-static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row) {
-    // return false;
-    // Store last value of row prior to reading
-    matrix_row_t last_row_value = current_matrix[current_row];
+// static bool read_cols_on_row(matrix_row_t current_matrix[], uint8_t current_row) {
+//     // return false;
+//     // Store last value of row prior to reading
+//     matrix_row_t last_row_value = current_matrix[current_row];
 
-    // Clear data in matrix row
-    current_matrix[current_row] = 0;
+//     // Clear data in matrix row
+//     current_matrix[current_row] = 0;
 
-    // Select row and wait for row selecton to stabilize
-    select_row(current_row);
-    wait_us(30);
+//     // Select row and wait for row selecton to stabilize
+//     select_row(current_row);
+//     wait_us(30);
 
-    // For each col...
-    for (uint8_t col_index = 0; col_index < MATRIX_COLS; col_index++) {
+//     // For each col...
+//     for (uint8_t col_index = 0; col_index < MATRIX_COLS; col_index++) {
 
-        // Set pin to input
-        select_col(col_index);
+//         // Set pin to input
+//         select_col(col_index);
 
-        // Select the col pin to read (active low)
-        uint8_t pin_state = readPin(col_pins[col_index]);
+//         // Select the col pin to read (active low)
+//         uint8_t pin_state = readPin(col_pins[col_index]);
 
-        // Set pin to output
-        unselect_col(col_index);
+//         // Set pin to output
+//         unselect_col(col_index);
 
-        // Populate the matrix row with the state of the col pin
-        current_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << col_index);
-    }
+//         // Populate the matrix row with the state of the col pin
+//         current_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << col_index);
+//     }
 
-    // Unselect row
-    unselect_row(current_row);
+//     // Unselect row
+//     unselect_row(current_row);
 
-    return (last_row_value != current_matrix[current_row]);
-}
+//     return (last_row_value != current_matrix[current_row]);
+// }
 
 void matrix_init(void) {
     // initialize key pins
@@ -151,14 +151,14 @@ void matrix_init(void) {
 uint8_t matrix_scan(void) {
     bool changed = false;
 
-    // Set row, read cols
-    for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
-        changed |= read_cols_on_row(raw_matrix, current_row);
-    }
+    // // Set row, read cols
+    // for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
+    //     changed |= read_cols_on_row(raw_matrix, current_row);
+    // }
 
-    // led_scan();
+    // // led_scan();
 
-    debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
+    // debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
 
     matrix_scan_quantum();
     return (uint8_t)changed;
