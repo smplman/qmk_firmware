@@ -37,18 +37,12 @@
 #include "led.h"
 #include "color.h"
 
-volatile SN_CT16B1_Type * ct_b1 = (SN_CT16B1_Type *) SN_CT16B1_BASE;
+volatile SN_CT16B1_Type *ct_b1 = (SN_CT16B1_Type *)SN_CT16B1_BASE;
 
 extern volatile matrix_row_t raw_matrix[MATRIX_ROWS];  // raw values
-static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
+static const pin_t           row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 
-uint32_t led_pwm_values[16] =
-{
-    12000, 12000, 1200, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000
-};                                     // Extra for the boot pin not in use
-
-static struct
-{
+static struct {
     uint8_t g;
     uint8_t b;
     uint8_t r;
@@ -62,7 +56,7 @@ static uint8_t col_index = 0;
 // on period interrupt update all the PWM MRs to the values for the next LED
 // the only issue is that when you do that, the timer has reset and may count during the ISR, so you'll have to detect low or 0 values and set the pin accordingly
 
-void init (void) {
+void init(void) {
     // Enable Timer Clock
     SN_SYS1->AHBCLKEN_b.CT16B1CLKEN = 1;
 
@@ -77,7 +71,6 @@ void init (void) {
     //// MR8 at Offset:0x40
     //// MR24 at Offset:0x80
     //// set all match registers the same for now
-    // memcpy((void*) 0x40002040, led_pwm_values, sizeof(led_pwm_values));
 
     // 16 bits - max = 65535
     SN_CT16B1->MR0 = 0xFFFF;
@@ -100,6 +93,7 @@ void init (void) {
     SN_CT16B1->MR13 = 0;
     SN_CT16B1->MR14 = 0;
 
+    /* clang-format off */
     // Enable PWM function, IOs and select the PWM modes
     // SN_CT16B1->PWMENB   = 0xFFFB00;     //Enable PWM8-PWM9, PWM11-PWM23 function
     // |mskCT16_PWM10EN_EN
@@ -154,8 +148,9 @@ void init (void) {
                           mskCT16_PWM12MODE_2 | \
                           mskCT16_PWM13MODE_2 | \
                           mskCT16_PWM14MODE_2);
+    /* clang-format on */
 
-    SN_CT16B1->MR15 = 0xFF;
+    SN_CT16B1->MR15   = 0xFF;
     SN_CT16B1->MCTRL2 = (mskCT16_MR15IE_EN);
 
     // Set prescale value - This seems to give us .1ms per col select
@@ -164,9 +159,8 @@ void init (void) {
     // Let TC start counting.
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
-    //Set col, read rows
-    for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++)
-    {
+    // Set col, read rows
+    for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++) {
         setPinOutput(col_pins[current_col]);
     }
     writePinLow(col_pins[col_index]);
@@ -174,8 +168,7 @@ void init (void) {
     SN_CT16B1->MCTRL2_b.MR15RST = 1;
 
     // Wait until timer reset done.
-    while (SN_CT16B1->TMRCTRL & mskCT16_CRST)
-    {
+    while (SN_CT16B1->TMRCTRL & mskCT16_CRST) {
         ;
     }
 
@@ -183,24 +176,21 @@ void init (void) {
     nvicEnableVector(CT16B1_IRQn, 4);
 }
 
-static void flush (void) {
-}
+static void flush(void) {}
 
-static void set_color (int index, uint8_t r, uint8_t g, uint8_t b) {
+static void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
     led_state[index].r = r;
     led_state[index].g = g;
     led_state[index].b = b;
 }
 
-static void set_color_all (uint8_t r, uint8_t g, uint8_t b) {
-    for (int i = 0; i < DRIVER_LED_TOTAL; i++)
-    {
+static void set_color_all(uint8_t r, uint8_t g, uint8_t b) {
+    for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
         set_color(i, r, g, b);
     }
 }
 
-const rgb_matrix_driver_t rgb_matrix_driver =
-{
+const rgb_matrix_driver_t rgb_matrix_driver = {
     .init          = init,
     .flush         = flush,
     .set_color     = set_color,
@@ -215,8 +205,7 @@ const rgb_matrix_driver_t rgb_matrix_driver =
 extern volatile bool matrix_changed;
 
 // OSAL_IRQ_HANDLER(Vector84)
-void RgbIsr ()
-{
+void RgbIsr() {
     OSAL_IRQ_PROLOGUE();
 
     writePinHigh(col_pins[col_index]);
@@ -245,22 +234,18 @@ void RgbIsr ()
     SN_CT16B1->MR13 = led_state[(col_index) + 4].b;
     SN_CT16B1->MR14 = led_state[(col_index) + 4].r;
 
-    for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
-    {
+    for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++) {
         // Check row pin state
-        if (readPin(row_pins[row_index]) == 0)
-        {
+        if (readPin(row_pins[row_index]) == 0) {
             // Pin LO, set col bit
             raw_matrix[row_index] |= (MATRIX_ROW_SHIFTER << col_index);
-        }
-        else
-        {
+        } else {
             // Pin HI, clear col bit
             raw_matrix[row_index] &= ~(MATRIX_ROW_SHIFTER << col_index);
         }
     }
 
-    SN_CT16B1->IC = SN_CT16B1->RIS;    // Clear all for now
+    SN_CT16B1->IC = SN_CT16B1->RIS;  // Clear all for now
 
     OSAL_IRQ_EPILOGUE();
 }

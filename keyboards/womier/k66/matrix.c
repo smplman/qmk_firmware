@@ -37,52 +37,43 @@ static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 
 // LED COL pins are the same as the keyboard matrix
 
-volatile matrix_row_t raw_matrix[MATRIX_ROWS]  = {0}; // raw values
-matrix_row_t          last_matrix[MATRIX_ROWS] = {0}; // raw values
-matrix_row_t          matrix[MATRIX_ROWS]      = {0}; // debounced values
+volatile matrix_row_t raw_matrix[MATRIX_ROWS]  = {0};  // raw values
+matrix_row_t          last_matrix[MATRIX_ROWS] = {0};  // raw values
+matrix_row_t          matrix[MATRIX_ROWS]      = {0};  // debounced values
 volatile bool         matrix_changed           = false;
 
-void matrix_scan_kb (void) {
-}
+void matrix_scan_kb(void) {}
 
-inline matrix_row_t matrix_get_row (uint8_t row) {
-    return matrix[row];
-}
+inline matrix_row_t matrix_get_row(uint8_t row) { return matrix[row]; }
 
-void matrix_print (void) {
-}
+void matrix_print(void) {}
 
-static void select_col (uint8_t col) {
+static void select_col(uint8_t col) {
     setPinOutput(col_pins[col]);
     writePinLow(col_pins[col]);
 }
 
-static void unselect_col (uint8_t col) {
-    setPinInputHigh(col_pins[col]);
-}
+static void unselect_col(uint8_t col) { setPinInputHigh(col_pins[col]); }
 
-static void unselect_cols (void) {
-    for (uint8_t x = 0; x < MATRIX_COLS; x++)
-    {
+static void unselect_cols(void) {
+    for (uint8_t x = 0; x < MATRIX_COLS; x++) {
         setPinInputHigh(col_pins[x]);
     }
 }
 
-static void init_pins (void) {
+static void init_pins(void) {
     unselect_cols();
-    for (uint8_t x = 0; x < MATRIX_ROWS; x++)
-    {
+    for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
         setPinInputHigh(row_pins[x]);
     }
 }
 
-void matrix_init (void) {
+void matrix_init(void) {
     // initialize key pins
     init_pins();
 
     // initialize matrix state: all keys off
-    for (uint8_t i = 0; i < MATRIX_ROWS; i++)
-    {
+    for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
         raw_matrix[i] = 0;
         matrix[i]     = 0;
     }
@@ -92,18 +83,14 @@ void matrix_init (void) {
     matrix_init_quantum();
 }
 
-uint8_t matrix_scan (void) {
-
+uint8_t matrix_scan(void) {
     matrix_changed = false;
 
-    for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++)
-    {
-        for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
-        {
+    for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++) {
+        for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++) {
             // Determine if the matrix changed state
-            if ((last_matrix[row_index] != raw_matrix[row_index]))
-            {
-                matrix_changed = true;
+            if ((last_matrix[row_index] != raw_matrix[row_index])) {
+                matrix_changed         = true;
                 last_matrix[row_index] = raw_matrix[row_index];
             }
         }
@@ -113,5 +100,5 @@ uint8_t matrix_scan (void) {
 
     matrix_scan_quantum();
 
-    return (uint8_t) matrix_changed;
+    return (uint8_t)matrix_changed;
 }
