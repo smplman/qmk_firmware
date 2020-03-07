@@ -49,12 +49,12 @@
 // on period interrupt update all the PWM MRs to the values for the next LED
 // the only issue is that when you do that, the timer has reset and may count during the ISR, so you'll have to detect low or 0 values and set the pin accordingly
 
-// static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
+static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 
 static uint8_t current_col = 0;
 
-// static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
+static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
 // static matrix_row_t matrix[MATRIX_ROWS]; //debounced values
 
 LED_TYPE led_state[DRIVER_LED_TOTAL];
@@ -193,6 +193,32 @@ OSAL_IRQ_HANDLER(Vector80) {
 
         setPinInput(col_pins[current_col]);
         writePinHigh(col_pins[current_col]);
+
+        // Read the matrix
+        // select row
+        // select col
+        //
+
+        for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
+
+            // Store last value of row prior to reading
+            matrix_row_t last_row_value = raw_matrix[current_row];
+
+            // Clear data in matrix row
+            raw_matrix[current_row] = 0;
+
+            // Select row
+            writePinLow(row_pins[current_row]);
+
+            uint8_t pin_state = readPin(col_pins[current_col]);
+
+            // Unselect row
+            writePinHigh(row_pins[current_row]);
+
+            raw_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << current_col);
+
+            matrix_changed = (last_row_value != raw_matrix[current_row]);
+        }
 
         current_col = (current_col + 1) % MATRIX_COLS;
 

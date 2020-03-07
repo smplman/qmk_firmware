@@ -35,7 +35,7 @@ static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
 static matrix_row_t matrix[MATRIX_ROWS]; //debounced values
 
-// volatile bool matrix_changed = false;
+volatile bool matrix_changed = false;
 
 __attribute__((weak)) void matrix_init_kb(void) { matrix_init_user(); }
 
@@ -152,10 +152,8 @@ uint8_t matrix_scan(void) {
     //     changed |= read_cols_on_row(raw_matrix, current_row);
     // }
 
-    // // led_scan();
-
-    debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
-    // debounce(raw_matrix, matrix, MATRIX_ROWS, matrix_changed);
+    // debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
+    debounce(raw_matrix, matrix, MATRIX_ROWS, matrix_changed);
 
     matrix_scan_quantum();
     return (uint8_t)changed;
