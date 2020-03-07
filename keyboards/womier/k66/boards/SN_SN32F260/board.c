@@ -28,20 +28,19 @@
  * @details Digital I/O ports static configuration as defined in @p board.h.
  *          This variable is used by the HAL when initializing the PAL driver.
  */
-const PALConfig pal_default_config =
-{
- #if STM32_HAS_GPIOA
+const PALConfig pal_default_config = {
+#    if STM32_HAS_GPIOA
     {VAL_GPIOA_MODER},
- #endif
- #if STM32_HAS_GPIOB
+#    endif
+#    if STM32_HAS_GPIOB
     {VAL_GPIOB_MODER},
- #endif
- #if STM32_HAS_GPIOC
+#    endif
+#    if STM32_HAS_GPIOC
     {VAL_GPIOC_MODER},
- #endif
- #if STM32_HAS_GPIOD
+#    endif
+#    if STM32_HAS_GPIOD
     {VAL_GPIOD_MODER},
- #endif
+#    endif
 };
 #endif
 
@@ -52,15 +51,13 @@ static int flag __attribute__((section(".flag"))) __attribute__((__used__)) = 0x
  * @details This initialization must be performed just after stack setup
  *          and before any other initialization.
  */
-void __early_init (void) {
-    sn32_clock_init();
-}
+void __early_init(void) { sn32_clock_init(); }
 
 /**
  * @brief   Board-specific initialization code.
  * @todo    Add your board-specific code, if any.
  */
-void boardInit (void) {
+void boardInit(void) {
     // setP0.0~P0.1, P0.6~P0.7, P0.10~P0.15 to input pull-up
     SN_GPIO0->CFG = 0x000A0AA0;
 
@@ -74,7 +71,7 @@ void boardInit (void) {
     SN_GPIO3->CFG = 0xAAA800A0;
 
     SN_GPIO0->MODE = 0xffff;
-    SN_GPIO2->CFG  = 0x00;             // Enable P2 internal pull-up resistor
+    SN_GPIO2->CFG  = 0x00;  // Enable P2 internal pull-up resistor
     SN_GPIO2->MODE = 0xFFFF;
     SN_GPIO2->DATA = 0x0000;
 
