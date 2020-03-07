@@ -38,7 +38,7 @@ else
 	fi
 fi
 if [ -n "$target" ]; then
-	if [ "$(uname)" = "Linux" ] || "$(docker-machine active)" >/dev/null 2>&1; then
+	if [ "$(uname)" = "Darwin" ] || "$(docker-machine active)" >/dev/null 2>&1; then
 		usb_args="--privileged -v /dev:/dev"
 	else
 		errcho "Error: target requires docker-machine to work on your platform"
@@ -57,6 +57,7 @@ perms="1000:50"
 docker run --rm -it $usb_args \
     --user=$perms \
 	-w /qmk_firmware \
+    -v /qmk_firmware-9:/qmk_firmware \
 	-e ALT_GET_KEYBOARDS=true \
 	-e SKIP_GIT="$SKIP_GIT" \
 	-e MAKEFLAGS="$MAKEFLAGS" \
