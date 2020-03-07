@@ -29,17 +29,13 @@ Ported to QMK by Stephen Peery <https://github.com/smp4488/>
 #include "quantum.h"
 #include "led_matrix.h"
 
-
 static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 
-// static const pin_t led_row_pins[MATRIX_ROWS][3] = LED_MATRIX_ROW_PINS;
-static const pin_t led_row_pins[LED_MATRIX_ROWS] = LED_MATRIX_ROW_PINS;
-// LED COL pins are the same as the keyboard matrix
-// static uint8_t led_col_index = 0;
-
 static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
 static matrix_row_t matrix[MATRIX_ROWS]; //debounced values
+
+// volatile bool matrix_changed = false;
 
 __attribute__((weak)) void matrix_init_kb(void) { matrix_init_user(); }
 
@@ -158,38 +154,11 @@ uint8_t matrix_scan(void) {
 
     // // led_scan();
 
-    // debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
+    debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
+    // debounce(raw_matrix, matrix, MATRIX_ROWS, matrix_changed);
 
     matrix_scan_quantum();
     return (uint8_t)changed;
-}
 
-void color_loop(void) {
-
-    for (uint8_t x = 0; x < MATRIX_COLS; x++) {
-        // Turn COL On
-        setPinOutput(col_pins[x]);
-        writePinLow(col_pins[x]);
-        chThdSleepMilliseconds(100);
-
-        for (uint8_t y = 0; y < LED_MATRIX_ROWS; y++) {
-
-            // On
-            // setPinInput(led_row_pins[y]);
-            setPinOutput(led_row_pins[y]);
-            writePinHigh(led_row_pins[y]);
-
-            chThdSleepMilliseconds(100);
-
-            // Off
-            // setPinOutput(led_row_pins[y]);
-            writePinLow(led_row_pins[y]);
-
-            chThdSleepMilliseconds(100);
-        }
-        // Turn COL Off
-        setPinInput(col_pins[x]);
-        writePinHigh(col_pins[x]);
-        chThdSleepMilliseconds(100);
-    }
+    // return matrix_changed;
 }

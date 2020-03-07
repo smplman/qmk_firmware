@@ -57,33 +57,15 @@ static uint8_t current_col = 0;
 // static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
 // static matrix_row_t matrix[MATRIX_ROWS]; //debounced values
 
-// Match Registers pointers array
-volatile uint32_t *mr_ptr_array[5][3] = {{&SN_CT16B1->MR23, &SN_CT16B1->MR8,  &SN_CT16B1->MR9},
-                                         {&SN_CT16B1->MR11, &SN_CT16B1->MR12, &SN_CT16B1->MR13},
-                                         {&SN_CT16B1->MR14, &SN_CT16B1->MR15, &SN_CT16B1->MR16},
-                                         {&SN_CT16B1->MR17, &SN_CT16B1->MR18, &SN_CT16B1->MR19},
-                                         {&SN_CT16B1->MR20, &SN_CT16B1->MR21, &SN_CT16B1->MR22 }};
-
-
 LED_TYPE led_state[DRIVER_LED_TOTAL];
 
-// bool matrix_changed = false;
 
-
-
-// void setup_led_pwm(void) {
 void init(void){
     // Enable Timer Clock
     SN_SYS1->AHBCLKEN_b.CT16B1CLKEN = 1;
 
-    // // PFPA - Set PWM to port B pins
+    // PFPA - Set PWM to port B pins
     SN_PFPA->CT16B1 = 0xFFFF00;         // 8-9, 11-23 = top half 16 bits
-
-    // for (uint8_t x = 0; x < MATRIX_ROWS; x++) {
-    //     *mr_ptr_array[x][0] = 0;       // R
-    //     *mr_ptr_array[x][1] = 0xFFFF;  // B
-    //     *mr_ptr_array[x][2] = 0;       // G
-    // }
 
     // Enable PWM function, IOs and select the PWM modes
     // Enable PWM8-PWM9, PWM11-PWM23 function
@@ -139,28 +121,13 @@ void init(void){
 
     // Set match interrupts and TC rest
     SN_CT16B1->MCTRL = (mskCT16_MR1IE_EN);
-    // SN_CT16B1->MCTRL = (mskCT16_MR1RST_EN|mskCT16_MR1IE_EN);
-
-
-    // Testing individual PWMs
-    // SN_PFPA->CT16B1 = ((1<<16)|(1<<17));
-    // SN_CT16B1->MR16 = 1200;
-    // SN_CT16B1->MR17 = 1200;
-
-    // SN_CT16B1->PWMIOENB = ((1<<16)|(1<<17)); // Enable PWM16 IO
-    // SN_CT16B1->PWMENB   = ((1<<16)|(1<<17)); // Enable PWM16 function
-    // SN_CT16B1->PWMCTRL2 = ((1<<0) | 1<<2);   // PWM16 select as PWM mode 2
-
-    // SN_CT16B1->MCTRL2 = ((1<<18)|(1<<19)); // PWM16 TC and RESET
-    // SN_CT16B1->MCTRL2 = (mskCT16_MR16IE_EN|mskCT16_MR16RST_EN);
+    SN_CT16B1->MCTRL_b.MR1RST = 1;
 
     // COL match register
     SN_CT16B1->MR1 = 0xFF;
 
     // Set prescale value
     SN_CT16B1->PRE = 0x5;
-
-    SN_CT16B1->MCTRL_b.MR1RST = 1;
 
     //Set CT16B1 as the up-counting mode.
 	SN_CT16B1->TMRCTRL = (mskCT16_CRST);
@@ -174,62 +141,17 @@ void init(void){
     nvicEnableVector(CT16B1_IRQn, 4);
 }
 
-void set_pwm_values(uint8_t col, uint8_t row) {
-// void set_pwm_values() {
-    LED_TYPE state = led_state[g_led_config.matrix_co[row][col]];
-    *mr_ptr_array[row][0] = state.r * 255; // R
-    *mr_ptr_array[row][1] = state.b * 255; // B
-    *mr_ptr_array[row][2] = state.g * 255; // G
-}
-
-void set_col_pwm(uint8_t col) {
-    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
-        set_pwm_values(col, row);
-    }
-}
-
-void led_scan(void) {
-    for (uint8_t col = 0; col < MATRIX_COLS; col++) {
-
-        // Set RBG for single col
-        set_col_pwm(col);
-
-        // Turn on col
-        writePinLow(col_pins[col]);
-
-        wait_us(700);
-        // wait_ms(1000);
-
-        // Turn off col
-        writePinHigh(col_pins[col]);
-    }
-}
-
-static void flush(void) {
-
-    // led_scan();
-
-    // set_col_pwm(0);
-    // writePinLow(col_pins[0]);
-}
+static void flush(void) {}
 
 void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
-    led_state[index].r = r;
-    led_state[index].g = g;
-    led_state[index].b = b;
+    led_state[index].r = r * 255;
+    led_state[index].g = g * 255;
+    led_state[index].b = b * 255;
 }
 
 static void set_color_all(uint8_t r, uint8_t g, uint8_t b) {
     for (int i=0; i<DRIVER_LED_TOTAL; i++)
         set_color(i, r, g, b);
-}
-
-void set_col_color(uint8_t r, uint8_t g, uint8_t b) {
-    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
-        *mr_ptr_array[row][0] = r * 255; // R
-        *mr_ptr_array[row][1] = b * 255; // B
-        *mr_ptr_array[row][2] = g * 255; // G
-    }
 }
 
 const rgb_matrix_driver_t rgb_matrix_driver = {
@@ -251,6 +173,8 @@ void led_set(uint8_t usb_led) {
     }
 }
 
+extern volatile bool matrix_changed;
+
 /**
  * @brief   TIM2 interrupt handler.
  *
@@ -260,13 +184,11 @@ OSAL_IRQ_HANDLER(Vector80) {
 
     OSAL_IRQ_PROLOGUE();
 
-	// uint32_t iwRisStatus;
+	uint32_t iwRisStatus = SN_CT16B1->RIS;	//Save the interrupt status.
 
-	// iwRisStatus = SN_CT16B1->RIS;	//Save the interrupt status.
-
-	// // MR1 used to move light col
-	// if (iwRisStatus & mskCT16_MR1IF)
-	// {
+	// MR1 used to move light col
+	if (iwRisStatus & mskCT16_MR1IF)
+	{
         SN_CT16B1->IC = mskCT16_MR1IC; // Clear match interrupt status
 
         setPinInput(col_pins[current_col]);
@@ -276,11 +198,6 @@ OSAL_IRQ_HANDLER(Vector80) {
 
         setPinOutput(col_pins[current_col]);
         writePinLow(col_pins[current_col]);
-
-        // Set RBG for current col
-        // set_col_pwm(current_col);
-        // set_pwm_values();
-        // set_col_pwm
 
         SN_CT16B1->MR23 = led_state[(current_col) + 0].r;
         SN_CT16B1->MR8  = led_state[(current_col) + 0].b;
@@ -324,7 +241,7 @@ OSAL_IRQ_HANDLER(Vector80) {
         //     }
         // }
 
-    // }
+    }
 
     OSAL_IRQ_EPILOGUE();
 }
