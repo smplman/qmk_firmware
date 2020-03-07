@@ -37,31 +37,13 @@ static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 
 // LED COL pins are the same as the keyboard matrix
 
-volatile matrix_row_t raw_matrix[MATRIX_ROWS] = {0};  // raw values
-matrix_row_t last_matrix[MATRIX_ROWS] = {0};  // raw values
-matrix_row_t matrix[MATRIX_ROWS] = {0};      // debounced values
-volatile bool matrix_changed = false;
+volatile matrix_row_t raw_matrix[MATRIX_ROWS]  = {0}; // raw values
+matrix_row_t          last_matrix[MATRIX_ROWS] = {0}; // raw values
+matrix_row_t          matrix[MATRIX_ROWS]      = {0}; // debounced values
+volatile bool         matrix_changed           = false;
 
 void matrix_scan_kb (void) {
 }
-
-// __attribute__((weak)) void matrix_init_kb (void)
-// {
-// matrix_init_user();
-// }
-
-// __attribute__((weak)) void matrix_scan_kb (void)
-// {
-// matrix_scan_user();
-// }
-
-// __attribute__((weak)) void matrix_init_user (void)
-// {
-// }
-
-// __attribute__((weak)) void matrix_scan_user (void)
-// {
-// }
 
 inline matrix_row_t matrix_get_row (uint8_t row) {
     return matrix[row];
@@ -94,53 +76,6 @@ static void init_pins (void) {
     }
 }
 
-static bool read_rows_on_col (matrix_row_t current_matrix[], uint8_t current_col) {
-    bool matrix_changed = false;
-
-    uint32_t rows[MATRIX_ROWS];
-
-    // Select col and wait for col selecton to stabilize
-    select_col(current_col);
-    wait_us(3);
-
-    // For each row...
-    for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
-    {
-        // Check row pin state
-        rows[row_index] = readPin(row_pins[row_index]);
-    }
-
-    // Unselect col
-    unselect_col(current_col);
-
-    // For each row...
-    for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
-    {
-        // Store last value of row prior to reading
-        matrix_row_t last_row_value = current_matrix[row_index];
-
-        // Check row pin state
-        if (rows[row_index] == 0)
-        {
-            // Pin LO, set col bit
-            current_matrix[row_index] |= (MATRIX_ROW_SHIFTER << current_col);
-        }
-        else
-        {
-            // Pin HI, clear col bit
-            current_matrix[row_index] &= ~(MATRIX_ROW_SHIFTER << current_col);
-        }
-
-        // Determine if the matrix changed state
-        if ((last_row_value != current_matrix[row_index]) && !(matrix_changed))
-        {
-            matrix_changed = true;
-        }
-    }
-
-    return matrix_changed;
-}
-
 void matrix_init (void) {
     // initialize key pins
     init_pins();
@@ -157,49 +92,26 @@ void matrix_init (void) {
     matrix_init_quantum();
 }
 
-static uint16_t debouncing_time;
 uint8_t matrix_scan (void) {
-    bool   changed         = false;
-    static debouncing_time = 0;        // timer_read();RGB_RMOD
-#if 0
-    for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
+
+    matrix_changed = false;
+
+    for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++)
     {
-        if(raw_matrix[row_index] != matrix[row_index])
+        for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
         {
-            changed = true;
+            // Determine if the matrix changed state
+            if ((last_matrix[row_index] != raw_matrix[row_index]))
+            {
+                matrix_changed = true;
+                last_matrix[row_index] = raw_matrix[row_index];
+            }
         }
     }
 
-    debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
-        matrix_scan_quantum();
-    #else
-    // SN_CT16B1->TMRCTRL = 0;
+    debounce(last_matrix, matrix, MATRIX_ROWS, matrix_changed);
 
-    // if ((timer_elapsed(debouncing_time) > 5))
-    // {
-    //     debouncing_time = timer_read();
-    //     unselect_cols();
-
-    //     // memset(raw_matrix, 0, sizeof(raw_matrix));
-    //     // Set col, read rows
-    //     for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++)
-    //     {
-    //         changed |= read_rows_on_col(raw_matrix, current_col);
-    //     }
-
-    //     for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++)
-    //     {
-    //         select_col(current_col);
-    //     }
-
-    debounce(raw_matrix, matrix, MATRIX_ROWS, matrix_changed);
-
-    matrix_changed = false;
     matrix_scan_quantum();
 
-    // }
-    // SN_CT16B1->TMRCTRL |= (1<<0);
-    #endif
-
-    return (uint8_t) changed;
+    return (uint8_t) matrix_changed;
 }

@@ -247,7 +247,6 @@ void RgbIsr ()
 
     for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
     {
-        matrix_row_t last_row_value = raw_matrix[row_index];
         // Check row pin state
         if (readPin(row_pins[row_index]) == 0)
         {
@@ -258,12 +257,6 @@ void RgbIsr ()
         {
             // Pin HI, clear col bit
             raw_matrix[row_index] &= ~(MATRIX_ROW_SHIFTER << col_index);
-        }
-
-        // Determine if the matrix changed state
-        if ((last_row_value != raw_matrix[row_index]))
-        {
-            matrix_changed |= true;
         }
     }
 
