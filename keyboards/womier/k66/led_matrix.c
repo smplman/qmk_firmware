@@ -73,24 +73,24 @@ void init(void) {
     //// set all match registers the same for now
 
     // 16 bits - max = 65535
-    SN_CT16B1->MR0 = 0xFFFF;
+    SN_CT16B1->MR0 = 0;
     SN_CT16B1->MR1 = 0;
-    SN_CT16B1->MR2 = 0;
+    SN_CT16B1->MR2 = 0xFFFF;
 
-    SN_CT16B1->MR3 = 0xFFFF;
-    SN_CT16B1->MR4 = 0;
-    SN_CT16B1->MR5 = 0;
+    SN_CT16B1->MR3 = 0x40;
+    SN_CT16B1->MR4 = 0x40;
+    SN_CT16B1->MR5 = 0xFFFF;
 
     SN_CT16B1->MR6 = 0xFFFF;
-    SN_CT16B1->MR7 = 0;
-    SN_CT16B1->MR8 = 0;
+    SN_CT16B1->MR7 = 0xFFFF;
+    SN_CT16B1->MR8 = 0xFFFF;
 
-    SN_CT16B1->MR9  = 0xFFFF;
-    SN_CT16B1->MR10 = 0;
-    SN_CT16B1->MR11 = 0;
+    SN_CT16B1->MR9  = 0x40;
+    SN_CT16B1->MR10 = 0xFFFF;
+    SN_CT16B1->MR11 = 0x40;
 
-    SN_CT16B1->MR12 = 0xFFFF;
-    SN_CT16B1->MR13 = 0;
+    SN_CT16B1->MR12 = 0;
+    SN_CT16B1->MR13 = 0xFFFF;
     SN_CT16B1->MR14 = 0;
 
     /* clang-format off */
