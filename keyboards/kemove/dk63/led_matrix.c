@@ -9,6 +9,7 @@
 #include "led.h"
 #include "color.h"
 #include "matrix.h"
+
 /*
     COLS key / led
     PWM PWM08A - PWM21A
@@ -45,16 +46,13 @@
     GPIO    GND
 */
 
-// set counter reset on MRn (setting MRn to the full period) and set the other MRs to the PWM duty cycle you want for that pin
-// on period interrupt update all the PWM MRs to the values for the next LED
-// the only issue is that when you do that, the timer has reset and may count during the ISR, so you'll have to detect low or 0 values and set the pin accordingly
 
 static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 
 static uint8_t current_col = 0;
 
-static matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
+extern volatile matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
 // static matrix_row_t matrix[MATRIX_ROWS]; //debounced values
 
 LED_TYPE led_state[DRIVER_LED_TOTAL];
@@ -138,7 +136,8 @@ void init(void){
     // Let TC start counting.
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
-    nvicEnableVector(CT16B1_IRQn, 4);
+    NVIC_ClearPendingIRQ(CT16B1_IRQn);
+    nvicEnableVector(CT16B1_IRQn, 10);
 }
 
 static void flush(void) {}
@@ -195,7 +194,6 @@ OSAL_IRQ_HANDLER(Vector80) {
         writePinHigh(col_pins[current_col]);
 
         for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
-            // changed |= read_cols_on_row(raw_matrix, current_row);
             // Store last value of row prior to reading
             matrix_row_t last_row_value = raw_matrix[current_row];
 
@@ -205,31 +203,18 @@ OSAL_IRQ_HANDLER(Vector80) {
             // Select row and wait for row selecton to stabilize
             writePinLow(row_pins[current_row]);
             setPinInput(row_pins[current_row]);
-            // wait_us(30);
 
-            // For each col...
-            // for (uint8_t col_index = 0; col_index < MATRIX_COLS; col_index++) {
+            // Select the col pin to read (active low)
+            uint8_t pin_state = readPin(col_pins[current_col]);
 
-                // Set pin to input
-                // select_col(col_index);
-
-                // Select the col pin to read (active low)
-                uint8_t pin_state = readPin(col_pins[current_col]);
-
-                // Set pin to output
-                // unselect_col(col_index);
-
-                // Populate the matrix row with the state of the col pin
-                raw_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << current_col);
-            // }
+            // Populate the matrix row with the state of the col pin
+            raw_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << current_col);
 
             // Unselect row
             writePinHigh(row_pins[current_row]);
             setPinOutput(row_pins[current_row]);
 
             matrix_changed = (last_row_value != raw_matrix[current_row]);
-
-            //return (last_row_value != current_matrix[current_row]);
         }
 
         current_col = (current_col + 1) % MATRIX_COLS;
@@ -256,6 +241,8 @@ OSAL_IRQ_HANDLER(Vector80) {
         SN_CT16B1->MR20 = led_state[(current_col) + 4].r;
         SN_CT16B1->MR21 = led_state[(current_col) + 4].b;
         SN_CT16B1->MR22 = led_state[(current_col) + 4].g;
+
+        SN_CT16B1->IC = SN_CT16B1->RIS;  // Clear all for now
     // }
 
     OSAL_IRQ_EPILOGUE();
