@@ -51,9 +51,12 @@ static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 
 static uint8_t current_col = 0;
+static uint8_t current_row = 0;
 
 extern volatile matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
 // static matrix_row_t matrix[MATRIX_ROWS]; //debounced values
+
+extern volatile bool matrix_changed;
 
 LED_TYPE led_state[DRIVER_LED_TOTAL];
 
@@ -119,13 +122,14 @@ void init(void){
 
     // Set match interrupts and TC rest
     SN_CT16B1->MCTRL = (mskCT16_MR1IE_EN);
+    // SN_CT16B1->MCTRL_b.MR0RST = 1;
     SN_CT16B1->MCTRL_b.MR1RST = 1;
 
     // COL match register
     SN_CT16B1->MR1 = 0xFF;
 
     // Set prescale value
-    SN_CT16B1->PRE = 0x5;
+    SN_CT16B1->PRE = 0x24;
 
     //Set CT16B1 as the up-counting mode.
 	SN_CT16B1->TMRCTRL = (mskCT16_CRST);
@@ -137,7 +141,7 @@ void init(void){
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
     NVIC_ClearPendingIRQ(CT16B1_IRQn);
-    nvicEnableVector(CT16B1_IRQn, 10);
+    nvicEnableVector(CT16B1_IRQn, 6);
 }
 
 static void flush(void) {}
@@ -172,8 +176,6 @@ void led_set(uint8_t usb_led) {
     }
 }
 
-extern volatile bool matrix_changed;
-
 /**
  * @brief   TIM2 interrupt handler.
  *
@@ -183,42 +185,38 @@ OSAL_IRQ_HANDLER(Vector80) {
 
     OSAL_IRQ_PROLOGUE();
 
-	// uint32_t iwRisStatus = SN_CT16B1->RIS;	//Save the interrupt status.
+	uint32_t iwRisStatus = SN_CT16B1->RIS;	//Save the interrupt status.
 
-	// // MR1 used to move light col
-	// if (iwRisStatus & mskCT16_MR1IF)
-	// {
+	// MR1 used to move light col
+	if (iwRisStatus & mskCT16_MR1IF)
+	{
         SN_CT16B1->IC = mskCT16_MR1IC; // Clear match interrupt status
 
+        // Turn COL off
         setPinInput(col_pins[current_col]);
         writePinHigh(col_pins[current_col]);
 
-        for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
-            // Store last value of row prior to reading
-            matrix_row_t last_row_value = raw_matrix[current_row];
+        matrix_row_t last_row_value = raw_matrix[current_row];
+        raw_matrix[current_row] = 0;
 
-            // Clear data in matrix row
-            raw_matrix[current_row] = 0;
+        // Select ROW
+        // setPinOutput(row_pins[current_row]);
+        writePinLow(row_pins[current_row]);
 
-            // Select row and wait for row selecton to stabilize
-            writePinLow(row_pins[current_row]);
-            setPinInput(row_pins[current_row]);
+        uint8_t pin_state = readPin(col_pins[current_col]);
 
-            // Select the col pin to read (active low)
-            uint8_t pin_state = readPin(col_pins[current_col]);
+        raw_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << current_col);
 
-            // Populate the matrix row with the state of the col pin
-            raw_matrix[current_row] |= pin_state ? 0 : (MATRIX_ROW_SHIFTER << current_col);
+        // Unselect ROW
+        // setPinInput(row_pins[current_row]);
+        writePinHigh(row_pins[current_row]);
 
-            // Unselect row
-            writePinHigh(row_pins[current_row]);
-            setPinOutput(row_pins[current_row]);
-
-            matrix_changed = (last_row_value != raw_matrix[current_row]);
-        }
+        matrix_changed = (last_row_value != raw_matrix[current_row]);
 
         current_col = (current_col + 1) % MATRIX_COLS;
+        current_row = (current_row + 1) % MATRIX_ROWS;
 
+        // Turn COL ON
         setPinOutput(col_pins[current_col]);
         writePinLow(col_pins[current_col]);
 
@@ -230,9 +228,9 @@ OSAL_IRQ_HANDLER(Vector80) {
         SN_CT16B1->MR12 = led_state[(current_col) + 1].b;
         SN_CT16B1->MR13 = led_state[(current_col) + 1].g;
 
-        SN_CT16B1->MR14 = led_state[(current_col) + 2].r;
         SN_CT16B1->MR15 = led_state[(current_col) + 2].b;
         SN_CT16B1->MR16 = led_state[(current_col) + 2].g;
+        SN_CT16B1->MR14 = led_state[(current_col) + 2].r;
 
         SN_CT16B1->MR17 = led_state[(current_col) + 3].r;
         SN_CT16B1->MR18 = led_state[(current_col) + 3].b;
@@ -241,9 +239,7 @@ OSAL_IRQ_HANDLER(Vector80) {
         SN_CT16B1->MR20 = led_state[(current_col) + 4].r;
         SN_CT16B1->MR21 = led_state[(current_col) + 4].b;
         SN_CT16B1->MR22 = led_state[(current_col) + 4].g;
-
-        SN_CT16B1->IC = SN_CT16B1->RIS;  // Clear all for now
-    // }
+    }
 
     OSAL_IRQ_EPILOGUE();
 }

@@ -33,6 +33,7 @@ static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 
 matrix_row_t raw_matrix[MATRIX_ROWS]; //raw values
+matrix_row_t last_matrix[MATRIX_ROWS] = {0};  // raw values
 matrix_row_t matrix[MATRIX_ROWS]; //debounced values
 
 volatile bool matrix_changed = false;
@@ -151,6 +152,16 @@ uint8_t matrix_scan(void) {
     // for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
     //     changed |= read_cols_on_row(raw_matrix, current_row);
     // }
+
+    for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++) {
+        for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++) {
+            // Determine if the matrix changed state
+            if ((last_matrix[row_index] != raw_matrix[row_index])) {
+                matrix_changed         = true;
+                last_matrix[row_index] = raw_matrix[row_index];
+            }
+        }
+    }
 
     // debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
     debounce(raw_matrix, matrix, MATRIX_ROWS, matrix_changed);
