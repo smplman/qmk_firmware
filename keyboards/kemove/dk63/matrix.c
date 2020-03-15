@@ -150,7 +150,7 @@ void matrix_init(void) {
     SN_CT16B1->MR1 = 0xFF;
 
     // Set prescale value
-    SN_CT16B1->PRE = 0x4;
+    SN_CT16B1->PRE = 0x9;
 
     //Set CT16B1 as the up-counting mode.
 	SN_CT16B1->TMRCTRL = (mskCT16_CRST);
@@ -161,8 +161,35 @@ void matrix_init(void) {
     // Let TC start counting.
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
-    NVIC_ClearPendingIRQ(CT16B1_IRQn);
-    nvicEnableVector(CT16B1_IRQn, 4);
+    // R
+    // B
+    // G
+
+    // SN_CT16B1->MR23 = 255;
+    // SN_CT16B1->MR8  = 255;
+    // SN_CT16B1->MR9  = 255;
+
+    // SN_CT16B1->MR11 = 63;
+    // SN_CT16B1->MR12 = 255;
+    // SN_CT16B1->MR13 = 127;
+
+    SN_CT16B1->MR14 = 255;
+    SN_CT16B1->MR15 = 255;
+    SN_CT16B1->MR16 = 255;
+
+    // SN_CT16B1->MR17 = 63;
+    // SN_CT16B1->MR18 = 255;
+    // SN_CT16B1->MR19 = 127;
+
+    // SN_CT16B1->MR20 = 63;
+    // SN_CT16B1->MR21 = 255;
+    // SN_CT16B1->MR22 = 127;
+
+    setPinOutput(col_pins[0]);
+    writePinLow(col_pins[0]);
+
+    // NVIC_ClearPendingIRQ(CT16B1_IRQn);
+    // nvicEnableVector(CT16B1_IRQn, 4);
 }
 
 uint8_t matrix_scan(void) {
@@ -198,21 +225,22 @@ OSAL_IRQ_HANDLER(Vector80) {
     setPinInput(col_pins[current_col]);
     writePinHigh(col_pins[current_col]);
 
-    // for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++) {
-    //     // setPinOutput(row_pins[row_index]);
-    //     writePinLow(row_pins[row_index]);
+    // Read the key matrix
+    for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++) {
+        // setPinOutput(row_pins[row_index]);
+        writePinLow(row_pins[row_index]);
 
-    //     // Check row pin state
-    //     if (readPin(col_pins[current_col]) == 0) {
-    //         // Pin LO, set col bit
-    //         raw_matrix[row_index] |= (MATRIX_ROW_SHIFTER << current_col);
-    //     } else {
-    //         // Pin HI, clear col bit
-    //         raw_matrix[row_index] &= ~(MATRIX_ROW_SHIFTER << current_col);
-    //     }
-    //     // setPinInput(row_pins[row_index]);
-    //     writePinHigh(row_pins[row_index]);
-    // }
+        // Check row pin state
+        if (readPin(col_pins[current_col]) == 0) {
+            // Pin LO, set col bit
+            raw_matrix[row_index] |= (MATRIX_ROW_SHIFTER << current_col);
+        } else {
+            // Pin HI, clear col bit
+            raw_matrix[row_index] &= ~(MATRIX_ROW_SHIFTER << current_col);
+        }
+        // setPinInput(row_pins[row_index]);
+        writePinHigh(row_pins[row_index]);
+    }
 
     current_col = (current_col + 1) % MATRIX_COLS;
 
@@ -228,9 +256,9 @@ OSAL_IRQ_HANDLER(Vector80) {
     SN_CT16B1->MR12 = led_state[(current_col) + 1].b;
     SN_CT16B1->MR13 = led_state[(current_col) + 1].g;
 
+    SN_CT16B1->MR14 = led_state[(current_col) + 2].r;
     SN_CT16B1->MR15 = led_state[(current_col) + 2].b;
     SN_CT16B1->MR16 = led_state[(current_col) + 2].g;
-    SN_CT16B1->MR14 = led_state[(current_col) + 2].r;
 
     SN_CT16B1->MR17 = led_state[(current_col) + 3].r;
     SN_CT16B1->MR18 = led_state[(current_col) + 3].b;
@@ -239,6 +267,8 @@ OSAL_IRQ_HANDLER(Vector80) {
     SN_CT16B1->MR20 = led_state[(current_col) + 4].r;
     SN_CT16B1->MR21 = led_state[(current_col) + 4].b;
     SN_CT16B1->MR22 = led_state[(current_col) + 4].g;
+
+    SN_CT16B1->IC = SN_CT16B1->RIS;  // Clear all for now
 
     OSAL_IRQ_EPILOGUE();
 }
