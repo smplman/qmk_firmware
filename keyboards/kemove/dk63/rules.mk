@@ -40,7 +40,7 @@ LINK_TIME_OPTIMIZATION_ENABLE = no
 BACKLIGHT_ENABLE = no
 MAGIC_ENABLE = yes
 MAGIC_KEYCODE_ENABLE = yes
-BOOTMAGIC_ENABLE = yes  # Virtual DIP switch configuration
+BOOTMAGIC_ENABLE = full # Virtual DIP switch configuration
 MOUSEKEY_ENABLE = no    # Mouse keys
 EXTRAKEY_ENABLE = no    # Audio control and System control
 CONSOLE_ENABLE = no     # Console for debug
@@ -50,7 +50,7 @@ NKRO_ENABLE = yes       # USB Nkey Rollover
 AUDIO_ENABLE = no
 RGBLIGHT_ENABLE = no
 SERIAL_LINK_ENABLE = no
-WAIT_FOR_USB = yes
+WAIT_FOR_USB = no
 CUSTOM_MATRIX = yes
 RGB_MATRIX_ENABLE = custom
 
