@@ -65,7 +65,6 @@ void bootloader_jump(void) {
 
 #elif defined(SN32_BOOTLOADER_ADDRESS)
 
-#   if defined(SN32F24xx) /* SN32_BOOTLOADER_ADDRESS */
 #       define SYMVAL(sym) (uint32_t)(((uint8_t *)&(sym)) - ((uint8_t *)0))
 extern uint32_t __ram0_end__;
 #       define BOOTLOADER_MAGIC 0xDEADBEEF
@@ -85,17 +84,15 @@ void enter_bootloader_mode_if_requested(void) {
     if (*check == BOOTLOADER_MAGIC) {
         *check = 0;
         __set_CONTROL(0);
-        __set_MSP(*(__IO uint32_t *)SN32_BOOTLOADER_ADDRESS);
         __enable_irq();
 
-        typedef void (*BootJump_t)(void);
-        BootJump_t boot_jump = *(BootJump_t *)(SN32_BOOTLOADER_ADDRESS + 4);
-        boot_jump();
+        void(*recovery)(void) = (void*)SN32_BOOTLOADER_ADDRESS;
+        recovery();
+
         while (1)
             ;
     }
 }
-#endif
 
 #else /* neither STM32 nor KINETIS */
 __attribute__((weak)) void bootloader_jump(void) {}

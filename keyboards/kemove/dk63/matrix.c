@@ -29,7 +29,6 @@ Ported to QMK by Stephen Peery <https://github.com/smp4488/>
 #include "matrix.h"
 #include "debounce.h"
 #include "quantum.h"
-#include "led_matrix.h"
 
 static const pin_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
@@ -150,7 +149,7 @@ void matrix_init(void) {
     SN_CT16B1->MR1 = 0xFF;
 
     // Set prescale value
-    SN_CT16B1->PRE = 0x9;
+    SN_CT16B1->PRE = 0x24;
 
     //Set CT16B1 as the up-counting mode.
 	SN_CT16B1->TMRCTRL = (mskCT16_CRST);
@@ -161,35 +160,8 @@ void matrix_init(void) {
     // Let TC start counting.
     SN_CT16B1->TMRCTRL |= mskCT16_CEN_EN;
 
-    // R
-    // B
-    // G
-
-    // SN_CT16B1->MR23 = 255;
-    // SN_CT16B1->MR8  = 255;
-    // SN_CT16B1->MR9  = 255;
-
-    // SN_CT16B1->MR11 = 63;
-    // SN_CT16B1->MR12 = 255;
-    // SN_CT16B1->MR13 = 127;
-
-    SN_CT16B1->MR14 = 255;
-    SN_CT16B1->MR15 = 255;
-    SN_CT16B1->MR16 = 255;
-
-    // SN_CT16B1->MR17 = 63;
-    // SN_CT16B1->MR18 = 255;
-    // SN_CT16B1->MR19 = 127;
-
-    // SN_CT16B1->MR20 = 63;
-    // SN_CT16B1->MR21 = 255;
-    // SN_CT16B1->MR22 = 127;
-
-    setPinOutput(col_pins[0]);
-    writePinLow(col_pins[0]);
-
-    // NVIC_ClearPendingIRQ(CT16B1_IRQn);
-    // nvicEnableVector(CT16B1_IRQn, 4);
+    NVIC_ClearPendingIRQ(CT16B1_IRQn);
+    nvicEnableVector(CT16B1_IRQn, 4);
 }
 
 uint8_t matrix_scan(void) {
