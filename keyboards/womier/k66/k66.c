@@ -39,7 +39,6 @@ led_config_t g_led_config = { {
 } };
 
 /* clang-format on */
-
 void matrix_init_kb(void) {
     // matrix_init_user();
 }
