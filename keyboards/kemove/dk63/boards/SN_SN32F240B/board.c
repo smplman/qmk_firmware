@@ -63,23 +63,5 @@ void __early_init(void) {
  * @todo    Add your board-specific code, if any.
  */
 void boardInit(void) {
-//   SN_GPIO0->MODE = 0xffff;
-//   // setP0.0~P0.1, P0.6~P0.7, P0.10~P0.15 to input pull-up
-//   SN_GPIO0->CFG = 0x000A0AA0;
-
-//   // set P1.2~1.9, P1.12~P1.15 to input pull-up
-//   SN_GPIO1->CFG = 0x00A0000A;
-
-//   SN_GPIO2->MODE = 0xFFFF;
-//   // set P2.4~P2.15 to input pull-up
-//   SN_GPIO2->CFG = 0x000000AA;
-
-//   // set P3.0~P3.1, P3.4~P3.8 to input pull-up
-//   SN_GPIO3->CFG = 0xAAA800A0;
-
-  // Set led pins to output
-//   SN_GPIO2->CFG = 0xFFFF;
-//   SN_GPIO2->DATA = 0x0; // Set low
-
   SN_SYS0->SWDCTRL_b.SWDDIS = 1; // Disable SWD
 }
