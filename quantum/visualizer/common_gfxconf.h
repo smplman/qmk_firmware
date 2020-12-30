@@ -52,7 +52,7 @@
 //    #define INTERRUPTS_ON()                          optional_code
 
 // Options that (should where relevant) apply to all operating systems
-#define GFX_NO_INLINE GFXON
+#define GFX_NO_INLINE                            GFXON
 //    #define GFX_COMPILER                             GFX_COMPILER_UNKNOWN
 //    #define GFX_SHOW_COMPILER                        GFXOFF
 //    #define GFX_CPU                                  GFX_CPU_UNKNOWN
@@ -69,34 +69,35 @@
 //    #define GFX_EMULATE_MALLOC                       GFXOFF
 //    #define GFX_MEM_LT64K                            GFXOFF
 
+
 ///////////////////////////////////////////////////////////////////////////
 // GDISP                                                                 //
 ///////////////////////////////////////////////////////////////////////////
-#define GFX_USE_GDISP GFXON
+#define GFX_USE_GDISP                                GFXON
 
 //#define GDISP_NEED_AUTOFLUSH                         GFXOFF
 //#define GDISP_NEED_TIMERFLUSH                        GFXOFF
 //#define GDISP_NEED_VALIDATION                        GFXON
 //#define GDISP_NEED_CLIP                              GFXON
-#define GDISP_NEED_CIRCLE GFXON
+#define GDISP_NEED_CIRCLE                            GFXON
 //#define GDISP_NEED_DUALCIRCLE                        GFXOFF
-#define GDISP_NEED_ELLIPSE GFXON
-#define GDISP_NEED_ARC GFXON
-#define GDISP_NEED_ARCSECTORS GFXON
-#define GDISP_NEED_CONVEX_POLYGON GFXON
+#define GDISP_NEED_ELLIPSE                           GFXON
+#define GDISP_NEED_ARC                               GFXON
+#define GDISP_NEED_ARCSECTORS                        GFXON
+#define GDISP_NEED_CONVEX_POLYGON                    GFXON
 //#define GDISP_NEED_SCROLL                            GFXOFF
-#define GDISP_NEED_PIXELREAD GFXON
-#define GDISP_NEED_CONTROL GFXON
+#define GDISP_NEED_PIXELREAD                         GFXON
+#define GDISP_NEED_CONTROL                           GFXON
 //#define GDISP_NEED_QUERY                             GFXOFF
 //#define GDISP_NEED_MULTITHREAD                       GFXOFF
 //#define GDISP_NEED_STREAMING                         GFXOFF
-#define GDISP_NEED_TEXT GFXON
+#define GDISP_NEED_TEXT                              GFXON
 //    #define GDISP_NEED_TEXT_WORDWRAP                 GFXOFF
 //    #define GDISP_NEED_TEXT_BOXPADLR                 1
 //    #define GDISP_NEED_TEXT_BOXPADTB                 1
 //    #define GDISP_NEED_ANTIALIAS                     GFXOFF
 //    #define GDISP_NEED_UTF8                          GFXOFF
-#define GDISP_NEED_TEXT_KERNING GFXON
+#define GDISP_NEED_TEXT_KERNING                  GFXON
 //    #define GDISP_INCLUDE_FONT_UI1                   GFXOFF
 //    #define GDISP_INCLUDE_FONT_UI2                   GFXOFF		// The smallest preferred font.
 //    #define GDISP_INCLUDE_FONT_LARGENUMBERS          GFXOFF
@@ -106,10 +107,10 @@
 //    #define GDISP_INCLUDE_FONT_DEJAVUSANS20          GFXOFF
 //    #define GDISP_INCLUDE_FONT_DEJAVUSANS24          GFXOFF
 //    #define GDISP_INCLUDE_FONT_DEJAVUSANS32          GFXOFF
-#define GDISP_INCLUDE_FONT_DEJAVUSANSBOLD12 GFXON
+#define GDISP_INCLUDE_FONT_DEJAVUSANSBOLD12      GFXON
 //    #define GDISP_INCLUDE_FONT_FIXED_10X20           GFXOFF
 //    #define GDISP_INCLUDE_FONT_FIXED_7X14            GFXOFF
-#define GDISP_INCLUDE_FONT_FIXED_5X8 GFXON
+#define GDISP_INCLUDE_FONT_FIXED_5X8             GFXON
 //    #define GDISP_INCLUDE_FONT_DEJAVUSANS12_AA       GFXOFF
 //    #define GDISP_INCLUDE_FONT_DEJAVUSANS16_AA       GFXOFF
 //    #define GDISP_INCLUDE_FONT_DEJAVUSANS20_AA       GFXOFF
@@ -160,39 +161,40 @@
 //#define GDISP_DEFAULT_ORIENTATION                    gOrientationLandscape    // If not defined the native hardware orientation is used.
 //#define GDISP_LINEBUF_SIZE                           128
 //#define GDISP_STARTUP_COLOR                          GFX_BLACK
-#define GDISP_NEED_STARTUP_LOGO GFXOFF
+#define GDISP_NEED_STARTUP_LOGO                      GFXOFF
 
 //#define GDISP_TOTAL_DISPLAYS                         1
 
 //#define GDISP_DRIVER_LIST                            GDISPVMT_Win32, GDISPVMT_Win32
 #ifdef GDISP_DRIVER_LIST
 //        // For code and speed optimization define as GFXON or GFXOFF if all controllers have the same capability
-#    define GDISP_HARDWARE_STREAM_WRITE GFXOFF
-#    define GDISP_HARDWARE_STREAM_READ GFXOFF
-#    define GDISP_HARDWARE_STREAM_POS GFXOFF
-#    define GDISP_HARDWARE_DRAWPIXEL GFXON
-#    define GDISP_HARDWARE_CLEARS GFXOFF
-#    define GDISP_HARDWARE_FILLS GFXOFF
+#define GDISP_HARDWARE_STREAM_WRITE          GFXOFF
+#define GDISP_HARDWARE_STREAM_READ           GFXOFF
+#define GDISP_HARDWARE_STREAM_POS            GFXOFF
+#define GDISP_HARDWARE_DRAWPIXEL             GFXON
+#define GDISP_HARDWARE_CLEARS                GFXOFF
+#define GDISP_HARDWARE_FILLS                 GFXOFF
 //#define GDISP_HARDWARE_BITFILLS              GFXOFF
-#    define GDISP_HARDWARE_SCROLL GFXOFF
-#    define GDISP_HARDWARE_PIXELREAD GFXON
-#    define GDISP_HARDWARE_CONTROL GFXON
-#    define GDISP_HARDWARE_QUERY GFXOFF
-#    define GDISP_HARDWARE_CLIP GFXOFF
+#define GDISP_HARDWARE_SCROLL                GFXOFF
+#define GDISP_HARDWARE_PIXELREAD             GFXON
+#define GDISP_HARDWARE_CONTROL               GFXON
+#define GDISP_HARDWARE_QUERY                 GFXOFF
+#define GDISP_HARDWARE_CLIP                  GFXOFF
 
-#    define GDISP_PIXELFORMAT GDISP_PIXELFORMAT_RGB888
+#define GDISP_PIXELFORMAT                    GDISP_PIXELFORMAT_RGB888
 #endif
 
-#define GDISP_USE_GFXNET GFXOFF
+#define GDISP_USE_GFXNET                             GFXOFF
 //    #define GDISP_GFXNET_PORT                        13001
 //    #define GDISP_GFXNET_CUSTOM_LWIP_STARTUP         GFXOFF
 //    #define GDISP_DONT_WAIT_FOR_NET_DISPLAY          GFXOFF
 //    #define GDISP_GFXNET_UNSAFE_SOCKETS              GFXOFF
 
+
 ///////////////////////////////////////////////////////////////////////////
 // GWIN                                                                  //
 ///////////////////////////////////////////////////////////////////////////
-#define GFX_USE_GWIN GFXOFF
+#define GFX_USE_GWIN                                 GFXOFF
 
 //#define GWIN_NEED_WINDOWMANAGER                      GFXOFF
 //    #define GWIN_REDRAW_IMMEDIATE                    GFXOFF
@@ -241,32 +243,36 @@
 //    #define GWIN_NEED_TABSET                         GFXOFF
 //        #define GWIN_TABSET_TABHEIGHT                18
 
+
 ///////////////////////////////////////////////////////////////////////////
 // GTRANS                                                                //
 ///////////////////////////////////////////////////////////////////////////
 //#define GFX_USE_GTRANS                               GFXOFF
 
+
 ///////////////////////////////////////////////////////////////////////////
 // GEVENT                                                                //
 ///////////////////////////////////////////////////////////////////////////
-#define GFX_USE_GEVENT GFXON
+#define GFX_USE_GEVENT                               GFXON
 
 //#define GEVENT_ASSERT_NO_RESOURCE                    GFXOFF
 //#define GEVENT_MAXIMUM_SIZE                          32
 //#define GEVENT_MAX_SOURCE_LISTENERS                  32
 
+
 ///////////////////////////////////////////////////////////////////////////
 // GTIMER                                                                //
 ///////////////////////////////////////////////////////////////////////////
-#define GFX_USE_GTIMER GFXOFF
+#define GFX_USE_GTIMER                               GFXOFF
 
 //#define GTIMER_THREAD_PRIORITY                       gThreadpriorityHigh
 //#define GTIMER_THREAD_WORKAREA_SIZE                  2048
 
+
 ///////////////////////////////////////////////////////////////////////////
 // GQUEUE                                                                //
 ///////////////////////////////////////////////////////////////////////////
-#define GFX_USE_GQUEUE GFXOFF
+#define GFX_USE_GQUEUE                               GFXOFF
 
 //#define GQUEUE_NEED_ASYNC                            GFXOFF
 //#define GQUEUE_NEED_GSYNC                            GFXOFF
@@ -276,7 +282,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // GINPUT                                                                //
 ///////////////////////////////////////////////////////////////////////////
-#define GFX_USE_GINPUT GFXOFF
+#define GFX_USE_GINPUT                               GFXOFF
 
 //#define GINPUT_NEED_MOUSE                            GFXOFF
 //    #define GINPUT_TOUCH_STARTRAW                    GFXOFF
@@ -301,10 +307,11 @@
 //#define GINPUT_NEED_TOGGLE                           GFXOFF
 //#define GINPUT_NEED_DIAL                             GFXOFF
 
+
 ///////////////////////////////////////////////////////////////////////////
 // GFILE                                                                 //
 ///////////////////////////////////////////////////////////////////////////
-#define GFX_USE_GFILE GFXOFF
+#define GFX_USE_GFILE                                GFXOFF
 
 //#define GFILE_NEED_PRINTG                            GFXOFF
 //#define GFILE_NEED_SCANG                             GFXOFF
@@ -329,20 +336,20 @@
 ///////////////////////////////////////////////////////////////////////////
 // GADC                                                                  //
 ///////////////////////////////////////////////////////////////////////////
-#define GFX_USE_GADC GFXOFF
+#define GFX_USE_GADC                                 GFXOFF
 //    #define GADC_MAX_LOWSPEED_DEVICES                4
 
 ///////////////////////////////////////////////////////////////////////////
 // GAUDIO                                                                //
 ///////////////////////////////////////////////////////////////////////////
-#define GFX_USE_GAUDIO GFXOFF
+#define GFX_USE_GAUDIO                               GFXOFF
 //    #define GAUDIO_NEED_PLAY                         GFXOFF
 //    #define GAUDIO_NEED_RECORD                       GFXOFF
 
 ///////////////////////////////////////////////////////////////////////////
 // GMISC                                                                 //
 ///////////////////////////////////////////////////////////////////////////
-#define GFX_USE_GMISC GFXON
+#define GFX_USE_GMISC                                GFXON
 
 //#define GMISC_NEED_ARRAYOPS                          GFXOFF
 //#define GMISC_NEED_FASTTRIG                          GFXOFF
@@ -350,8 +357,8 @@
 //#define GMISC_NEED_INVSQRT                           GFXOFF
 //    #define GMISC_INVSQRT_MIXED_ENDIAN               GFXOFF
 //    #define GMISC_INVSQRT_REAL_SLOW                  GFXOFF
-#define GMISC_NEED_MATRIXFLOAT2D GFXON
-#define GMISC_NEED_MATRIXFIXED2D GFXOFF
+#define GMISC_NEED_MATRIXFLOAT2D                     GFXON
+#define GMISC_NEED_MATRIXFIXED2D                     GFXOFF
 //#define GMISC_NEED_HITTEST_POLY                      GFXOFF
 
 #endif /* COMMON_GFXCONF_H */
