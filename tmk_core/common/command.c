@@ -39,8 +39,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    include "backlight.h"
 #endif
 
-#if defined(MOUSEKEY_ENABLE) && !defined(MK_3_SPEED)
+#ifdef MOUSEKEY_ENABLE
 #    include "mousekey.h"
+#endif
+
+#ifdef PROTOCOL_VUSB
+#    include "usbdrv.h"
 #endif
 
 #ifdef AUDIO_ENABLE
@@ -53,7 +57,7 @@ static void print_version(void);
 static void print_status(void);
 static bool command_console(uint8_t code);
 static void command_console_help(void);
-#if defined(MOUSEKEY_ENABLE) && !defined(MK_3_SPEED)
+#ifdef MOUSEKEY_ENABLE
 static bool mousekey_console(uint8_t code);
 static void mousekey_console_help(void);
 #endif
@@ -74,7 +78,7 @@ bool command_proc(uint8_t code) {
             else
                 return (command_console_extra(code) || command_console(code));
             break;
-#if defined(MOUSEKEY_ENABLE) && !defined(MK_3_SPEED)
+#ifdef MOUSEKEY_ENABLE
         case MOUSEKEY:
             mousekey_console(code);
             break;
@@ -141,6 +145,7 @@ static void command_common_help(void) {
 static void print_version(void) {
     // print version & information
     print("\n\t- Version -\n");
+    print("DESC: " STR(DESCRIPTION) "\n");
     print("VID: " STR(VENDOR_ID) "(" STR(MANUFACTURER) ") "
                                                        "PID: " STR(PRODUCT_ID) "(" STR(PRODUCT) ") "
                                                                                                 "VER: " STR(DEVICE_VER) "\n");
@@ -148,9 +153,9 @@ static void print_version(void) {
     print("BUILD:  (" __DATE__ ")\n");
 #else
     print("BUILD: " STR(QMK_VERSION) " (" __TIME__ " " __DATE__ ")\n");
-#    ifdef PROTOCOL_CHIBIOS
+#ifdef PROTOCOL_CHIBIOS
     print("CHIBIOS: " STR(CHIBIOS_VERSION) ", CONTRIB: " STR(CHIBIOS_CONTRIB_VERSION) "\n");
-#    endif
+#endif
 #endif
 
     /* build options */
@@ -179,9 +184,6 @@ static void print_version(void) {
 #endif
 #ifdef NKRO_ENABLE
           " NKRO"
-#endif
-#ifdef LTO_ENABLE
-          " LTO"
 #endif
 
           " " STR(BOOTLOADER_SIZE) "\n");
@@ -354,8 +356,15 @@ static bool command_common(uint8_t code) {
         // jump to bootloader
         case MAGIC_KC(MAGIC_KEY_BOOTLOADER):
         case MAGIC_KC(MAGIC_KEY_BOOTLOADER_ALT):
+            clear_keyboard();  // clear to prevent stuck keys
             print("\n\nJumping to bootloader... ");
-            reset_keyboard();
+#ifdef AUDIO_ENABLE
+            stop_all_notes();
+            shutdown_user();
+#else
+            wait_ms(1000);
+#endif
+            bootloader_jump();  // not return
             break;
 
         // debug toggle
@@ -526,7 +535,7 @@ static bool command_console(uint8_t code) {
         case KC_ESC:
             command_state = ONESHOT;
             return false;
-#if defined(MOUSEKEY_ENABLE) && !defined(MK_3_SPEED)
+#ifdef MOUSEKEY_ENABLE
         case KC_M:
             mousekey_console_help();
             print("M> ");
@@ -541,7 +550,7 @@ static bool command_console(uint8_t code) {
     return true;
 }
 
-#if defined(MOUSEKEY_ENABLE) && !defined(MK_3_SPEED)
+#ifdef MOUSEKEY_ENABLE
 /***********************************************************
  * Mousekey console
  ***********************************************************/
