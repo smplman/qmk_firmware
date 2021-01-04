@@ -47,12 +47,15 @@ void init(void) {}
 static void flush(void) {}
 
 void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
-    led_state[index].r = r / 1.33;
-    led_state[index].g = g;
-    led_state[index].b = b / 0.5;
+    // led_state[index].r = r / 1.33;
+    // led_state[index].g = g;
+    // led_state[index].b = b / 0.5;
     // led_state[index].r = 100 - (r * 100 / 255);
     // led_state[index].g = 100 - (g * 100 / 255);
     // led_state[index].b = 100 - (b * 100 / 255);
+    led_state[index].r = r;
+    led_state[index].g = g;
+    led_state[index].b = b;
 }
 
 static void set_color_all(uint8_t r, uint8_t g, uint8_t b) {
