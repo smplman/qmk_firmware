@@ -9,7 +9,7 @@
     PWM PWM08A - PWM21A
     2ty transistors PNP driven high
     base      - GPIO
-    collector - LED Col pins
+    collector - COL in matrix
     emitter   - VDD
 
     VDD     GPIO
@@ -19,7 +19,7 @@
          |
          |
         (C)
-        LED
+    COL / Matrix
 
     ROWS RGB
     PWM PWM08B - PWM23B
@@ -47,12 +47,6 @@ void init(void) {}
 static void flush(void) {}
 
 void set_color(int index, uint8_t r, uint8_t g, uint8_t b) {
-    // led_state[index].r = r / 1.33;
-    // led_state[index].g = g;
-    // led_state[index].b = b / 0.5;
-    // led_state[index].r = 100 - (r * 100 / 255);
-    // led_state[index].g = 100 - (g * 100 / 255);
-    // led_state[index].b = 100 - (b * 100 / 255);
     led_state[index].r = r;
     led_state[index].g = g;
     led_state[index].b = b;

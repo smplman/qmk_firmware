@@ -28,7 +28,6 @@
 
 /* key matrix size */
 #define MATRIX_ROWS 5
-// #define MATRIX_ROWS 2 // Need to disable cols for SWD
 #define MATRIX_COLS 14
 
 /*
