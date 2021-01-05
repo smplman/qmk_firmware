@@ -26,7 +26,8 @@ upload:
 
 # start gdb session
 gdb:
-	arm-none-eabi-gdb-py $(QMK_DIR)/.build/kemove_dk63_default.elf -ex "target remote :3333" -ex "set confirm off" -ex "set pagination off" -ex "source ./svd_gdb.py" -ex "svd_load util/SN32F240B.svd"
+	# arm-none-eabi-gdb-py $(QMK_DIR)/.build/kemove_dk63_default.elf -ex "target remote :3333" -ex "set confirm off" -ex "set pagination off" -ex "source ./svd_gdb.py" -ex "svd_load util/SN32F240B.svd"
+	arm-none-eabi-gdb $(QMK_DIR)/.build/kemove_dk63_default.elf -ex "target remote :3333" -ex "set confirm off" -ex "set pagination off" -ex "source ./svd_gdb.py"
 
 # Docker makefile commands
 KEYBOARD_DIR=/qmk_firmware/keyboards/kemove/dk63

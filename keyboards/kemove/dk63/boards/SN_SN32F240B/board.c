@@ -63,6 +63,6 @@ void __early_init(void) {
  * @todo    Add your board-specific code, if any.
  */
 void boardInit(void) {
-  SN_SYS0->SWDCTRL_b.SWDDIS = 0; // Disable SWD
-  SN_SYS0->EXRSTCTRL_b.RESETDIS = 0; // Disable RESET
+  SN_SYS0->SWDCTRL_b.SWDDIS = 1; // Disable SWD
+  SN_SYS0->EXRSTCTRL_b.RESETDIS = 1; // Disable RESET
 }
