@@ -25,6 +25,11 @@ ARMV = 6
 
 # BOOTLOADER = flash
 SN32_BOOTLOADER_ADDRESS = 0x1FFF0301
+SN32_FLASH_START = 0x200
+# # Jumploader
+# ifeq ($(SN32_FLASH_START),)
+#   LDOPT := $(LDOPT),--defsym=__flash_start__=$(SN32_FLASH_START)
+# endif
 
 # OPT_DEFS = -O0
 

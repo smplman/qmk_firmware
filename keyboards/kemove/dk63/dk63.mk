@@ -1,14 +1,16 @@
-# Upload firmware
+# Makefile for dk63, offers some dev tools
+
+DIR:=${CURDIR}
+QMK_PATH=$(DIR)/../../../
+QMK_DIR:= $(abspath $(dir $(QMK_PATH)))
+UTIL_DIR=$(DIR)/util
 
 # start openocd
 openocd-run:
-	# "openocd.exe" "-c" "gdb_port 3333" "-s" "C:\Users\smplman\projects\qmk_firmware-19" "-f" "C:\Users\smplman\projects\dk63\stlink.cfg" "-f" "C:\Users\smplman\projects\dk63\vs11k09a-1.cfg"
-	# openocd -c "gdb_port 3333" -s /qmk_firmware -f /qmk_firmware/util/dk63/stlink.cfg -f /qmk_firmware/util/dk63/vs11k09a-1.cfg
-	openocd -c "gdb_port 3333" -s ./ -f ./util/dk63/stlink.cfg -f ./util/dk63/vs11k09a-1.cfg
+	openocd -c "gdb_port 3333" -s $(QMK_DIR) -f $(UTIL_DIR)/stlink.cfg -f $(UTIL_DIR)/vs11k09a-1.cfg
 
 openocd-start:
-	# openocd -c "gdb_port 3333" -s /qmk_firmware -f /qmk_firmware/util/dk63/stlink.cfg -f /qmk_firmware/util/dk63/vs11k09a-1.cfg &
-	openocd -c "gdb_port 3333" -s ./ -f ./util/dk63/stlink.cfg -f ./util/dk63/vs11k09a-1.cfg &
+	openocd -c "gdb_port 3333" -s $(QMK_DIR) -f ./util/stlink.cfg -f ./util/vs11k09a-1.cfg &
 
 # stop openocd
 openocd-stop:
@@ -16,68 +18,66 @@ openocd-stop:
 
 # Put device into bootloader mode
 dfu:
-	# python3 C:\Users\smplman\projects\qmk_firmware-19\util\dk63\dfu.py
-	python3 /qmk_firmware/util/dk63/dfu.py
-	# python3 ../qmk_firmware-9/util/dk63/dfu.py
+	python3 ./util/dfu.py
 
 # run python script to upload the firmware
 upload:
-	# python3 C:\Users\smplman\projects\qmk_firmware-19\util\dk63\flash-firmware.py C:\Users\smplman\projects\qmk_firmware-19\.build\kemove_dk63_default.bin --vid 0x0c45 --pid 0x7040
-	python3 /qmk_firmware/util/dk63/flash-firmware.py /qmk_firmware/.build/kemove_dk63_default.bin --vid 0x0c45 --pid 0x7040
-	# python3 /qmk_firmware/util/dk63/flash-firmware.py /qmk_firmware/.build/RCData4000.bin --vid 0x0c45 --pid 0x7040
+	python3 ./util/flash-firmware.py $(QMK_DIR)/.build/kemove_dk63_default.bin --vid 0x0c45 --pid 0x7040
 
 # start gdb session
 gdb:
-	# arm-none-eabi-gdb.exe ./.build/kemove_dk63_default.elf -ex "target remote :3333" -ex "set confirm off" -ex "set pagination off"
-	arm-none-eabi-gdb-py .build/kemove_dk63_default.elf -ex "target remote :3333" -ex "set confirm off" -ex "set pagination off" -ex "source /Users/speery/Downloads/PyCortexMDebug/build/lib/cmdebug/svd_gdb.py" -ex "svd_load util/dk63/SN32F240B.svd"
+	# arm-none-eabi-gdb-py $(QMK_DIR)/.build/kemove_dk63_default.elf -ex "target remote :3333" -ex "set confirm off" -ex "set pagination off" -ex "source ./svd_gdb.py" -ex "svd_load util/SN32F240B.svd"
+	arm-none-eabi-gdb $(QMK_DIR)/.build/kemove_dk63_default.elf -ex "target remote :3333" -ex "set confirm off" -ex "set pagination off" -ex "source ./svd_gdb.py"
+
+# Docker makefile commands
+KEYBOARD_DIR=/qmk_firmware/keyboards/kemove/dk63
+DOCKER_UTIL_DIR=$(KEYBOARD_DIR)/util
+DOCKER_MAKEFILE=$(KEYBOARD_DIR)/dk63.mk
+DOCKER_RUN=docker run -it --rm --privileged -w /qmk_firmware -p 3333:3333 -v $(QMK_DIR):/qmk_firmware -v /dev:/dev qmk
+DOCKER_MAKE=$(DOCKER_RUN) make -f $(DOCKER_MAKEFILE)
 
 # deploy using docker
 deploy:
-	./util/dk63/docker_build.sh kemove/dk63:default:flash
+	./util/docker_build.sh kemove/dk63:default:flash
 
 build:
+	cd $(QMK_DIR); \
 	make kemove/dk63:default
 
-# dfu-remote: docker run -it --rm --privileged -w /qmk_firmware -p 3333:3333 -v /dev:/dev qmk make -f dk63.mk dfu
+# dfu-remote: docker run -it --rm --privileged -w /qmk_firmware -p 3333:3333 -v /dev:/dev qmk make -f $(DOCKER_MAKEFILE) dfu
 
 remote-debug:
 	docker run --rm -it --rm --privileged -v /dev:/dev \
 		--user=1000:50 \
 		-w /qmk_firmware \
-		-v /mnt/c/Users/smplman/projects/qmk_firmware-19:/qmk_firmware \
+		-v $(QMK_DIR):/qmk_firmware \
 		-e ALT_GET_KEYBOARDS=true \
 		-e SKIP_GIT="$SKIP_GIT" \
 		-e MAKEFLAGS="$MAKEFLAGS" \
 		-p 3333:3333 \
 		qmk \
-		openocd -c "gdb_port 3333" -s /qmk_firmware -f /qmk_firmware/util/dk63/stlink.cfg -f /qmk_firmware/util/dk63/vs11k09a-1.cfg
+		openocd -c "gdb_port 3333" -s /qmk_firmware -f $(DOCKER_UTIL_DIR)/stlink.cfg -f $(DOCKER_UTIL_DIR)/vs11k09a-1.cfg
 
 openocd-remote:
-	# docker run -it --privileged --rm -w /qmk_firmware -p 3333:3333 -v /dev:/dev qmk make -f dk63.mk openocd-run
-	docker run -it --rm --privileged -w /qmk_firmware -p 3333:3333 -v /dev:/dev -v /Users/speery/projects/personal/qmk_firmware-9:/qmk_firmware qmk make -f dk63.mk openocd-run
+	$(DOCKER_MAKE) openocd-run
 
 gdb-remote:
-	# arm-none-eabi-gdb.exe ./.build/kemove_dk63_default.elf -ex "target remote 192.168.99.101:3333" -ex "set confirm off" -ex "set pagination off"
-	arm-none-eabi-gdb-py ./.build/kemove_dk63_default.elf -ex "target remote 192.168.99.102:3333" -ex "set confirm off" -ex "set pagination off" -ex "source /Users/speery/Downloads/PyCortexMDebug/build/lib/cmdebug/svd_gdb.py" -ex "svd_load util/dk63/SN32F240B.svd"
-	# docker run -it --rm --privileged -w /qmk_firmware -v /Users/speery/projects/personal/qmk_firmware-9:/qmk_firmware -v /dev:/dev qmk make -f dk63.mk gdb
+	$(DOCKER_MAKE) gdb
 
 build-remote:
-	# docker run -it --rm --privileged -w /qmk_firmware -p 3333:3333 -v /dev:/dev qmk make -f dk63.mk upload
-	docker run -it --rm --privileged -w /qmk_firmware -p 3333:3333 -v /Users/speery/projects/personal/qmk_firmware-9:/qmk_firmware -v /dev:/dev qmk make -f dk63.mk build
+	$(DOCKER_MAKE) build
 
 upload-remote:
-	# docker run -it --rm --privileged -w /qmk_firmware -p 3333:3333 -v /dev:/dev qmk make -f dk63.mk upload
-	docker run -it --rm --privileged -w /qmk_firmware -p 3333:3333 -v /Users/speery/projects/personal/qmk_firmware-9:/qmk_firmware -v /dev:/dev qmk make -f dk63.mk upload
+	$(DOCKER_MAKE) upload
 
 all-remote:
-	# docker run -it --rm --privileged -v /mnt/c/Users/smplman/projects/qmk_firmware-19:/qmk_firmware -w /qmk_firmware -p 3333:3333 -v /dev:/dev qmk make -f dk63.mk all
-	docker run -it --rm --privileged -w /qmk_firmware -v /Users/speery/projects/personal/qmk_firmware-9:/qmk_firmware -p 3333:3333 -v /dev:/dev qmk make -f dk63.mk all
+	$(DOCKER_MAKE) all
 
 dfu-remote:
-	docker run -it --rm --privileged -w /qmk_firmware -v /Users/speery/projects/personal/qmk_firmware-9:/qmk_firmware -p 3333:3333 -v /dev:/dev qmk make -f dk63.mk dfu-mode
+	$(DOCKER_MAKE) dfu-mode
 
 sh:
-	docker run -it --rm --privileged -w /qmk_firmware -v /Users/speery/projects/personal/qmk_firmware-9:/qmk_firmware -v /dev:/dev qmk /bin/bash
+	$(DOCKER_RUN) /bin/bash
 
 
 # dfu and upload
