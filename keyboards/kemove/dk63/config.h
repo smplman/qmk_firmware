@@ -41,7 +41,6 @@
  *
 */
 
-// #define DIODE_DIRECTION ROW2COL
 #define DIODE_DIRECTION COL2ROW
 
 // 1.5(40), 1.4(38), 1.3(37), 1.2(36), 1.1(35), 1.0(34), 0.15(32), 0.14(31), 0.13(30), 0.12(29), 0.11(28), 0.10(27), 0.9(26), 0.8(25)
@@ -66,6 +65,38 @@
 
 // #define EEPROM_DRIVER vendor
 
+/* Backlight configuration
+ */
+#define BACKLIGHT_LEVELS 8
+
+// #define LED_MATRIX_ROWS 14
+// #define LED_MATRIX_ROW_PINS { A8, A9, A10, A11, A12, A13, A14, A15, B0, B1, B2, B3, B4, B5 }
+
+#define LED_MATRIX_ROWS 15
+#define LED_MATRIX_ROW_PINS { C14, C13, C12, C11, C10, C9, C8, C7, C6, C5, C4, C3, C1, C0, C15}
+// #define LED_MATRIX_ROWS 1
+// G B R
+// #define LED_MATRIX_ROW_PINS { C15 } //{ C15, C14, C13, C12, C11, C10, C9, C8, C7, C6, C5, C4, C3, C1, C0 }
+
+// #define LED_MATRIX_ROW_PINS { {14, 13, 12}, {11, 10, 9}, {8, 7, 6}, {5, 4, 3}, {1, 0, 15 } }
+
+// #define LED_MATRIX_ROWS 3
+// #define LED_MATRIX_ROW_PINS { C15, C14, C13 }
+// #define LED_MATRIX_ROW_PINS { C15, C12, C9, C6, C3} // B
+// #define LED_MATRIX_ROW_PINS { C14, C11, C8, C5, C1} // R?
+// #define LED_MATRIX_ROW_PINS { C13, C10, C7, C4, C0} // G
+
+#define LED_MATRIX_COLS 14
+#define LED_MATRIX_COL_PINS { A8, A9, A10, A11, A12, A13, A14, A15, B0, B1, B2, B3, B4, B5 }
+
+// #define LED_MATRIX_COLS 15
+// #define LED_MATRIX_COL_PINS { C15, C14, C13, C12, C11, C10, C9, C8, C7, C6, C5, C4, C3, C1, C0 }
+
+// #define LED_MATRIX_COLS 1
+// #define LED_MATRIX_COL_PINS { B5 }
+
+#define LED_DRIVER_LED_COUNT 63 // * 3(rgb)
+#define DRIVER_LED_TOTAL 63
 /*
  * Force NKRO
  *

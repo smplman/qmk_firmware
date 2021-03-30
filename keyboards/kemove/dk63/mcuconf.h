@@ -60,6 +60,14 @@
 
 #define PLATFORM_USB_USE_USB1 TRUE
 
+/*
+ * Timer driver system settings.
+ */
+#define SN32_PWM_USE_TIM1                  FALSE
+#define SN32_PWM_USE_TIM2                  TRUE
+#define SN32_PWM_TIM1_IRQ_PRIORITY         3
+#define SN32_PWM_TIM2_IRQ_PRIORITY         3
+
 #define SYS_CLOCK_SETUP 1
 #define SYS0_CLKCFG_VAL 0
 #define AHB_PRESCALAR 0x2

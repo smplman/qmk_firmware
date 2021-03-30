@@ -75,7 +75,8 @@ void boardInit(void) {
 //   SN_GPIO3->CFG = 0xAAA800A0;
 
   // Set led pins to output
-  SN_GPIO3->CFG = 0xFFFFFFFF;
+//   SN_GPIO2->CFG = 0xFFFF;
+//   SN_GPIO2->DATA = 0x0; // Set low
 
   SN_SYS0->SWDCTRL_b.SWDDIS = 1; // Disable SWD
 }

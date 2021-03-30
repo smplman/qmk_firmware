@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import struct
-import sys
 
+import time
 import usb.core
 import usb.util
 
+from telnetlib import Telnet
 import argparse
 
 
@@ -33,12 +34,7 @@ def hid_get_feature(dev):
 
 def detach_drivers(dev):
     for cfg in dev:
-        print(cfg)
         for intf in cfg:
-            dev.reset()
-            dev.detach_kernel_driver(intf.bInterfaceNumber)
-            dev.set_configuration()
-
             if dev.is_kernel_driver_active(intf.bInterfaceNumber):
                 try:
                     dev.detach_kernel_driver(intf.bInterfaceNumber)
@@ -53,18 +49,43 @@ def hex_int(x):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("file", help="firmware file to flash")
+    parser.add_argument("start", type=hex_int, help="start offset to flash")
     parser.add_argument("--vid", type=hex_int, required=True, help="usb device vid")
     parser.add_argument("--pid", type=hex_int, required=True, help="usb device pid")
+    parser.add_argument("--swd", type=bool, required=False, default=False, help="usb device pid")
+    parser.add_argument("--openocd", required=False, help="host:port of openocd telnet")
 
     args = parser.parse_args()
 
     with open(args.file, "rb") as inf:
         firmware = inf.read()
-    if len(firmware) % 64 != 0:
-        raise RuntimeError("firmware size must be divisible by 64")
+
+    while len(firmware) % 64 != 0:
+        firmware += b"\x00"
+
+    start = args.start
+    end = start + len(firmware)
+
+    if end > 0x7800:
+        raise RuntimeError("firmware too big")
+
+    if args.swd and args.openocd:
+        host, port = args.openocd.split(":")
+        port = int(port)
+
+        with Telnet(host, port) as tn:
+            tn.read_until(b"> ")
+            tn.write(b"reset halt\n")
+
+            tn.read_until(b"> ")
+            tn.write(b"reg pc 0x1fff0009\n")
+
+            tn.read_until(b"> ")
+            tn.write(b"resume\n")
+
+    time.sleep(5)
 
     dev = usb.core.find(idVendor=args.vid, idProduct=args.pid)
-    print(dev)
     if dev is None:
         raise RuntimeError("device not found")
 
@@ -80,7 +101,7 @@ def main():
     # cmd 3 - write code option - not sure if triggers mass erase - needs more testing, skipping for now
 
     print("Prepare for flash")
-    hid_set_feature(dev, struct.pack("<III", CMD_BASE + 5, 0, len(firmware) // 64))
+    hid_set_feature(dev, struct.pack("<III", CMD_BASE + 5, start, len(firmware) // 64))
     resp = bytes(hid_get_feature(dev))
     cmd, status = struct.unpack("<II", resp[0:8])
     assert cmd == CMD_BASE + 5
