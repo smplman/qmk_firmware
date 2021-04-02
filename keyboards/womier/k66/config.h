@@ -52,8 +52,8 @@
 // #define LED_MATRIX_ROWS 14
 // #define LED_MATRIX_ROW_PINS { A8, A9, A10, A11, A12, A13, A14, A15, B0, B1, B2, B3, B4, B5 }
 
-#define LED_MATRIX_ROWS        15
-#define LED_MATRIX_ROW_PINS    {A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14}
+#define LED_MATRIX_ROWS        14
+#define LED_MATRIX_ROW_PINS    {A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13}
 
 // #define LED_MATRIX_ROW_PINS    {C14, C13, C12, C11, C10, C9, C8, C7, C6, C5, C4, C3, C1, C0, C15}
 
@@ -79,6 +79,8 @@
 // #define LED_MATRIX_COL_PINS { B5 }
 
 #define LED_DRIVER_LED_COUNT       63  // * 3(rgb)
+
+#define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_CYCLE_OUT_IN_DUAL
 
 // #define SW_I2C_USE_I2C1            1
 
