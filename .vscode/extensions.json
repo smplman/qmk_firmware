@@ -6,6 +6,7 @@
     "ms-vscode.cpptools",
     "bierner.github-markdown-preview",
     "donjayamanne.git-extension-pack",
-    "CoenraadS.bracket-pair-colorizer-2"
+    "CoenraadS.bracket-pair-colorizer-2",
+    "marus25.cortex-debug"
   ]
 }

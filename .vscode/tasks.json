@@ -9,7 +9,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "command": "cd qmk_firmware; make womier/k66:default",
+            "command": "make womier/k66:default",
             "options": {
                 "cwd": "${workspaceRoot}"
             },

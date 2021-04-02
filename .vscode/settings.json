@@ -216,7 +216,7 @@
         "**/m10a": true,
         "**/maartenwut": true,
         "**/manta60": true,
-        "**/massdrop": true,
+        "**/massdrop": false,
         "**/matrix": true,
         "**/maxipad": true,
         "**/maxr1998": true,
@@ -399,5 +399,15 @@
       "vector": "c",
       "ostream": "c",
       "*.tcc": "c"
-    }
+    },
+    "cortex-debug.armToolchainPath": "C:/msys64/home/Bill/qmk_utils/gcc-arm-none-eabi/bin",
+    "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
+    "terminal.integrated.shellArgs.windows": [
+        "--login",
+        "-i"
+    ],
+    "terminal.integrated.env.windows": {
+        "MSYSTEM": "MINGW64",
+        "CHERE_INVOKING": "1"
+    },
 }
