@@ -76,22 +76,22 @@ void init (void) {
     // 16 bits - max = 65535
     SN_CT16B1->MR0 = 0;
     SN_CT16B1->MR1 = 0;
-    SN_CT16B1->MR2 = 0xFFFF;
+    SN_CT16B1->MR2 = 0;
 
-    SN_CT16B1->MR3 = 0x40;
-    SN_CT16B1->MR4 = 0x40;
-    SN_CT16B1->MR5 = 0xFFFF;
+    SN_CT16B1->MR3 = 0;
+    SN_CT16B1->MR4 = 0;
+    SN_CT16B1->MR5 = 0;
 
-    SN_CT16B1->MR6 = 0xFFFF;
-    SN_CT16B1->MR7 = 0xFFFF;
-    SN_CT16B1->MR8 = 0xFFFF;
+    SN_CT16B1->MR6 = 0;
+    SN_CT16B1->MR7 = 0;
+    SN_CT16B1->MR8 = 0;
 
-    SN_CT16B1->MR9  = 0x40;
-    SN_CT16B1->MR10 = 0xFFFF;
-    SN_CT16B1->MR11 = 0x40;
+    SN_CT16B1->MR9  = 0;
+    SN_CT16B1->MR10 = 0;
+    SN_CT16B1->MR11 = 0;
 
     SN_CT16B1->MR12 = 0;
-    SN_CT16B1->MR13 = 0xFFFF;
+    SN_CT16B1->MR13 = 0;
     SN_CT16B1->MR14 = 0;
 
     /* clang-format off */
@@ -206,7 +206,7 @@ const rgb_matrix_driver_t rgb_matrix_driver =
     .set_color_all = set_color_all,
 };
 
-volatile uint32_t * rgb_match_registers[MATRIX_ROWS][3] =
+volatile uint32_t * rgb_match_registers[5][3] =
 {
     {&SN_CT16B1->MR0,  &SN_CT16B1->MR1,   &SN_CT16B1->MR2    },
     {&SN_CT16B1->MR3,  &SN_CT16B1->MR4,   &SN_CT16B1->MR5    },
@@ -232,19 +232,14 @@ void RgbIsr () {
 
     writePinLow(col_pins[col_index]);
 
-    for (uint8_t row_index = 0; row_index < MATRIX_ROWS; row_index++)
+    for (uint8_t row_index = 0; row_index < 5; row_index++)
     {
-        if (NO_LED != g_led_config.matrix_co[row_index][col_index])
+
+        if ((NO_LED != g_led_config.matrix_co[row_index][col_index]))
         {
             *rgb_match_registers[row_index][0] = led_state[g_led_config.matrix_co[row_index][col_index]].g;
             *rgb_match_registers[row_index][1] = led_state[g_led_config.matrix_co[row_index][col_index]].b;
             *rgb_match_registers[row_index][2] = led_state[g_led_config.matrix_co[row_index][col_index]].r;
-        }
-        else
-        {
-            *rgb_match_registers[row_index][0] = 0;
-            *rgb_match_registers[row_index][1] = 0;
-            *rgb_match_registers[row_index][2] = 0;
         }
 
         // Check row pin state
