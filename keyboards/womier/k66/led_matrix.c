@@ -52,6 +52,7 @@ static struct
 static const pin_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
 
 static uint8_t col_index = 0;
+static uint8_t led_index = 1;
 
 // set counter reset on MRn (setting MRn to the full period) and set the other MRs to the PWM duty cycle you want for that pin
 // on period interrupt update all the PWM MRs to the values for the next LED
@@ -76,22 +77,22 @@ void init (void) {
     // 16 bits - max = 65535
     SN_CT16B1->MR0 = 0;
     SN_CT16B1->MR1 = 0;
-    SN_CT16B1->MR2 = 0;
+    SN_CT16B1->MR2 = 0xFFFF;
 
-    SN_CT16B1->MR3 = 0;
-    SN_CT16B1->MR4 = 0;
-    SN_CT16B1->MR5 = 0;
+    SN_CT16B1->MR3 = 0x40;
+    SN_CT16B1->MR4 = 0x40;
+    SN_CT16B1->MR5 = 0xFFFF;
 
-    SN_CT16B1->MR6 = 0;
-    SN_CT16B1->MR7 = 0;
-    SN_CT16B1->MR8 = 0;
+    SN_CT16B1->MR6 = 0xFFFF;
+    SN_CT16B1->MR7 = 0xFFFF;
+    SN_CT16B1->MR8 = 0xFFFF;
 
-    SN_CT16B1->MR9  = 0;
-    SN_CT16B1->MR10 = 0;
-    SN_CT16B1->MR11 = 0;
+    SN_CT16B1->MR9  = 0x40;
+    SN_CT16B1->MR10 = 0xFFFF;
+    SN_CT16B1->MR11 = 0x40;
 
     SN_CT16B1->MR12 = 0;
-    SN_CT16B1->MR13 = 0;
+    SN_CT16B1->MR13 = 0xFFFF;
     SN_CT16B1->MR14 = 0;
 
     /* clang-format off */
@@ -166,9 +167,17 @@ void init (void) {
     for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++)
     {
         setPinOutput(col_pins[current_col]);
+        writePinHigh(col_pins[current_col]);
     }
 
-    writePinLow(col_pins[col_index]);
+    // Set col, read rows
+    // for (uint8_t current_col = 0; current_col < MATRIX_ROWS; current_col++)
+    // {
+    //     setPinOutput(row_pins[current_col]);
+    //     writePinHigh(row_pins[col_index]);
+    // }
+
+    writePinLow(col_pins[0]);
 
     SN_CT16B1->MCTRL2_b.MR15RST = 1;
 
@@ -229,17 +238,18 @@ void RgbIsr () {
     writePinHigh(col_pins[col_index]);
 
     col_index = (col_index + 1) % MATRIX_COLS;
+    led_index = (led_index + 1) % MATRIX_COLS;
 
     writePinLow(col_pins[col_index]);
 
     for (uint8_t row_index = 0; row_index < 5; row_index++)
     {
 
-        if ((NO_LED != g_led_config.matrix_co[row_index][col_index]))
+        if ((NO_LED != g_led_config.matrix_co[row_index][led_index]))
         {
-            *rgb_match_registers[row_index][0] = led_state[g_led_config.matrix_co[row_index][col_index]].g;
-            *rgb_match_registers[row_index][1] = led_state[g_led_config.matrix_co[row_index][col_index]].b;
-            *rgb_match_registers[row_index][2] = led_state[g_led_config.matrix_co[row_index][col_index]].r;
+            *rgb_match_registers[row_index][0] = led_state[g_led_config.matrix_co[row_index][led_index]].g;
+            *rgb_match_registers[row_index][1] = led_state[g_led_config.matrix_co[row_index][led_index]].b;
+            *rgb_match_registers[row_index][2] = led_state[g_led_config.matrix_co[row_index][led_index]].r;
         }
 
         // Check row pin state
