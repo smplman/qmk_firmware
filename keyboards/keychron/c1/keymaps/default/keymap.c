@@ -21,10 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Layer names don't all need to be of the same length, obviously, and you can also skip them
 // entirely and just use numbers.
 enum layer_names {
-    _WIN = 0,
-    _WINfn = 1,
-    _MAC = 2,
-    _MACfn = 3,
+    WIN_BASE = 0,
+    WIN_FN = 1,
+    MAC_BASE = 2,
+    MAC_FN = 3,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -92,29 +92,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                 {   _______,               _______,              _______,              _______,              _______,              _______,              _______,              _______,              _______,              _______,              _______,              _______,              KC_NO,                _______,              KC_NO,                KC_NO,                KC_NO   },
                 {   _______,               KC_NO,                _______,              _______,              _______,              _______,              _______,              _______,              _______,              _______,              _______,              _______,              KC_NO,                _______,              KC_NO,                RGB_SPI,              KC_NO   },
                 {   _______,               KC_LALT,              KC_LGUI,              KC_NO,                KC_NO,                KC_NO,                _______,              KC_NO,                KC_NO,                KC_NO,                _______,              _______,              _______,              _______,              RGB_RMOD,             RGB_SPD,              RGB_MOD }
-              },
-
-    // This is only a blank keymap for those who want to redo the layer 1 (refer to line 54 - 61) or make an entirely new layer.
-    /*  Row:          0        1        2        3        4        5        6        7        8        9        10       11       12       13       14       15       16    */
-        [4] =   {   { _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   KC_NO, _______, _______, _______ },
-                    { _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ },
-                    { _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ },
-                    { _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   KC_NO, _______,   KC_NO,   KC_NO,   KC_NO },
-                    { _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   KC_NO, _______,   KC_NO, _______,   KC_NO },
-                    { _______, _______, _______,   KC_NO,   KC_NO,   KC_NO, _______,   KC_NO,   KC_NO,   KC_NO, _______, _______, _______, _______, _______, _______, _______ }
-                }
+              }
 };
 void dip_switch_update_user(uint8_t index, bool active){
   index = 1;
  if(active){ //Mac mode
 writePin(LED_NUM_LOCK_PIN, 0);
 writePin(LED_SCROLL_LOCK_PIN, 1);
-layer_on(2);
+layer_move(2);
       }
       else{ //Windows mode
 writePin(LED_NUM_LOCK_PIN, 1);
 writePin(LED_SCROLL_LOCK_PIN, 0);
-layer_off(2);
+layer_move(0);
       }
   }
   
