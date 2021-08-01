@@ -25,13 +25,14 @@
 #define DEVICE_VER      0x0001
 
 #define MANUFACTURER    Keychron
-#define PRODUCT         K4
-#define DESCRIPTION     K4 Gateron RGB Non Hotswap
+#define PRODUCT         K3
+#define DESCRIPTION     K3 Gateron RGB Non Hotswap
 
 /* key matrix size */
 #define MATRIX_ROWS 6
 #define MATRIX_COLS 16
 
+#define SN32_MATRIX_READ_COLS
 #define DIODE_DIRECTION COL2ROW
 #define MATRIX_COL_PINS { A8, A9, A10, A11, A12, A13, A14, A15, B1, B2, B3, B4, B5, B6, B7, B8 }
 #define MATRIX_ROW_PINS { C15, D11, D10, D9, D8, D7 }
